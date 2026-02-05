@@ -11,5 +11,5 @@ public class ImageDto {
     private String fileType;
     @Lob
     private Blob image;
-    private PatientDto patient;
+    private String patientTaj;
 }
