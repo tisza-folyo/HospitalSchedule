@@ -9,8 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public class Person {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Person {
 
     @Id
     private String taj;
