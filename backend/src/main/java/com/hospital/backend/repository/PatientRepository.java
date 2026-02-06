@@ -4,4 +4,5 @@ import com.hospital.backend.model.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PatientRepository extends JpaRepository<Patient,String> {
+    Patient findByTaj(String taj);
 }

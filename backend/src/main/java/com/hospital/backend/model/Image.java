@@ -21,6 +21,7 @@ public class Image {
     private Long imageId;
     private String fileName;
     private String fileType;
+    private String dwnUrl;
 
     @Lob
     private Blob image;

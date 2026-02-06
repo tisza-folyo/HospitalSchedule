@@ -9,6 +9,7 @@ import java.sql.Blob;
 public class ImageDto {
     private String fileName;
     private String fileType;
+    private String dwnUrl;
     @Lob
     private Blob image;
     private String patientTaj;
