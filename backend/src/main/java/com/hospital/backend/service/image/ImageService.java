@@ -26,7 +26,7 @@ public class ImageService implements IImageService{
 
     @Override
     public List<ImageDto> saveImages(List<MultipartFile> files, String pTaj) {
-        Patient patient = patientRepository.findByTaj(pTaj);
+        Patient patient = patientRepository.findByTaj(pTaj).orElseThrow(() -> new ResourceNotFoundException("Patient"));
         List<ImageDto> savedImageDto = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
