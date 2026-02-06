@@ -16,6 +16,5 @@ import java.util.List;
 public class Patient extends Person {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "patient_id")
     private List<Image> personalDocImages;
 }
