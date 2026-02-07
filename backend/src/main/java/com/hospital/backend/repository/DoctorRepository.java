@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DoctorRepository extends JpaRepository<Doctor,String> {
     boolean existsBySpecialtySpecialtyName(String specialtyName);
+
+    boolean existsByTaj(String taj);
 }

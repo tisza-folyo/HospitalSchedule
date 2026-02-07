@@ -11,6 +11,9 @@ import lombok.*;
 @Entity
 @IdClass(PersonId.class)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"taj", "role_id"})
+})
 public abstract class Person {
 
     @Id

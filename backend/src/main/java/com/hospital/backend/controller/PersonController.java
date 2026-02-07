@@ -32,10 +32,10 @@ public class PersonController {
         }
     }
 
-    @DeleteMapping("/delete/{pTaj}/patient")
-    public ResponseEntity<ApiResponse> deletePatient(@PathVariable String pTaj){
+    @DeleteMapping("/delete/{pTaj}/person")
+    public ResponseEntity<ApiResponse> deletePatient(@PathVariable String pTaj, @RequestParam String role){
         try {
-            personService.deletePatient(pTaj);
+            personService.deletePerson(pTaj,role);
             return ResponseEntity.ok(new ApiResponse("Deleted", null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));

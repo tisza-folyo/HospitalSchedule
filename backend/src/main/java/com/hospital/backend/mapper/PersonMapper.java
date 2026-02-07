@@ -1,9 +1,6 @@
 package com.hospital.backend.mapper;
 
-import com.hospital.backend.dto.AdminDto;
-import com.hospital.backend.dto.DoctorDto;
-import com.hospital.backend.dto.NurseDto;
-import com.hospital.backend.dto.PatientDto;
+import com.hospital.backend.dto.*;
 import com.hospital.backend.model.*;
 import com.hospital.backend.request.RegisterRequest;
 import org.mapstruct.Mapper;
@@ -24,6 +21,8 @@ public interface PersonMapper {
     NurseDto toNurseDto(Nurse nurse);
 
     AdminDto toAdminDto(Admin admin);
+
+    AssistantDto toAssistantDto(Assistant assistant);
 
     void updatePersonFromRequest(RegisterRequest request, @MappingTarget Person person);
 }

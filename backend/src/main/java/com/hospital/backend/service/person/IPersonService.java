@@ -4,7 +4,7 @@ import com.hospital.backend.dto.PatientDto;
 import com.hospital.backend.request.RegisterRequest;
 
 public interface IPersonService {
-    void deletePatient(String taj);
+    void deletePerson(String taj, String roleName);
 
     Object addPerson(RegisterRequest request);
 }
