@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@IdClass(PersonId.class)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Person {
 
@@ -20,6 +21,7 @@ public abstract class Person {
     private String email;
     private String password;
 
+    @Id
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

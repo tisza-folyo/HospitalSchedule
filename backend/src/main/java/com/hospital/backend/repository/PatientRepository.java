@@ -8,4 +8,9 @@ import java.util.Optional;
 
 public interface PatientRepository extends JpaRepository<Patient,String> {
     Optional<Patient> findByTaj(String taj);
+
+
+    boolean existsByEmail(String email);
+
+    boolean existsByTaj(String taj);
 }

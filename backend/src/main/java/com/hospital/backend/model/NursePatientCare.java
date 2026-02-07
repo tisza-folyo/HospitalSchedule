@@ -19,11 +19,17 @@ public class NursePatientCare {
     private int uTaj;
 
     @ManyToOne
-    @JoinColumn(name = "pTaj")
+    @JoinColumns({
+            @JoinColumn(name = "pTaj", referencedColumnName = "taj"),
+            @JoinColumn(name = "pRoleId", referencedColumnName = "role_id")
+    })
     private Patient patient;
 
     @ManyToOne
-    @JoinColumn(name = "nTaj")
+    @JoinColumns({
+            @JoinColumn(name = "nTaj", referencedColumnName = "taj"),
+            @JoinColumn(name = "nRoleId", referencedColumnName = "role_id")
+    })
     private Nurse nurse;
 
     @ManyToOne

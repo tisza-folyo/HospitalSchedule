@@ -4,6 +4,6 @@ import com.hospital.backend.dto.DoctorAssistantWorkDto;
 import com.hospital.backend.model.DoctorAssistantWork;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", uses = {DoctorMapper.class, AssistantMapper.class})
+@Mapper(componentModel = "spring", uses = {PersonMapper.class})
 public interface DoctorAssistantWorkMapper extends GenericMapper<DoctorAssistantWork, DoctorAssistantWorkDto> {
 }

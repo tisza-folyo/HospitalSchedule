@@ -15,6 +15,6 @@ import java.util.List;
 @Entity
 public class Patient extends Person {
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> personalDocImages;
 }

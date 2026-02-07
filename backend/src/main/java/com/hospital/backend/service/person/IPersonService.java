@@ -1,10 +1,10 @@
 package com.hospital.backend.service.person;
 
 import com.hospital.backend.dto.PatientDto;
-import com.hospital.backend.request.RegistPatientRequest;
+import com.hospital.backend.request.RegisterRequest;
 
 public interface IPersonService {
-    PatientDto addPatient(RegistPatientRequest patientRequest);
-
     void deletePatient(String taj);
+
+    Object addPerson(RegisterRequest request);
 }

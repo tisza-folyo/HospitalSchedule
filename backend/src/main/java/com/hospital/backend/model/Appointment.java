@@ -25,11 +25,17 @@ public class Appointment {
     private String symptomDescription;
 
     @ManyToOne
-    @JoinColumn(name = "dTaj")
+    @JoinColumns({
+            @JoinColumn(name = "dTaj", referencedColumnName = "taj"),
+            @JoinColumn(name = "dRoleId", referencedColumnName = "role_id")
+    })
     private Doctor doctor;
 
     @ManyToOne
-    @JoinColumn(name = "pTaj")
+    @JoinColumns({
+            @JoinColumn(name = "pTaj", referencedColumnName = "taj"),
+            @JoinColumn(name = "pRoleId", referencedColumnName = "role_id")
+    })
     private Patient patient;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

@@ -22,10 +22,16 @@ public class DoctorAssistantWork {
     private int uTaj;
 
     @ManyToOne
-    @JoinColumn(name = "dTaj")
+    @JoinColumns({
+            @JoinColumn(name = "dTaj", referencedColumnName = "taj"),
+            @JoinColumn(name = "dRoleId", referencedColumnName = "role_id")
+    })
     private Doctor doctor;
 
     @ManyToOne
-    @JoinColumn(name = "aTaj")
+    @JoinColumns({
+            @JoinColumn(name = "aTaj", referencedColumnName = "taj"),
+            @JoinColumn(name = "aRoleId", referencedColumnName = "role_id")
+    })
     private Assistant assistant;
 }

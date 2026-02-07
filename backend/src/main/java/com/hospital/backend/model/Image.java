@@ -28,6 +28,9 @@ public class Image {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "pTaj", referencedColumnName = "taj")
+    @JoinColumns({
+            @JoinColumn(name = "pTaj", referencedColumnName = "taj"),
+            @JoinColumn(name = "pRoleId", referencedColumnName = "role_id")
+    })
     private Patient patient;
 }
