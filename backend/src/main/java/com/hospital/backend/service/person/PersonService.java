@@ -20,6 +20,7 @@ public class PersonService implements IPersonService {
     private final AssistantRepository assistantRepository;
     private final AdminRepository adminRepository;
     private final RoleRepository roleRepository;
+    private final SectionRepository sectionRepository;
     private final PersonMapper personMapper;
     private final SpecialtyRepository specialtyRepository;
 
@@ -43,6 +44,16 @@ public class PersonService implements IPersonService {
             case "DOCTOR" -> saveDoctor(request,role);
             default -> throw new ResourceNotFoundException(roleName);
         };
+    }
+
+    @Override
+    public DoctorDto setSection(String dTaj, String roleName, String sectionName){
+        Role role = roleRepository.findByRoleName(roleName).orElseThrow(() -> new ResourceNotFoundException(roleName));
+        Section section = sectionRepository.findBySectionName(sectionName).orElseThrow(() -> new ResourceNotFoundException(sectionName));
+        Doctor doctor = doctorRepository.findByTajAndRole(dTaj,role).orElseThrow(() -> new ResourceNotFoundException(dTaj + " " + roleName));
+        doctor.setSection(section);
+        doctorRepository.save(doctor);
+        return personMapper.toDoctorDto(doctor);
     }
 
     private PatientDto savePatient(RegisterRequest request, Role role) {

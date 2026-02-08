@@ -1,5 +1,6 @@
 package com.hospital.backend.controller;
 
+import com.hospital.backend.dto.DoctorDto;
 import com.hospital.backend.dto.PatientDto;
 import com.hospital.backend.exception.AlreadyExistsException;
 import com.hospital.backend.exception.ResourceNotFoundException;
@@ -39,6 +40,20 @@ public class PersonController {
             return ResponseEntity.ok(new ApiResponse("Deleted", null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }catch (Exception e){
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/set-section/doctor")
+    public ResponseEntity<ApiResponse> setDoctorSection(@RequestParam String taj, @RequestParam String role, @RequestParam String section){
+        try {
+            DoctorDto result = personService.setSection(taj, role, section);
+            return ResponseEntity.ok(new ApiResponse("Updated", result));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }catch (AlreadyExistsException e){
+            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }

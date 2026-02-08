@@ -26,9 +26,9 @@ public class RoleController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addRole(@RequestParam String roleName){
+    public ResponseEntity<ApiResponse> addRole(@RequestParam String name){
         try {
-            RoleDto result = roleService.addRole(roleName);
+            RoleDto result = roleService.addRole(name);
             return ResponseEntity.ok(new ApiResponse("Saved", result));
         } catch (AlreadyExistsException e) {
             return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null ));
