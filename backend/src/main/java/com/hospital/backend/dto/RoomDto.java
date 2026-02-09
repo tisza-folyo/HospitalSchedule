@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class RoomDto {
-    private long roomId;
+    private Long roomId;
     private int floor;
     private int roomNumber;
 }

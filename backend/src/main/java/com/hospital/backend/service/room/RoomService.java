@@ -29,7 +29,7 @@ public class RoomService implements IRoomService {
     @Override
     public List<BedDto> getRoomBeds(long roomId){
         List<Bed> beds = roomRepository.findRoomByRoomId(roomId).orElseThrow(() -> new ResourceNotFoundException("Room")).getBeds();
-        if (beds.isEmpty()) throw new ResourceNotFoundException("Bed");
+        if (beds.isEmpty()) throw new ResourceNotFoundException("No beds");
         return bedMapper.toDtoList(beds);
     }
 
@@ -40,8 +40,8 @@ public class RoomService implements IRoomService {
 
     @Override
     public RoomDto addRoom(RoomDto roomDto){
-        Room room = roomMapper.toEntity(roomDto);
         if (roomRepository.existsByFloorAndRoomNumber(roomDto.getFloor(), roomDto.getRoomNumber())) throw new AlreadyExistsException("Room on this floor");
+        Room room = roomMapper.toEntity(roomDto);
         room.setBeds(new ArrayList<>());
         roomRepository.save(room);
         return roomMapper.toDto(room);
