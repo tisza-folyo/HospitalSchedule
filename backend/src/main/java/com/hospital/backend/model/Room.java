@@ -24,4 +24,13 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bed> beds;
 
+    public void addBedToRoom(Bed bed) {
+        this.beds.add(bed);
+        bed.setRoom(this);
+    }
+    public void removeBedFromRoom(Bed bed) {
+        this.beds.remove(bed);
+        bed.setRoom(null);
+    }
+
 }
