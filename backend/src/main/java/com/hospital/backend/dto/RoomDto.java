@@ -9,6 +9,5 @@ import java.util.List;
 public class RoomDto {
     private long roomId;
     private int floor;
-    private String roomNumber;
-    private List<BedDto> beds;
+    private int roomNumber;
 }

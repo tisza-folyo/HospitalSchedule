@@ -24,4 +24,9 @@ public class Bed {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    public Bed(int bedNumber, Room room) {
+        this.bedNumber = bedNumber;
+        this.room = room;
+    }
+
 }
