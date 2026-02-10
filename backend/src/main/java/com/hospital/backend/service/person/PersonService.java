@@ -77,6 +77,8 @@ public class PersonService implements IPersonService {
         Nurse nurse = new Nurse();
         personMapper.updatePersonFromRequest(request,nurse);
         nurse.setRole(role);
+        nurse.setWorkHoursStart(request.getWorkHoursStart());
+        nurse.setWorkHoursEnd(request.getWorkHoursEnd());
         return personMapper.toNurseDto(nurseRepository.save(nurse));
     }
 
@@ -85,6 +87,8 @@ public class PersonService implements IPersonService {
         Assistant assistant = new Assistant();
         personMapper.updatePersonFromRequest(request,assistant);
         assistant.setRole(role);
+        assistant.setWorkHoursStart(request.getWorkHoursStart());
+        assistant.setWorkHoursEnd(request.getWorkHoursEnd());
         return personMapper.toAssistantDto(assistantRepository.save(assistant));
     }
 
@@ -95,6 +99,8 @@ public class PersonService implements IPersonService {
         personMapper.updatePersonFromRequest(request,doctor);
         doctor.setRole(role);
         doctor.setSpecialty(spec);
+        doctor.setWorkHoursStart(request.getWorkHoursStart());
+        doctor.setWorkHoursEnd(request.getWorkHoursEnd());
         return personMapper.toDoctorDto(doctorRepository.save(doctor));
     }
 }

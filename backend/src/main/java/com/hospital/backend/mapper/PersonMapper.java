@@ -6,6 +6,9 @@ import com.hospital.backend.request.RegisterRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Mapper(componentModel = "spring", uses = {
         RoleMapper.class,
         ImageMapper.class,
