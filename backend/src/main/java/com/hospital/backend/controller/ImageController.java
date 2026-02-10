@@ -31,10 +31,22 @@ public class ImageController {
         }
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<ApiResponse> saveImages(@RequestBody List<MultipartFile> files, @RequestParam String pTaj){
+    @PostMapping("/upload-to-patient")
+    public ResponseEntity<ApiResponse> saveImagesToPatient(@RequestBody List<MultipartFile> files, @RequestParam String pTaj){
         try {
             List<ImageDto> imageDtos = imageService.saveImages(files, pTaj);
+            return ResponseEntity.ok(new ApiResponse("Saved", imageDtos));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }catch (Exception e){
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @PostMapping("/upload-to-appointment")
+    public ResponseEntity<ApiResponse> saveImageToAppointment(@RequestParam List<MultipartFile> files, @RequestParam Long appointmentId){
+        try {
+            List<ImageDto> imageDtos = imageService.saveImages(files,appointmentId);
             return ResponseEntity.ok(new ApiResponse("Saved", imageDtos));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));

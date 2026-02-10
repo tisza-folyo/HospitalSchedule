@@ -8,6 +8,8 @@ import java.util.List;
 public interface IImageService {
     List<ImageDto> saveImages(List<MultipartFile> files, String pTaj);
 
+    List<ImageDto> saveImages(List<MultipartFile> files, Long appointmentId);
+
     void deleteImagesByTaj(String pTaj);
 
     void deleteImageByDwnUrl(String dwnUrl);

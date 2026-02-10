@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class LoginPatientRequest {
     private String taj;
+    private String roleName;
     private String email;
     private String password;
 }

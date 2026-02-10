@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,4 +21,7 @@ public class Doctor extends Person {
     @ManyToOne
     @JoinColumn(name = "section_id")
     private Section section;
+
+    private LocalTime workHoursStart;
+    private LocalTime workHoursEnd;
 }

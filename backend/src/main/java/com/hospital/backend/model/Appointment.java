@@ -23,6 +23,7 @@ public class Appointment {
     private LocalDate day;
     private LocalTime timeSlot;
     private String symptomDescription;
+    private Status status;
 
     @ManyToOne
     @JoinColumns({

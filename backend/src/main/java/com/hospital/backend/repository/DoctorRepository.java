@@ -6,6 +6,7 @@ import com.hospital.backend.model.Section;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
+import java.util.List;
 import java.util.Optional;
 
 public interface DoctorRepository extends JpaRepository<Doctor,String> {
@@ -17,4 +18,6 @@ public interface DoctorRepository extends JpaRepository<Doctor,String> {
 
 
     Optional<Doctor> findByTajAndRole(String taj, Role role);
+
+    List<Doctor> findAllBySection(Section section);
 }

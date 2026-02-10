@@ -6,6 +6,8 @@ import com.hospital.backend.dto.SpecialtyDto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalTime;
+
 
 @Getter
 @Setter
@@ -18,4 +20,6 @@ public class RegisterRequest {
     private String password;
     private RoleDto role;
     private SpecialtyDto specialty;
+    private LocalTime workHoursStart;
+    private LocalTime workHoursEnd;
 }

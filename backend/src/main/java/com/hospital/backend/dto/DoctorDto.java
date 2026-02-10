@@ -5,6 +5,8 @@ import com.hospital.backend.model.Section;
 import com.hospital.backend.model.Specialty;
 import lombok.Data;
 
+import java.time.LocalTime;
+
 @Data
 public class DoctorDto {
     private String taj;
@@ -15,4 +17,6 @@ public class DoctorDto {
     private RoleDto role;
     private SpecialtyDto specialty;
     private SectionDto section;
+    private LocalTime workHoursStart;
+    private LocalTime workHoursEnd;
 }
