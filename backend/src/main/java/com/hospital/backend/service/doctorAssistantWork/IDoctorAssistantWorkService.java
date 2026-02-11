@@ -4,6 +4,7 @@ import com.hospital.backend.dto.AssistantDto;
 import com.hospital.backend.dto.DoctorAssistantWorkDto;
 import com.hospital.backend.dto.DoctorDto;
 import com.hospital.backend.model.Doctor;
+import com.hospital.backend.request.UpdateAssistantWorkRequest;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,9 +24,9 @@ public interface IDoctorAssistantWorkService {
 
     DoctorAssistantWorkDto addWork(LocalDate day, String dTaj, String uTaj);
 
-    DoctorAssistantWorkDto assignAssistant(String dTaj, String aTaj, LocalDate day, String uTaj);
+    DoctorAssistantWorkDto assignAssistant(UpdateAssistantWorkRequest request);
 
-    DoctorAssistantWorkDto changeAssistantByAssistant(String dTaj, String aTaj, LocalDate day, String uTaj);
+    DoctorAssistantWorkDto changeAssistantByAssistant(UpdateAssistantWorkRequest request);
 
     void deleteWork(Long workId);
 }

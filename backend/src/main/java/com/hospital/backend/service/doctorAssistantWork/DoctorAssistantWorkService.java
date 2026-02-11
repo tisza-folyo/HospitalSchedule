@@ -13,6 +13,7 @@ import com.hospital.backend.repository.AssistantRepository;
 import com.hospital.backend.repository.DoctorAssistantWorkRepository;
 import com.hospital.backend.repository.DoctorRepository;
 import com.hospital.backend.repository.RoleRepository;
+import com.hospital.backend.request.UpdateAssistantWorkRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -84,26 +85,26 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
     }
 
     @Override
-    public DoctorAssistantWorkDto assignAssistant(String dTaj, String aTaj, LocalDate day, String uTaj){
-        Doctor doctor = doctorRepository.findByTaj(dTaj).orElseThrow(() ->  new ResourceNotFoundException("Doctor"));
-        Assistant assistant = assistantRepository.findByTaj(aTaj).orElseThrow(() -> new ResourceNotFoundException("Assistant"));
-        DoctorAssistantWork work = doctorAssistantWorkRepository.findByDoctorAndWorkDay(doctor,day).orElseThrow(() -> new ResourceNotFoundException("Work"));
+    public DoctorAssistantWorkDto assignAssistant(UpdateAssistantWorkRequest request){
+        Doctor doctor = doctorRepository.findByTaj(request.getDTaj()).orElseThrow(() ->  new ResourceNotFoundException("Doctor"));
+        Assistant assistant = assistantRepository.findByTaj(request.getATaj()).orElseThrow(() -> new ResourceNotFoundException("Assistant"));
+        DoctorAssistantWork work = doctorAssistantWorkRepository.findByDoctorAndWorkDay(doctor,request.getDay()).orElseThrow(() -> new ResourceNotFoundException("Work"));
         if (work.getAssistant() != null) throw new CollisionException("Assistant");
-        if (doctorAssistantWorkRepository.existsByAssistantAndWorkDay(assistant, day)) throw new CollisionException("Work");
+        if (doctorAssistantWorkRepository.existsByAssistantAndWorkDay(assistant, request.getDay())) throw new CollisionException("Work");
         work.setAssistant(assistant);
-        work.setUTaj(uTaj);
+        work.setUTaj(request.getUTaj());
         return doctorAssistantWorkMapper.toDto(doctorAssistantWorkRepository.save(work));
     }
 
     @Override
-    public DoctorAssistantWorkDto changeAssistantByAssistant(String dTaj, String aTaj, LocalDate day, String uTaj){
-        Doctor doctor = doctorRepository.findByTaj(dTaj).orElseThrow(() ->  new ResourceNotFoundException("Doctor"));
-        Assistant newAssistant = assistantRepository.findByTaj(aTaj).orElseThrow(() -> new ResourceNotFoundException("Assistant"));
-        DoctorAssistantWork work = doctorAssistantWorkRepository.findByDoctorAndWorkDay(doctor,day).orElseThrow(() -> new ResourceNotFoundException("Work"));
-        if (doctorAssistantWorkRepository.existsByAssistantAndWorkDay(newAssistant, day)) throw new CollisionException("Work");
-        if (work.getAssistant().getTaj().equals(uTaj)) throw new ResourceNotFoundException("Assistant");
+    public DoctorAssistantWorkDto changeAssistantByAssistant(UpdateAssistantWorkRequest request){
+        Doctor doctor = doctorRepository.findByTaj(request.getDTaj()).orElseThrow(() ->  new ResourceNotFoundException("Doctor"));
+        Assistant newAssistant = assistantRepository.findByTaj(request.getATaj()).orElseThrow(() -> new ResourceNotFoundException("Assistant"));
+        DoctorAssistantWork work = doctorAssistantWorkRepository.findByDoctorAndWorkDay(doctor,request.getDay()).orElseThrow(() -> new ResourceNotFoundException("Work"));
+        if (doctorAssistantWorkRepository.existsByAssistantAndWorkDay(newAssistant, request.getDay())) throw new CollisionException("Work");
+        if (work.getAssistant().getTaj().equals(request.getUTaj())) throw new ResourceNotFoundException("Assistant");
         work.setAssistant(newAssistant);
-        work.setUTaj(uTaj);
+        work.setUTaj(request.getUTaj());
         return doctorAssistantWorkMapper.toDto(doctorAssistantWorkRepository.save(work));
     }
 
