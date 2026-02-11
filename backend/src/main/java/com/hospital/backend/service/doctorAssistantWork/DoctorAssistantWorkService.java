@@ -102,7 +102,7 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
         Assistant newAssistant = assistantRepository.findByTaj(request.getATaj()).orElseThrow(() -> new ResourceNotFoundException("Assistant"));
         DoctorAssistantWork work = doctorAssistantWorkRepository.findByDoctorAndWorkDay(doctor,request.getDay()).orElseThrow(() -> new ResourceNotFoundException("Work"));
         if (doctorAssistantWorkRepository.existsByAssistantAndWorkDay(newAssistant, request.getDay())) throw new CollisionException("Work");
-        if (work.getAssistant().getTaj().equals(request.getUTaj())) throw new ResourceNotFoundException("Assistant");
+        if (!work.getAssistant().getTaj().equals(request.getUTaj())) throw new ResourceNotFoundException("Assistant");
         work.setAssistant(newAssistant);
         work.setUTaj(request.getUTaj());
         return doctorAssistantWorkMapper.toDto(doctorAssistantWorkRepository.save(work));
