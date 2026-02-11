@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Data
 public class DoctorAssistantWorkDto {
     private LocalDate workDay;
-    private int uTaj;
+    private String uTaj;
     private DoctorDto doctor;
     private AssistantDto assistant;
 }

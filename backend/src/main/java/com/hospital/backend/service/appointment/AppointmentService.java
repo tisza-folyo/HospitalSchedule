@@ -94,6 +94,7 @@ public class AppointmentService implements IAppointmentService {
         List<Appointment> appointments = appointmentRepository.findAllByDoctorAndDay(doctor, day);
         List<LocalTime> times = appointments.stream().map(Appointment::getTimeSlot).toList();
         List<Appointment> freeAppointments = new ArrayList<>();
+        if (doctor.getWorkHoursStart() == null || doctor.getWorkHoursEnd() == null) return appointmentMapper.toDtoList(freeAppointments);
         for (LocalTime t = doctor.getWorkHoursStart(); t.isBefore(doctor.getWorkHoursEnd()); t = t.plusMinutes(doctor.getSpecialty().getTreatmentTimeInMinutes())) {
             if (!times.contains(t)) freeAppointments.add(createAppointment(doctor, null, day, t, null, Status.FREE));
         }
@@ -142,13 +143,11 @@ public class AppointmentService implements IAppointmentService {
     }
 
     private Doctor getDoctorByTaj(String dTaj){
-        Role doctorRole = roleRepository.findByRoleName("DOCTOR").orElseThrow(() -> new ResourceNotFoundException("Role"));
-        return doctorRepository.findByTajAndRole(dTaj,doctorRole).orElseThrow(() -> new ResourceNotFoundException(dTaj + " " + doctorRole.getRoleName()));
+        return doctorRepository.findByTaj(dTaj).orElseThrow(() -> new ResourceNotFoundException("Doctor"));
     }
 
     private Patient getPatientByTaj(String pTaj){
-        Role patientRole = roleRepository.findByRoleName("PATIENT").orElseThrow(() -> new ResourceNotFoundException("Role"));
-        return patientRepository.findByTajAndRole(pTaj,patientRole).orElseThrow(() -> new ResourceNotFoundException(pTaj + " " + patientRole.getRoleName()));
+        return patientRepository.findByTaj(pTaj).orElseThrow(() -> new ResourceNotFoundException("Patient"));
     }
 
 }

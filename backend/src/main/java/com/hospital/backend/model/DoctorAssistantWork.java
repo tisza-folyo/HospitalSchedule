@@ -19,7 +19,7 @@ public class DoctorAssistantWork {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long workId;
     private LocalDate workDay;
-    private int uTaj;
+    private String uTaj;
 
     @ManyToOne
     @JoinColumns({
