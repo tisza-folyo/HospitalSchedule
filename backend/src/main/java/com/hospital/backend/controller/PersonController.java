@@ -20,42 +20,20 @@ public class PersonController {
     private final IPersonService personService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> addPerson(@RequestBody RegisterRequest registPatientRequest){
-        try {
-            Object dto = personService.addPerson(registPatientRequest);
-            return ResponseEntity.ok(new ApiResponse("Saved", dto));
-        } catch (AlreadyExistsException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null));
-        }catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> addPerson(@RequestBody RegisterRequest registPatientRequest) {
+        Object result = personService.addPerson(registPatientRequest);
+        return ResponseEntity.ok(new ApiResponse("Saved", result));
     }
 
     @DeleteMapping("/delete/{pTaj}/person")
-    public ResponseEntity<ApiResponse> deletePatient(@PathVariable String pTaj, @RequestParam String role){
-        try {
-            personService.deletePerson(pTaj,role);
-            return ResponseEntity.ok(new ApiResponse("Deleted", null));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> deletePatient(@PathVariable String pTaj, @RequestParam String role) {
+        personService.deletePerson(pTaj, role);
+        return ResponseEntity.ok(new ApiResponse("Deleted", null));
     }
 
     @PutMapping("/set-section/doctor")
-    public ResponseEntity<ApiResponse> setDoctorSection(@RequestParam String taj, @RequestParam String role, @RequestParam String section){
-        try {
-            DoctorDto result = personService.setSection(taj, role, section);
-            return ResponseEntity.ok(new ApiResponse("Updated", result));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (AlreadyExistsException e){
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> setDoctorSection(@RequestParam String taj, @RequestParam String role, @RequestParam String section) {
+        DoctorDto result = personService.setSection(taj, role, section);
+        return ResponseEntity.ok(new ApiResponse("Updated", result));
     }
 }

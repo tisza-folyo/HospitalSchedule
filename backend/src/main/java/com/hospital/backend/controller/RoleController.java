@@ -20,37 +20,25 @@ public class RoleController {
     private final IRoleService roleService;
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllRoles(){
+    public ResponseEntity<ApiResponse> getAllRoles() {
         List<RoleDto> results = roleService.getAllRoles();
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addRole(@RequestParam String name){
-        try {
-            RoleDto result = roleService.addRole(name);
-            return ResponseEntity.ok(new ApiResponse("Saved", result));
-        } catch (AlreadyExistsException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null ));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> addRole(@RequestParam String name) {
+        RoleDto result = roleService.addRole(name);
+        return ResponseEntity.ok(new ApiResponse("Saved", result));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse> deleteRole(@RequestParam String roleName){
-        try {
-            roleService.deleteRole(roleName);
-            return ResponseEntity.ok(new ApiResponse("Deleted", null));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> deleteRole(@RequestParam String roleName) {
+        roleService.deleteRole(roleName);
+        return ResponseEntity.ok(new ApiResponse("Deleted", null));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse> updateRole(@RequestParam String roleName, @RequestParam String newRoleName){
+    public ResponseEntity<ApiResponse> updateRole(@RequestParam String roleName, @RequestParam String newRoleName) {
         RoleDto result = roleService.updateRole(roleName, newRoleName);
         return ResponseEntity.ok(new ApiResponse("Updated", result));
     }

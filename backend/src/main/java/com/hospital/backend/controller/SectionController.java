@@ -21,50 +21,26 @@ public class SectionController {
     private final ISectionService sectionService;
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllSections(){
-        try {
-            List<SectionDto> sections = sectionService.getAllSections();
-            return ResponseEntity.ok(new ApiResponse("Success", sections));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> getAllSections() {
+        List<SectionDto> results = sectionService.getAllSections();
+        return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addSection(@RequestParam String name){
-        try {
-            SectionDto result = sectionService.addSection(name);
-            return ResponseEntity.ok(new ApiResponse("Saved", result));
-        } catch (AlreadyExistsException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null ));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> addSection(@RequestParam String name) {
+        SectionDto result = sectionService.addSection(name);
+        return ResponseEntity.ok(new ApiResponse("Saved", result));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse> deleteSection(@RequestParam String name){
-        try {
-            sectionService.deleteSection(name);
-            return ResponseEntity.ok(new ApiResponse("Deleted", null));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (CollisionException e){
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> deleteSection(@RequestParam String name) {
+        sectionService.deleteSection(name);
+        return ResponseEntity.ok(new ApiResponse("Deleted", null));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse> updateSection(@RequestParam String name, @RequestParam String newName){
-        try {
-            SectionDto result = sectionService.updateSection(name, newName);
-            return ResponseEntity.ok(new ApiResponse("Updated", result));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> updateSection(@RequestParam String name, @RequestParam String newName) {
+        SectionDto result = sectionService.updateSection(name, newName);
+        return ResponseEntity.ok(new ApiResponse("Updated", result));
     }
 }

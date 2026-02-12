@@ -135,13 +135,9 @@ public class DoctorAssistantWorkController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<ApiResponse> deleteWork(@RequestParam Long workId){
-        try {
+
             doctorAssistantWorkService.deleteWork(workId);
             return ResponseEntity.ok(new ApiResponse("Deleted", null));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+
     }
 }

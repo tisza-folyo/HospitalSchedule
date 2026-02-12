@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,7 +18,9 @@ public class NursePatientCare {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long careId;
-    private int uTaj;
+    private String uTaj;
+    private LocalDate entryDay;
+    private LocalDate exitDay;
 
     @ManyToOne
     @JoinColumns({

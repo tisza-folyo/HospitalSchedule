@@ -20,62 +20,32 @@ public class ImageController {
     private final ImageService imageService;
 
     @GetMapping("/{pTaj}/images")
-    public ResponseEntity<ApiResponse> getPatientImages(@PathVariable String pTaj){
-        try {
-            List<ImageDto> images = imageService.getPatientImages(pTaj);
-            return ResponseEntity.ok(new ApiResponse("Success", images));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> getPatientImages(@PathVariable String pTaj) {
+        List<ImageDto> results = imageService.getPatientImages(pTaj);
+        return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
     @PostMapping("/upload-to-patient")
-    public ResponseEntity<ApiResponse> saveImagesToPatient(@RequestBody List<MultipartFile> files, @RequestParam String pTaj){
-        try {
-            List<ImageDto> imageDtos = imageService.saveImages(files, pTaj);
-            return ResponseEntity.ok(new ApiResponse("Saved", imageDtos));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> saveImagesToPatient(@RequestBody List<MultipartFile> files, @RequestParam String pTaj) {
+        List<ImageDto> results = imageService.saveImages(files, pTaj);
+        return ResponseEntity.ok(new ApiResponse("Saved", results));
     }
 
     @PostMapping("/upload-to-appointment")
-    public ResponseEntity<ApiResponse> saveImageToAppointment(@RequestParam List<MultipartFile> files, @RequestParam Long appointmentId){
-        try {
-            List<ImageDto> imageDtos = imageService.saveImages(files,appointmentId);
-            return ResponseEntity.ok(new ApiResponse("Saved", imageDtos));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> saveImageToAppointment(@RequestParam List<MultipartFile> files, @RequestParam Long appointmentId) {
+        List<ImageDto> results = imageService.saveImages(files, appointmentId);
+        return ResponseEntity.ok(new ApiResponse("Saved", results));
     }
 
     @DeleteMapping("/delete/{pTaj}/images")
-    public ResponseEntity<ApiResponse> deleteImages(@PathVariable String pTaj){
-        try {
-            imageService.deleteImagesByTaj(pTaj);
-            return ResponseEntity.ok(new ApiResponse("Deleted", null));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> deleteImages(@PathVariable String pTaj) {
+        imageService.deleteImagesByTaj(pTaj);
+        return ResponseEntity.ok(new ApiResponse("Deleted", null));
     }
 
     @DeleteMapping("/delete/{dwnUrl}/image")
-    public ResponseEntity<ApiResponse> deleteImage(@PathVariable String dwnUrl){
-        try {
-            imageService.deleteImageByDwnUrl(dwnUrl);
-            return ResponseEntity.ok(new ApiResponse("Deleted", null));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> deleteImage(@PathVariable String dwnUrl) {
+        imageService.deleteImageByDwnUrl(dwnUrl);
+        return ResponseEntity.ok(new ApiResponse("Deleted", null));
     }
 }

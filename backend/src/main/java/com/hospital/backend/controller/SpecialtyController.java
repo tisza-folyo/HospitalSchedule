@@ -21,52 +21,27 @@ import static org.springframework.http.HttpStatus.*;
 public class SpecialtyController {
     private final ISpecialtyService specialtyService;
 
-
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllSpecialties(){
-        try {
-            List<SpecialtyDto> specialties = specialtyService.getAllSpecialties();
-            return ResponseEntity.ok(new ApiResponse("Success", specialties));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> getAllSpecialties() {
+        List<SpecialtyDto> results = specialtyService.getAllSpecialties();
+        return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addSpecialty(@RequestBody SpecialtyDto specialtyDto){
-        try {
-            SpecialtyDto result = specialtyService.addSpecialty(specialtyDto);
-            return ResponseEntity.ok(new ApiResponse("Saved", result));
-        } catch (AlreadyExistsException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null ));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> addSpecialty(@RequestBody SpecialtyDto specialtyDto) {
+        SpecialtyDto result = specialtyService.addSpecialty(specialtyDto);
+        return ResponseEntity.ok(new ApiResponse("Saved", result));
     }
 
     @PostMapping("/add-multiple")
-    public ResponseEntity<ApiResponse> addSpecialties(@RequestBody List<SpecialtyDto> specialtyDtos){
-        try {
-            List<SpecialtyDto> results = specialtyService.addSpecialties(specialtyDtos);
-            return ResponseEntity.ok(new ApiResponse("Saved", results));
-        } catch (AlreadyExistsException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null ));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> addSpecialties(@RequestBody List<SpecialtyDto> specialtyDtos) {
+        List<SpecialtyDto> results = specialtyService.addSpecialties(specialtyDtos);
+        return ResponseEntity.ok(new ApiResponse("Saved", results));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse> deleteSpecialty(@RequestParam String name){
-        try {
-            SpecialtyDto result = specialtyService.deleteSpecialty(name);
-            return ResponseEntity.ok(new ApiResponse("Deleted", result));
-        } catch (CollisionException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null ));
-        }catch (ResourceNotFoundException e){
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null ));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse> deleteSpecialty(@RequestParam String name) {
+        SpecialtyDto result = specialtyService.deleteSpecialty(name);
+        return ResponseEntity.ok(new ApiResponse("Deleted", result));
     }
 }

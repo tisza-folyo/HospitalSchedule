@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class BedDto {
-    private String bedNumber;
+    private int bedNumber;
     private int roomNumber;
 }
