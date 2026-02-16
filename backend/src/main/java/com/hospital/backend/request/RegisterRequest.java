@@ -1,7 +1,5 @@
 package com.hospital.backend.request;
 
-import com.hospital.backend.dto.RoleDto;
-import com.hospital.backend.dto.SectionDto;
 import com.hospital.backend.dto.SpecialtyDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +16,8 @@ public class RegisterRequest {
     private int age;
     private String email;
     private String password;
-    private RoleDto role;
-    private SpecialtyDto specialty;
+    private String roleName;
+    private String specialtyName;
     private LocalTime workHoursStart;
     private LocalTime workHoursEnd;
 }

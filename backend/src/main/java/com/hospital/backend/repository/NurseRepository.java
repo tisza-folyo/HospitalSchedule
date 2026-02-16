@@ -8,4 +8,6 @@ public interface NurseRepository extends JpaRepository<Nurse,String> {
     boolean existsByTaj(String taj);
 
     Optional<Nurse> findByTaj(String nTaj);
+
+    boolean existsByEmail(String email);
 }

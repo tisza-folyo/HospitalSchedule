@@ -20,4 +20,6 @@ public interface AssistantRepository extends JpaRepository<Assistant,String> {
     List<Assistant> findFreeAssistantsByDay(@Param("day") LocalDate day);
 
     Optional<Assistant> findByTaj(String aTaj);
+
+    boolean existsByEmail(String email);
 }

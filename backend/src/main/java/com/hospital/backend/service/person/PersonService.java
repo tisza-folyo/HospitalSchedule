@@ -2,13 +2,16 @@ package com.hospital.backend.service.person;
 
 import com.hospital.backend.dto.*;
 import com.hospital.backend.exception.AlreadyExistsException;
+import com.hospital.backend.exception.CollisionException;
 import com.hospital.backend.exception.ResourceNotFoundException;
 import com.hospital.backend.mapper.*;
 import com.hospital.backend.model.*;
 import com.hospital.backend.repository.*;
 import com.hospital.backend.request.RegisterRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ public class PersonService implements IPersonService {
     private final SectionRepository sectionRepository;
     private final PersonMapper personMapper;
     private final SpecialtyRepository specialtyRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -34,8 +38,9 @@ public class PersonService implements IPersonService {
 
     @Override
     public Object addPerson(RegisterRequest request) {
-        String roleName = request.getRole().getRoleName();
-        Role role = roleRepository.findByRoleName(request.getRole().getRoleName()).orElseThrow(() -> new ResourceNotFoundException(request.getRole().getRoleName()));
+        Role role = roleRepository.findByRoleName(request.getRoleName()).orElseThrow(() -> new ResourceNotFoundException(request.getRoleName()));
+        String roleName = role.getRoleName();
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
         return switch (roleName) {
             case "PATIENT" -> savePatient(request,role);
             case "ADMIN" -> saveAdmin(request,role);
@@ -58,6 +63,7 @@ public class PersonService implements IPersonService {
 
     private PatientDto savePatient(RegisterRequest request, Role role) {
         if(patientRepository.existsByTaj(request.getTaj())) throw new AlreadyExistsException("TAJ");
+        if (patientRepository.existsByEmail(request.getEmail())) throw new CollisionException("Email");
         Patient patient = new Patient();
         personMapper.updatePersonFromRequest(request, patient);
         patient.setRole(role);
@@ -66,6 +72,7 @@ public class PersonService implements IPersonService {
 
     private AdminDto saveAdmin(RegisterRequest request, Role role){
         if(adminRepository.existsByTaj(request.getTaj())) throw new AlreadyExistsException("TAJ");
+        if (adminRepository.existsByEmail(request.getEmail())) throw new CollisionException("Email");
         Admin admin = new Admin();
         personMapper.updatePersonFromRequest(request,admin);
         admin.setRole(role);
@@ -74,6 +81,7 @@ public class PersonService implements IPersonService {
 
     private NurseDto saveNurse(RegisterRequest request, Role role){
         if (nurseRepository.existsByTaj(request.getTaj())) throw new AlreadyExistsException("TAJ");
+        if (nurseRepository.existsByEmail(request.getEmail())) throw new CollisionException("Email");
         Nurse nurse = new Nurse();
         personMapper.updatePersonFromRequest(request,nurse);
         nurse.setRole(role);
@@ -84,6 +92,7 @@ public class PersonService implements IPersonService {
 
     private AssistantDto saveAssistant(RegisterRequest request,Role role){
         if (assistantRepository.existsByTaj(request.getTaj())) throw new AlreadyExistsException("TAJ");
+        if (assistantRepository.existsByEmail(request.getEmail())) throw new CollisionException("Email");
         Assistant assistant = new Assistant();
         personMapper.updatePersonFromRequest(request,assistant);
         assistant.setRole(role);
@@ -94,7 +103,8 @@ public class PersonService implements IPersonService {
 
     private DoctorDto saveDoctor(RegisterRequest request, Role role){
         if (doctorRepository.existsByTaj(request.getTaj())) throw new AlreadyExistsException("TAJ");
-        Specialty spec = specialtyRepository.findBySpecialtyName(request.getSpecialty().getSpecialtyName()).orElseThrow(() -> new ResourceNotFoundException(request.getSpecialty().getSpecialtyName()));
+        if (doctorRepository.existsByEmail(request.getEmail())) throw new CollisionException("Email");
+        Specialty spec = specialtyRepository.findBySpecialtyName(request.getSpecialtyName()).orElseThrow(() -> new ResourceNotFoundException(request.getSpecialtyName()));
         Doctor doctor = new Doctor();
         personMapper.updatePersonFromRequest(request,doctor);
         doctor.setRole(role);

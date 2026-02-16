@@ -30,4 +30,6 @@ public interface DoctorRepository extends JpaRepository<Doctor,String> {
     List<Doctor> findDoctorsWithoutAssistant(@Param("day") LocalDate day);
 
     Optional<Doctor> findByTaj(String dTaj);
+
+    boolean existsByEmail(String email);
 }

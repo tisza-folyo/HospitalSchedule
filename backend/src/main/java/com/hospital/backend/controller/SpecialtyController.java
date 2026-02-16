@@ -1,19 +1,13 @@
 package com.hospital.backend.controller;
 
 import com.hospital.backend.dto.SpecialtyDto;
-import com.hospital.backend.exception.AlreadyExistsException;
-import com.hospital.backend.exception.CollisionException;
-import com.hospital.backend.exception.ResourceNotFoundException;
 import com.hospital.backend.response.ApiResponse;
 import com.hospital.backend.service.specialty.ISpecialtyService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @RestController
