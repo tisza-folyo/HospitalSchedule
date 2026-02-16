@@ -97,6 +97,15 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
     }
 
     @Override
+    public DoctorAssistantWorkDto assignAssistant(String aTaj, String uTaj, LocalDate day){
+        Assistant assistant = assistantRepository.findByTaj(aTaj).orElseThrow(() -> new ResourceNotFoundException("Assistant"));
+        DoctorAssistantWork work = doctorAssistantWorkRepository.findFirstByAssistantIsNullAndWorkDay(day).orElseThrow(() -> new ResourceNotFoundException("Work"));
+        work.setAssistant(assistant);
+        work.setUTaj(uTaj);
+        return doctorAssistantWorkMapper.toDto(doctorAssistantWorkRepository.save(work));
+    }
+
+    @Override
     public DoctorAssistantWorkDto changeAssistantByAssistant(UpdateAssistantWorkRequest request){
         Doctor doctor = doctorRepository.findByTaj(request.getDTaj()).orElseThrow(() ->  new ResourceNotFoundException("Doctor"));
         Assistant newAssistant = assistantRepository.findByTaj(request.getATaj()).orElseThrow(() -> new ResourceNotFoundException("Assistant"));

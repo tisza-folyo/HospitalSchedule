@@ -26,6 +26,8 @@ public interface IDoctorAssistantWorkService {
 
     DoctorAssistantWorkDto assignAssistant(UpdateAssistantWorkRequest request);
 
+    DoctorAssistantWorkDto assignAssistant(String aTaj, String uTaj, LocalDate day);
+
     DoctorAssistantWorkDto changeAssistantByAssistant(UpdateAssistantWorkRequest request);
 
     void deleteWork(Long workId);

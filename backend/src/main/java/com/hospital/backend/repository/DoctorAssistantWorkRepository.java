@@ -21,4 +21,6 @@ public interface DoctorAssistantWorkRepository extends JpaRepository<DoctorAssis
     Optional<DoctorAssistantWork> findByDoctorAndWorkDay(Doctor doctor, LocalDate workDay);
 
     boolean existsByAssistantAndWorkDay(Assistant assistant, LocalDate day);
+
+    Optional<DoctorAssistantWork> findFirstByAssistantIsNullAndWorkDay(LocalDate day);
 }

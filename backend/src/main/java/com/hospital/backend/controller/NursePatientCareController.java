@@ -54,13 +54,13 @@ public class NursePatientCareController {
         return ResponseEntity.ok(new ApiResponse("Success", result));
     }
 
-    @PostMapping("/assign-with-patient")
+    @PostMapping("/assign")
     public ResponseEntity<ApiResponse> assignNurseToPatient(@RequestParam String nTaj, @RequestParam String pTaj, @RequestParam String uTaj) {
         NursePatientCareDto result = nursePatientCareService.assignNurseToPatient(nTaj, pTaj, uTaj);
         return ResponseEntity.ok(new ApiResponse("Success", result));
     }
 
-    @PostMapping("/assign")
+    @PostMapping("/assign-first")
     public ResponseEntity<ApiResponse> assignNurseToPatient(@RequestParam String nTaj, @RequestParam String uTaj) {
         NursePatientCareDto result = nursePatientCareService.assignNurseToPatient(nTaj, uTaj);
         return ResponseEntity.ok(new ApiResponse("Success", result));
