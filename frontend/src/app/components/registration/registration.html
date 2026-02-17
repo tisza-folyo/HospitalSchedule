@@ -1,0 +1,129 @@
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-10">
+    <div class="card shadow border-0">
+      <div class="card-header bg-primary text-white py-3">
+        <h4 class="mb-0 text-center"><i class="bi bi-person-plus me-2"></i>Regisztráció</h4>
+      </div>
+      <div class="card-body p-4">
+        <form #userForm="ngForm" (ngSubmit)="onRegister(userForm)">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Vezetéknév</label>
+              <input type="text" class="form-control" placeholder="Pl: Kovács" [(ngModel)]="lastName" name="lastName" required #lastNameModel="ngModel">
+              <div class="invalid-feedback" [class.d-block]="(submitAttempted && lastNameModel.invalid)">
+                <span [hidden]="!lastNameModel.errors?.['required']">Kérlek add meg a vezetéknevet.</span>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Keresztnév</label>
+              <input type="text" class="form-control" placeholder="Pl: János" [(ngModel)]="firstName" name="firstName" required #firstNameModel="ngModel">
+              <div class="invalid-feedback" [class.d-block]="(submitAttempted && firstNameModel.invalid)">
+                <span [hidden]="!firstNameModel.errors?.['required']">Kérlek add meg a keresztnevet.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-8 mb-3">
+              <label class="form-label fw-bold">TAJ szám</label>
+              <input type="text" minlength="9" maxlength="9" class="form-control" placeholder="9 szám szóköz nélkül" [(ngModel)]="taj" name="taj" required #tajModel="ngModel" pattern="^\d{9}$">
+              <div class="invalid-feedback" [class.d-block]="(submitAttempted && tajModel.invalid)">
+                <span [hidden]="!tajModel.errors?.['required']">Kérlek add meg a TAJ számot.</span>
+                <span [hidden]="!tajModel.errors?.['pattern']">A TAJ szám 9 számjegyből kell álljon.</span>
+              </div>
+              <div class="form-text">Kilencjegyű azonosító.</div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-bold">Életkor</label>
+              <input type="number" class="form-control" min="0" max="150" [(ngModel)]="age" name="age" required #ageModel="ngModel">
+              <div class="invalid-feedback" [class.d-block]="(submitAttempted && ageModel.invalid)">
+                <span [hidden]="!ageModel.errors?.['required']">Kérlek add meg az életkort.</span>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-4 text-muted">
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">E-mail cím</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text"></span>
+              <input type="email" class="form-control" placeholder="pelda@korhaz.hu" [(ngModel)]="email" name="email" required
+                email #emailModel="ngModel" [class.is-invalid]="submitAttempted && emailModel.invalid">
+              <div class="invalid-feedback" [class.d-block]="submitAttempted && emailModel.invalid">
+                @if (emailModel.errors?.['required']) {
+                <span>Kérlek add meg az e-mail címet.</span>
+                } @else if (emailModel.errors?.['email']) {
+                <span>Érvénytelen e-mail formátum (pl. nev@domain.hu).</span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold">Jelszó</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          
+              <input [type]="showPassword ? 'text' : 'password'" minlength="8" class="form-control" placeholder="••••••••"
+                [(ngModel)]="password" name="password" required #passwordModel="ngModel"
+                [class.is-invalid]="submitAttempted && passwordModel.invalid">
+          
+              <span class="input-group-text" (mousedown)="showPassword = true" (mouseup)="showPassword = false"
+                (mouseleave)="showPassword = false" style="cursor: pointer; user-select: none;">
+                <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343"><path d="M607.5-372.5Q660-425 660-500t-52.5-127.5Q555-680 480-680t-127.5 52.5Q300-575 300-500t52.5 127.5Q405-320 480-320t127.5-52.5Zm-204-51Q372-455 372-500t31.5-76.5Q435-608 480-608t76.5 31.5Q588-545 588-500t-31.5 76.5Q525-392 480-392t-76.5-31.5ZM214-281.5Q94-363 40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200q-146 0-266-81.5ZM480-500Zm207.5 160.5Q782-399 832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280q113 0 207.5-59.5Z"/></svg>
+                </i>
+              </span>
+          
+              <div class="invalid-feedback" [class.d-block]="submitAttempted && passwordModel.invalid">
+                @if (passwordModel.errors?.['required']) {
+                <span>Kérlek adj meg egy jelszót.</span>
+                } @else if (passwordModel.errors?.['minlength']) {
+                <span>A jelszó minimum 8 karakter kell legyen.</span>
+                }
+              </div>
+            </div>
+            <div class="form-text">Minimum 8 karakter hosszú legyen.</div>
+          </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-bold">Jelszó megerősítése</label>
+          <div class="input-group has-validation">
+            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+        
+            <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" placeholder="••••••••"
+              [(ngModel)]="passwordConfirm" name="passwordConfirm" required #passwordConfirmModel="ngModel"
+              [class.is-invalid]="(submitAttempted && passwordConfirmModel.invalid) || (passwordConfirmModel.touched && password !== passwordConfirm)">
+        
+            <span class="input-group-text" (mousedown)="showConfirmPassword = true" (mouseup)="showConfirmPassword = false"
+              (mouseleave)="showConfirmPassword = false" style="cursor: pointer; user-select: none; background-color: #eee;">
+              <i class="bi" [class.bi-eye]="!showConfirmPassword" [class.bi-eye-slash]="showConfirmPassword">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343"><path d="M607.5-372.5Q660-425 660-500t-52.5-127.5Q555-680 480-680t-127.5 52.5Q300-575 300-500t52.5 127.5Q405-320 480-320t127.5-52.5Zm-204-51Q372-455 372-500t31.5-76.5Q435-608 480-608t76.5 31.5Q588-545 588-500t-31.5 76.5Q525-392 480-392t-76.5-31.5ZM214-281.5Q94-363 40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200q-146 0-266-81.5ZM480-500Zm207.5 160.5Q782-399 832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280q113 0 207.5-59.5Z"/></svg>
+              </i>
+            </span>
+        
+            <div class="invalid-feedback"
+              [class.d-block]="(submitAttempted && passwordConfirmModel.invalid) || (passwordConfirmModel.touched && password !== passwordConfirm)">
+              @if (passwordConfirmModel.errors?.['required']) {
+              <span>Kérlek add meg a jelszót mégegyszer.</span>
+              } @else if (passwordConfirmModel.value && password !== passwordConfirm) {
+              <span>A két jelszó nem egyezik meg!</span>
+              }
+            </div>
+          </div>
+          <div class="form-text">Gépeld be újra a jelszót.</div>
+        </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">
+              Regisztráció véglegesítése
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
