@@ -1,11 +1,97 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
+import { LoginService } from './login.service';
+import { Router } from '@angular/router';
+import { AppService } from '../../app.service';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
+
+  email = '';
+  password = '';
+  roleName = '';
+  roleNames: string[] = [];
+
+  showPassword = false;
+  submitAttempted = false;
+  errorHappened = false;
+
+
+  private readonly ROLE_MAP: Record<string, string> = {
+    'ADMIN': 'Adminisztrátor',
+    'DOCTOR': 'Orvos',
+    'PATIENT': 'Páciens',
+    'ASSISTANT': 'Asszisztens',
+    'NURSE': 'Ápoló'
+  };
+
+  private translateToHU(techName: string): string {
+    return this.ROLE_MAP[techName] || techName;
+  }
+
+
+  private translateToEN(huName: string): string {
+    const entry = Object.entries(this.ROLE_MAP).find(([en, hu]) => hu === huName);
+    return entry ? entry[0] : huName;
+  }
+
+  resetError() {
+    if (this.errorHappened) {
+      this.errorHappened = false;
+      this.submitAttempted = false;
+    }
+  }
+
+  constructor(private loginService: LoginService, private router: Router, private appService: AppService) { }
+
+  ngOnInit(): void {
+    this.loginService.getRoles().subscribe({
+      next: (response) => {
+        const rawRoles = response.data.map((role: any) => role.roleName);
+        this.roleNames = rawRoles.map((techName: string) => this.translateToHU(techName));
+      },
+      error: (error) => {
+        console.error('Error fetching roles:', error);
+      }
+    });
+  }
+
+  onLogin(form: NgForm) {
+    this.submitAttempted = true;
+    this.errorHappened = false;
+    if (form.invalid) {
+      return;
+    }
+
+    const person: PersonLoginRequest = {
+      email: this.email,
+      password: this.password,
+      roleName: this.translateToEN(this.roleName)
+    };
+
+    this.loginService.loginPerson(person).subscribe({
+      next: (response) => {
+        console.log("Login response:", response);
+        const token = response.data.token;
+        this.appService.setToken(token);
+        this.appService.setRole();
+        this.router.navigate(['/']);
+      },
+      error: (error) => {
+        console.error("Login error:", error.error.message);
+        this.errorHappened = true;
+      }
+    });
+  }
+
+
+
 
 }

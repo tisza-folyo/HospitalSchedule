@@ -3,24 +3,34 @@
     <a class="navbar-brand fw-bold" routerLink="/">
       <i class="bi bi-calendar-check me-2"></i>HospitalSchedule
     </a>
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="topNavbar">
       <ul class="navbar-nav ms-auto gap-2">
+
+        @if (appService.getToken() === '') {
         <li class="nav-item">
           <a class="btn btn-outline-light" routerLink="/registration">Regisztráció</a>
         </li>
         <li class="nav-item">
           <a class="btn btn-light text-primary fw-bold" routerLink="/login">Bejelentkezés</a>
         </li>
+        }
+        @else {
+        <li class="nav-item">
+          <button class="btn btn-danger fw-bold" (click)="onLogout()">
+            <i class="bi bi-box-arrow-right me-1"></i>Kijelentkezés
+          </button>
+        </li>
+        }
+
       </ul>
     </div>
   </div>
 </nav>
 
-<div class="container mt-4">
-  <router-outlet></router-outlet>
+<div class="container mt-4" style="padding-top: 70px;"> <router-outlet></router-outlet>
 </div>

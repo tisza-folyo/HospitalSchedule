@@ -1,1 +1,76 @@
-<p>login works!</p>
+<div class="row justify-content-center pt-5">
+  <div class="col-lg-5 col-md-7">
+    <div class="card shadow border-0">
+      <div class="card-header bg-primary text-white py-3">
+        <h4 class="mb-0 text-center"><i class="bi bi-box-arrow-in-right me-2"></i>Bejelentkezés</h4>
+      </div>
+      <div class="card-body p-4">
+
+        <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)" novalidate>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">E-mail cím</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+              <input type="email" class="form-control" [(ngModel)]="email" (focus)="resetError()" name="email" required
+                email #emailModel="ngModel" [class.is-invalid]="submitAttempted && emailModel.invalid">
+              <div class="invalid-feedback">
+                @if (emailModel.errors?.['required']) { <span>E-mail megadása kötelező.</span> }
+                @if (emailModel.errors?.['email']) { <span>Érvénytelen e-mail formátum.</span> }
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Jelszó</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input [type]="showPassword ? 'text' : 'password'" class="form-control" [(ngModel)]="password"
+                (focus)="resetError()" name="password" required #passModel="ngModel"
+                [class.is-invalid]="submitAttempted && passModel.invalid">
+              <span class="input-group-text" (mousedown)="showPassword = true" (mouseup)="showPassword = false"
+                (mouseleave)="showPassword = false" style="cursor: pointer; user-select: none;">
+                <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="#434343">
+                    <path
+                      d="M607.5-372.5Q660-425 660-500t-52.5-127.5Q555-680 480-680t-127.5 52.5Q300-575 300-500t52.5 127.5Q405-320 480-320t127.5-52.5Zm-204-51Q372-455 372-500t31.5-76.5Q435-608 480-608t76.5 31.5Q588-545 588-500t-31.5 76.5Q525-392 480-392t-76.5-31.5ZM214-281.5Q94-363 40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200q-146 0-266-81.5ZM480-500Zm207.5 160.5Q782-399 832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280q113 0 207.5-59.5Z" />
+                  </svg>
+                </i>
+              </span>
+              <div class="invalid-feedback">Jelszó megadása kötelező.</div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold">Szerepkör</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+              <select class="form-select" [(ngModel)]="roleName" (focus)="resetError()" name="roleName" required
+                #roleModel="ngModel" [class.is-invalid]="submitAttempted && roleModel.invalid">
+
+                <option value="" disabled selected hidden>Válassz szerepkört...</option>
+                @for (roleName of roleNames; track roleName) {
+                <option [value]="roleName">{{ roleName }}</option>
+                }
+              </select>
+              <div class="invalid-feedback">Kérlek, válassz egy szerepkört!</div>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">
+              Bejelentkezés
+            </button>
+          </div>
+          @if (errorHappened) {
+          <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            A bejelentkezés sikertelen!
+          </div>
+          }
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -52,7 +52,7 @@ export class Registration {
         this.submitAttempted = false;
       },
       error: (error) => {
-        console.error('Registration failed:', error);
+        console.error('Registration failed:', error.error.message);
       }
     });
 
