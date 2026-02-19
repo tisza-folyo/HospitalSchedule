@@ -8,4 +8,10 @@ import { Component } from '@angular/core';
 })
 export class Patient {
 
+  sections: string[] = [];
+  doctors: string[] = [];
+  section: string = '';
+  date: string = '';
+  availableSlots: any[] = [];
+  selectedSlot: any = null;
 }

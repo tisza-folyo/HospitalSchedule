@@ -8,6 +8,10 @@ import { Observable } from 'rxjs';
 export class AppService {
     token = signal<string>('');
     roleName = signal<string | null>(null);
+    firstName = signal<string | null>(null);
+    lastName = signal<string | null>(null);
+    speciality = signal<string | null>(null);
+    section = signal<string | null>(null);
 
     getToken(): string | null {
         return this.token();

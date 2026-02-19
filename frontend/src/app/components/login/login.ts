@@ -42,6 +42,28 @@ export class Login {
     return entry ? entry[0] : huName;
   }
 
+  private navigateByRole(role: string) {
+    switch (role) {
+      case 'ADMIN':
+        this.router.navigate(['/admin']);
+        break;
+      case 'DOCTOR':
+        this.router.navigate(['/doctor']);
+        break;
+      case 'PATIENT':
+        this.router.navigate(['/patient']);
+        break;
+      case 'ASSISTANT':
+        this.router.navigate(['/assistant']);
+        break;
+      case 'NURSE':
+        this.router.navigate(['/nurse']);
+        break;
+      default:
+        this.router.navigate(['/']);
+    }
+  }
+
   resetError() {
     if (this.errorHappened) {
       this.errorHappened = false;
@@ -82,7 +104,20 @@ export class Login {
         const token = response.data.token;
         this.appService.setToken(token);
         this.appService.setRole();
-        this.router.navigate(['/']);
+        this.loginService.getPersonInfo(response.data.taj, person.roleName).subscribe({
+          next: (infoResponse) => {
+            console.log("Person info response:", infoResponse);
+            const d = infoResponse.data; 
+            this.appService.firstName.set(d.firstName ?? null);
+            this.appService.lastName.set(d.lastName ?? null);
+            this.appService.speciality.set(d.speciality ?? null);
+            this.appService.section.set(d.section ?? null);
+          },
+          error: (infoError) => {
+            console.error("Error fetching person info:", infoError);
+          }
+        });
+        this.navigateByRole(person.roleName);
       },
       error: (error) => {
         console.error("Login error:", error.error.message);

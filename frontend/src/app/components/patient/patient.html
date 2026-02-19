@@ -1,1 +1,99 @@
-<p>patient works!</p>
+<div class="container py-4">
+  <h2 class="mb-4 text-primary"><i class="bi bi-calendar-plus me-2"></i>Időpont foglalás</h2>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">Szűrési feltételek</div>
+        <div class="card-body">
+          
+        <div class="mb-3">
+            <label class="form-label fw-bold">Dátum kiválasztása</label>
+            <div class="d-flex gap-1"> 
+                <input type="date" class="form-control">
+                <button class="btn btn-outline-danger" type="button">
+                    <i class="bi bi-x-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg>
+                    </i>
+                </button>
+        
+            </div>
+        </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Szekció (Osztály)</label>
+            <div class="d-flex gap-1">
+                <select class="form-select">
+                    <option selected hidden value="">Összes szekció</option>
+                    @for (sec of sections; track sec) {
+                    <option [value]="sec">{{ sec }}</option>
+                    }
+                </select>
+                <button class="btn btn-outline-danger" type="button">
+                    <i class="bi bi-x-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg>
+                    </i>
+                </button>
+            </div>
+            </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Orvos</label>
+            <div class="d-flex gap-1">
+                <select class="form-select">
+                    <option selected hidden value="">Bármely orvos</option>
+                    @for (doc of doctors; track doc) {
+                    <option [value]="doc">{{ doc }}</option>
+                    }
+                </select>
+                <button class="btn btn-outline-danger" type="button">
+                    <i class="bi bi-x-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#000000">
+                            <path
+                                d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
+                        </svg>
+                    </i>
+                </button>
+            </div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Elérhető időpontok</h5>
+          
+          <div class="list-group appointment-list">
+            @for (slot of availableSlots; track slot.id) {
+              <button type="button" 
+                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2 rounded border"
+                [class.active]="selectedSlot?.id === slot.id">
+                <div>
+                  <span class="fw-bold fs-5 me-3">{{ slot.time }}</span>
+                  <span class="text-muted small">{{ slot.doctorName }} - {{ slot.section }}</span>
+                </div>
+                <i class="bi" [class.bi-check-circle-fill]="selectedSlot?.id === slot.id"></i>
+              </button>
+            } @empty {
+              <div class="text-center py-5 text-muted">
+                <i class="bi bi-calendar-x fs-1"></i>
+                <p class="mt-2">Nincs elérhető időpont a választott feltételekkel.</p>
+              </div>
+            }
+          </div>
+
+          <div class="mt-4 d-grid">
+            <button class="btn btn-success btn-lg fw-bold" 
+                    [disabled]="!selectedSlot">
+              <i class="bi bi-bookmark-check me-2"></i>Foglalás megerősítése
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
