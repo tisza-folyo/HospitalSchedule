@@ -1,6 +1,7 @@
 package com.hospital.backend.controller;
 
 import com.hospital.backend.dto.DoctorDto;
+import com.hospital.backend.model.Person;
 import com.hospital.backend.request.RegisterRequest;
 import com.hospital.backend.response.ApiResponse;
 import com.hospital.backend.service.person.IPersonService;
@@ -13,6 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${api.prefix}/people")
 public class PersonController {
     private final IPersonService personService;
+
+    @GetMapping("/{pTaj}/person")
+    public ResponseEntity<ApiResponse> getPersonDetails(@PathVariable String pTaj, @RequestParam String role) {
+        Person result = personService.getPersonByTajAndRole(pTaj, role);
+        return ResponseEntity.ok(new ApiResponse("Success", result));
+    }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> addPerson(@RequestBody RegisterRequest registerPatientRequest) {
