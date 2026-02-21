@@ -23,13 +23,13 @@ public class ImageController {
     }
 
     @PostMapping("/upload-to-patient")
-    public ResponseEntity<ApiResponse> saveImagesToPatient(@RequestBody List<MultipartFile> files, @RequestParam String pTaj) {
+    public ResponseEntity<ApiResponse> saveImagesToPatient(@RequestParam("files") List<MultipartFile> files, @RequestParam String pTaj) {
         List<ImageDto> results = imageService.saveImages(files, pTaj);
         return ResponseEntity.ok(new ApiResponse("Saved", results));
     }
 
     @PostMapping("/upload-to-appointment")
-    public ResponseEntity<ApiResponse> saveImageToAppointment(@RequestParam List<MultipartFile> files, @RequestParam Long appointmentId) {
+    public ResponseEntity<ApiResponse> saveImageToAppointment(@RequestParam("files") List<MultipartFile> files, @RequestParam Long appointmentId) {
         List<ImageDto> results = imageService.saveImages(files, appointmentId);
         return ResponseEntity.ok(new ApiResponse("Saved", results));
     }

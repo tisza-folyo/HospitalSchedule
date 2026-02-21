@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PersonService implements IPersonService {
@@ -39,6 +41,11 @@ public class PersonService implements IPersonService {
     public Person getPersonByTajAndRole(String taj, String roleName) {
         Role role = roleRepository.findByRoleName(roleName).orElseThrow(() -> new ResourceNotFoundException(roleName));
         return personRepository.findByTajAndRole(taj,role).orElseThrow(() -> new ResourceNotFoundException(taj + " " + roleName));
+    }
+
+    @Override
+    public List<DoctorDto> getAllDoctor(){
+        return doctorRepository.findAll().stream().map(personMapper::toDoctorDto).toList();
     }
 
     @Override

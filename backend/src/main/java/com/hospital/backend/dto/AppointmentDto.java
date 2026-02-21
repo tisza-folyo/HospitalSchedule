@@ -15,5 +15,6 @@ public class AppointmentDto {
     private DoctorDto doctor;
     private PatientDto patient;
     private Status status;
+    private String description;
     private List<ImageDto> symptomImg;
 }

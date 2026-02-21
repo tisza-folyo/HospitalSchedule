@@ -8,6 +8,9 @@ import com.hospital.backend.service.person.IPersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.w3c.dom.stylesheets.LinkStyle;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,6 +22,12 @@ public class PersonController {
     public ResponseEntity<ApiResponse> getPersonDetails(@PathVariable String pTaj, @RequestParam String role) {
         Person result = personService.getPersonByTajAndRole(pTaj, role);
         return ResponseEntity.ok(new ApiResponse("Success", result));
+    }
+
+    @GetMapping("/doctors/all")
+    public ResponseEntity<ApiResponse> getAllDoctor(){
+        List<DoctorDto> results = personService.getAllDoctor();
+        return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
     @PostMapping("/register")

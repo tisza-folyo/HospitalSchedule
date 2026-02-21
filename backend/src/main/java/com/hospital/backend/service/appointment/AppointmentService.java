@@ -90,6 +90,7 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public List<AppointmentDto> getAllAndFreeAppointments(String dTaj, LocalDate day){
+        if(isWeekend(day)) return appointmentMapper.toDtoList(new ArrayList<>());
         Doctor doctor = getDoctorByTaj(dTaj);
         List<Appointment> appointments = appointmentRepository.findAllByDoctorAndDay(doctor, day);
         List<LocalTime> times = appointments.stream().map(Appointment::getTimeSlot).toList();
@@ -104,6 +105,7 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public List<AppointmentDto> getAllAndFreeAppointments(LocalDate day){
+        if(isWeekend(day)) return appointmentMapper.toDtoList(new ArrayList<>());
         List<AppointmentDto> freeAppointments = new ArrayList<>();
         for (Doctor doctor : doctorRepository.findAll()) freeAppointments.addAll(getAllAndFreeAppointments(doctor.getTaj(), day));
         return freeAppointments;
@@ -111,6 +113,7 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public List<AppointmentDto> getAllAndFreeAppointments(LocalDate day, String sectionName){
+        if(isWeekend(day)) return appointmentMapper.toDtoList(new ArrayList<>());
         Section section = sectionRepository.findBySectionName(sectionName).orElseThrow(() -> new ResourceNotFoundException(sectionName));
         List<AppointmentDto> appointments = new ArrayList<>();
         List<Doctor> doctors = doctorRepository.findAllBySection(section);
