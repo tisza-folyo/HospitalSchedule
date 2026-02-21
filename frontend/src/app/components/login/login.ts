@@ -103,21 +103,23 @@ export class Login {
         console.log("Login response:", response);
         const token = response.data.token;
         this.appService.setToken(token);
-        this.appService.setRole();
         this.loginService.getPersonInfo(response.data.taj, person.roleName).subscribe({
           next: (infoResponse) => {
             console.log("Person info response:", infoResponse);
-            const d = infoResponse.data; 
-            this.appService.firstName.set(d.firstName ?? null);
-            this.appService.lastName.set(d.lastName ?? null);
-            this.appService.speciality.set(d.speciality ?? null);
-            this.appService.section.set(d.section ?? null);
+            const d = infoResponse.data;
+            this.appService.setTaj(d.taj ?? null);
+            this.appService.setRoleName(d.roleName ?? null);
+            this.appService.setFirstName(d.firstName ?? null);
+            this.appService.setLastName(d.lastName ?? null);
+            this.appService.setSpeciality(d.speciality ?? null);
+            this.appService.setSection(d.section ?? null);
+            this.navigateByRole(person.roleName);
           },
           error: (infoError) => {
             console.error("Error fetching person info:", infoError);
           }
         });
-        this.navigateByRole(person.roleName);
+        
       },
       error: (error) => {
         console.error("Login error:", error.error.message);
@@ -125,8 +127,4 @@ export class Login {
       }
     });
   }
-
-
-
-
 }

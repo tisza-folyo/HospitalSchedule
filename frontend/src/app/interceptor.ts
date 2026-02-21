@@ -4,12 +4,14 @@ import { AppService } from './app.service';
 
 
 export const jwtInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn) => {
-  const appService = inject(AppService);
-  const token = appService.getToken();
+  const token = localStorage.getItem('token');
+
 
   if (token) {
     const cloned = req.clone({
-      headers: req.headers.set('Authorization', `Bearer ${token}`)
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
     });
     return next(cloned);
   }

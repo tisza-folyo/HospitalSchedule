@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { jwtInterceptor } from './interceptor';
 
 
 export const appConfig: ApplicationConfig = {
@@ -11,6 +12,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient()
+    provideHttpClient(),
+    provideHttpClient(
+      withInterceptors([jwtInterceptor])
+    )
   ]
 };

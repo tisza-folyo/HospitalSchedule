@@ -6,39 +6,75 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
-    token = signal<string>('');
-    roleName = signal<string | null>(null);
-    firstName = signal<string | null>(null);
-    lastName = signal<string | null>(null);
-    speciality = signal<string | null>(null);
-    section = signal<string | null>(null);
+    token = signal<string>(localStorage.getItem('token') || '');
+    taj = signal<string | null>(localStorage.getItem('taj'));
+    roleName = signal<string | null>(localStorage.getItem('roleName'));
+    firstName = signal<string | null>(localStorage.getItem('firstName'));
+    lastName = signal<string | null>(localStorage.getItem('lastName'));
+    speciality = signal<string | null>(localStorage.getItem('speciality'));
+    section = signal<string | null>(localStorage.getItem('section'));
 
-    getToken(): string | null {
+    getToken(): string {
         return this.token();
+    }
+    getRoleName(): string | null {
+        return this.roleName();
+    }
+
+    getTaj(): string | null {
+        return this.taj();
     }
 
     setToken(newToken: string): void {
-        this.token.set(newToken);
+        this.updateStorageAndSignal('token', newToken, this.token);
+    }
+    setTaj(newTaj: string | null): void {
+        this.updateStorageAndSignal('taj', newTaj, this.taj);
     }
 
+    setRoleName(newRoleName: string | null): void {
+        this.updateStorageAndSignal('roleName', newRoleName, this.roleName);
+    }
 
-    constructor(private http: HttpClient) { }
+    setFirstName(newFirstName: string | null): void {
+        this.updateStorageAndSignal('firstName', newFirstName, this.firstName);
+    }
 
-    setRole() {
-        const token = this.getToken();
-        if (token) {
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
+    setLastName(newLastName: string | null): void {
+        this.updateStorageAndSignal('lastName', newLastName, this.lastName);
+    }
 
-                const userRole = payload.role;
+    setSpeciality(newSpeciality: string | null): void {
+        this.updateStorageAndSignal('speciality', newSpeciality, this.speciality);
+    }
 
-                if (userRole) {
-                    this.roleName.set(userRole);
-                }
+    setSection(newSection: string | null): void {
+        this.updateStorageAndSignal('section', newSection, this.section);
+    }
 
-            } catch (e) {
-                console.error("Decoding token failed:", e);
-            }
+    private updateStorageAndSignal(key: string, value: string | null, sig: any) {
+        if (value) {
+            localStorage.setItem(key, value);
+        } else {
+            localStorage.removeItem(key);
+        }
+        sig.set(value);
+    }
+
+    statusConverter(status: string): string {
+        switch (status) {
+            case 'FREE':
+                return 'Szabad';
+            case 'LOCKED':
+                return 'Lefoglalt';
+            case 'DONE':
+                return 'Befejezett';
+            default:
+                return status;
         }
     }
+    constructor(private http: HttpClient) { 
+    }
+
+
 }

@@ -30,12 +30,14 @@ export class App {
     heightAuto: false 
   }).then((result) => {
     if (result.isConfirmed) {
+      localStorage.clear();
       this.appService.setToken('');
-      this.appService.setRole();
+      this.appService.roleName.set(null);
       this.appService.firstName.set(null);
       this.appService.lastName.set(null);
       this.appService.speciality.set(null);
       this.appService.section.set(null);
+      this.appService.taj.set(null);
       this.router.navigate(['/']);
     }
   });
