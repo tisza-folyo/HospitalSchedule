@@ -65,7 +65,8 @@ export class Patient {
   }
 
   onSwitch() {
-    this.patientService.getAppointmentsByPatient(this.appService.getTaj()!).subscribe({
+    if (this.showProfile) {
+      this.patientService.getAppointmentsByPatient(this.appService.getTaj()!).subscribe({
       next: (response) => {
         this.appointments = this.formatData(response.data);
         console.log(this.appointments);
@@ -74,6 +75,10 @@ export class Patient {
         console.error('Error fetching patient appointments:', err);
       }
     });
+    }else {
+      this.appointments = [];
+    }
+    
   }
 
   searchAppointments() {
