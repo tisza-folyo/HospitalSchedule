@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Appointment } from './components/appointment.model';
 import Swal from 'sweetalert2';
 
 
@@ -75,6 +76,19 @@ export class AppService {
         }
     }
 
+    stausColorConverter(status: string): string {
+        switch (status) {
+            case 'FREE':
+                return 'info';
+            case 'LOCKED':
+                return 'warning';
+            case 'DONE':
+                return 'success';
+            default:
+                return 'secondary';
+        }
+    }
+
     successPopup(msg: string) {
         Swal.fire({
             title: msg,
@@ -105,6 +119,18 @@ export class AppService {
             confirmButtonText: 'Igen',
             cancelButtonText: 'Nem'
         });
+    }
+
+    formatData(data: any): Appointment[] {
+        return data.map((item: any) => ({
+            id: item.appointmentId,
+            timeSlot: new Date(`${item.day}T${item.timeSlot}`),
+            doctorTaj: item.doctor?.taj,
+            patientTaj: item.patient?.taj,
+            description: item.symptomDescription,
+            status: item.status,
+            files: item.symptomImg
+        }));
     }
     constructor(private http: HttpClient) {
     }

@@ -1,1 +1,224 @@
-<p>doctor works!</p>
+<div class="container-fluid py-4">
+    <h2 class="mb-4 text-primary fw-bold text-center">Doktori Vezérlőpult</h2>
+
+    <ul class="nav nav-pills nav-fill mb-4 shadow-sm p-2 bg-white rounded border" id="doctorTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active py-3" id="patients-tab" data-bs-toggle="tab" data-bs-target="#patients"
+                type="button">
+                <i class="bi bi-people-fill me-2"></i>Betegek Adatai
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link py-3" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments"
+                type="button" (click)="navigateToAppointments()">
+                <i class="bi bi-calendar-check me-2"></i>Időpontok
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link py-3" id="assistants-tab" data-bs-toggle="tab" data-bs-target="#assistants"
+                type="button">
+                <i class="bi bi-person-badge me-2"></i>Asszisztens Rendelés
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="doctorTabContent">
+
+        <div class="tab-pane fade show active text-center" id="patients" role="tabpanel">
+            <div class="row g-3">
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-primary text-white fw-bold">Beteg Kereső</div>
+                        <div class="card-body">
+                            <input type="text" class="form-control mb-3" placeholder="Név vagy TAJ szám alapján...">
+                            <div class="list-group overflow-auto" style="max-height: 500px;">
+                                <button class="list-group-item list-group-item-action text-start">
+                                    <h6 class="mb-1 fw-bold">Kovács János</h6>
+                                    <small class="text-muted">TAJ: 123-456-789</small>
+                                </button>
+                                <button class="list-group-item list-group-item-action text-start active">
+                                    <h6 class="mb-1 fw-bold">Nagy Erzsébet</h6>
+                                    <small>TAJ: 987-654-321</small>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-primary text-white">Beteg Részletes Adatai</div>
+                        <div class="card-body text-start">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <p><strong>Név:</strong> Nagy Erzsébet</p>
+                                    <p><strong>Születési idő:</strong> 1975.04.12.</p>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <p><strong>TAJ:</strong> 987-654-321</p>
+                                    <p><strong>Lakcím:</strong> Budapest, Példa u. 5.</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <h6 class="fw-bold mb-3">Feltöltött Dokumentumok</h6>
+                            <div class="list-group list-group-flush">
+                                <a href="#"
+                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <span><i
+                                            class="bi bi-file-earmark-pdf text-danger me-2"></i>Laborlelet_2024_02.pdf</span>
+                                    <span class="badge bg-secondary rounded-pill">Megnyitás</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="appointments" role="tabpanel">
+            <div class="row g-3 text-center">
+                <div class="col-lg-5 text-center">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-primary text-white fw-bold">Időpontok Listája</div>
+                        <div class="card-body">
+                            <select class="form-select mb-3" [(ngModel)]="statusFilter">
+                                <option selected value="">Összes</option>
+                                <option value="LOCKED">Lefoglalt</option>
+                                <option value="DONE">Befejezett</option>
+                            </select>
+                            <div class="table-responsive">
+                                <table class="table table-hover text-start">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Dátum</th>
+                                            <th>Időpont</th>
+                                            <th>Beteg Taj</th>
+                                            <th>Státusz</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (a of appointments; track a.id) {
+                                        @if (!statusFilter || a.status === statusFilter) {
+                                        <tr style="cursor: pointer;" (click)="selectAppointment(a)">
+                                            <td>{{ a.timeSlot.toISOString().split('T')[0] }}</td>
+                                            <td>{{ a.timeSlot | date: 'HH:mm' }}</td>
+                                            <td>{{ a.patientTaj!}}</td>
+                                            <td>
+                                                <span class="badge"
+                                                    [ngClass]="'bg-' + appService.stausColorConverter(a.status)">
+                                                    {{ this.appService.statusConverter(a.status) }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-primary text-white">Időpont Információk</div>
+                        <div class="card-body text-start">
+                            <h5 class="fw-bold text-info">Vizsgálat részletei</h5>
+                            <p><strong>Beteg:</strong> {{ patient?.lastName }} {{ patient?.firstName }}</p>
+                            <p><strong>Taj:</strong> {{ patient?.taj }}</p>
+                            <p><strong>Leírás:</strong> {{ description }}</p>
+                            <hr>
+                            <h6 class="fw-bold mb-2">Csatolt fájlok az időponthoz</h6>
+                            <div class="document-container border p-3 rounded bg-light">
+                                @for (file of files; track file.fileName) {
+                                <div class="file-item mb-4 pb-3 border-bottom">
+
+                                    @if (file.fileType === 'application/pdf') {
+                                    <div class="pdf-viewer">
+                                        <h6 class="text-danger">
+                                            <i class="bi bi-file-earmark-pdf-fill"></i> PDF: {{ file.fileName }}
+                                        </h6>
+                                        <embed [src]="file.dwnUrl | safeUrl" type="application/pdf" width="100%"
+                                            height="500px" />
+                                    </div>
+                                    }
+                                    @else if (file.fileType.includes('image')) {
+                                    <div class="image-viewer text-center">
+                                        <h6 class="text-primary">
+                                            <i class="bi bi-image-fill"></i> Kép: {{ file.fileName }}
+                                        </h6>
+                                        <img [src]="file.dwnUrl" class="img-fluid rounded shadow-sm border"
+                                            [alt]="file.fileName" />
+                                    </div>
+                                    }
+                                    @else {
+                                    <div class="alert alert-info d-flex align-items-center">
+                                        <i class="bi bi-info-circle-fill me-2"></i>
+                                        <div>
+                                            <strong>{{ file.fileName }}</strong> ({{ file.fileType }})
+                                            nem jeleníthető meg közvetlenül.
+                                            <br>
+                                            <a [href]="file.dwnUrl" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                                Fájl megnyitása / Letöltése
+                                            </a>
+                                        </div>
+                                    </div>
+                                    }
+
+                                </div>
+                                } @empty {
+                                <div class="text-center py-4 text-muted">
+                                    <i class="bi bi-files fs-1 d-block mb-2"></i>
+                                    <p>Ehhez az időponthoz nem tartoznak csatolt fájlok.</p>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="assistants" role="tabpanel">
+            <div class="row g-3 text-center">
+                <div class="col-lg-12">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-dark text-white fw-bold">Asszisztens Keresése és Hozzárendelése</div>
+                        <div class="card-body">
+                            <div class="row g-2 mb-4 justify-content-center">
+                                <div class="col-md-3">
+                                    <input type="date" class="form-control" title="Válasszon napot">
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <input type="text" class="form-control text-center"
+                                        placeholder="Asszisztens név...">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control text-center"
+                                        placeholder="Asszisztens TAJ...">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary w-100 text-center">Szűrés</button>
+                                </div>
+                            </div>
+
+                            <div class="row row-cols-1 row-cols-md-3 g-4">
+                                <div class="col">
+                                    <div class="card h-100 border-info border-2">
+                                        <div class="card-body text-center">
+                                            <div class="display-6 mb-2 text-info text-center"><i
+                                                    class="bi bi-person-check-fill"></i></div>
+                                            <h5 class="card-title fw-bold">Kiss Katalin</h5>
+                                            <p class="card-text text-muted mb-1">TAJ: 555-111-222</p>
+                                            <span class="badge bg-success mb-3">Elérhető</span>
+                                            <button class="btn btn-info w-100 text-white">Mellém rendelés</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
