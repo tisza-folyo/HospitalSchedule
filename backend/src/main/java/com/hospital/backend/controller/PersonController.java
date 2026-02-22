@@ -1,6 +1,7 @@
 package com.hospital.backend.controller;
 
 import com.hospital.backend.dto.DoctorDto;
+import com.hospital.backend.dto.PatientDto;
 import com.hospital.backend.model.Person;
 import com.hospital.backend.request.RegisterRequest;
 import com.hospital.backend.response.ApiResponse;
@@ -28,6 +29,12 @@ public class PersonController {
     public ResponseEntity<ApiResponse> getAllDoctor(){
         List<DoctorDto> results = personService.getAllDoctor();
         return ResponseEntity.ok(new ApiResponse("Success", results));
+    }
+
+    @GetMapping("/patient/{pTaj}")
+    public ResponseEntity<ApiResponse> getPatientDetails(@PathVariable String pTaj) {
+        PatientDto result = personService.getPatientByTaj(pTaj);
+        return ResponseEntity.ok(new ApiResponse("Success", result));
     }
 
     @PostMapping("/register")

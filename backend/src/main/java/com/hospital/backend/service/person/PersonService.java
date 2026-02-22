@@ -44,6 +44,12 @@ public class PersonService implements IPersonService {
     }
 
     @Override
+    public PatientDto getPatientByTaj(String taj){
+        Patient patient = patientRepository.findByTaj(taj).orElseThrow(() -> new ResourceNotFoundException(taj));
+        return personMapper.toPatientDto(patient);
+    }
+
+    @Override
     public List<DoctorDto> getAllDoctor(){
         return doctorRepository.findAll().stream().map(personMapper::toDoctorDto).toList();
     }
