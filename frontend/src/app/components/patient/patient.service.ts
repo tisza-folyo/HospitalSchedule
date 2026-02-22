@@ -20,6 +20,7 @@ export class PatientService {
 
     private postAppointmentEnpoint: string = `${this.apiUrl}/appointments/add-request`;
     private postFilesEnpoint = (pTaj: string): string => `${this.apiUrl}/images/upload-to-patient?pTaj=${pTaj}`;
+    private cancelAppointmentEnpoint = (appointmentId: number): string => `${this.apiUrl}/appointments/cancel?appointmentId=${appointmentId}`;
 
     constructor(private http: HttpClient) {}
 
@@ -57,6 +58,10 @@ export class PatientService {
             formData.append('files', file);
         });
         return this.http.post<{msg: string,data: any}>(this.postFilesEnpoint(pTaj), formData);
+    }
+
+    cancelAppointment(appointmentId: number): Observable<{msg: string,data: any}> {
+        return this.http.delete<{msg: string,data: any}>(this.cancelAppointmentEnpoint(appointmentId));
     }
 
 }

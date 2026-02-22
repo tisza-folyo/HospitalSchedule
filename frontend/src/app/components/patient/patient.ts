@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-patient',
-  imports: [DatePipe ,FormsModule, CommonModule],
+  imports: [DatePipe, FormsModule, CommonModule],
   templateUrl: './patient.html',
   styleUrl: './patient.css',
 })
@@ -32,10 +32,10 @@ export class Patient {
   appService = inject(AppService);
   selectedFiles: File[] = [];
 
-  constructor(private patientService: PatientService, private router: Router) {}
+  constructor(private patientService: PatientService, private router: Router) { }
 
   ngOnInit() {
-      this.loadInitialData();
+    this.loadInitialData();
   }
 
   private loadInitialData() {
@@ -66,19 +66,10 @@ export class Patient {
 
   onSwitch() {
     if (this.showProfile) {
-      this.patientService.getAppointmentsByPatient(this.appService.getTaj()!).subscribe({
-      next: (response) => {
-        this.appointments = this.formatData(response.data);
-        console.log(this.appointments);
-      },
-      error: (err) => {
-        console.error('Error fetching patient appointments:', err);
-      }
-    });
-    }else {
+      this.loadPatientAppointments();
+    } else {
       this.appointments = [];
     }
-    
   }
 
   searchAppointments() {
@@ -112,7 +103,7 @@ export class Patient {
           }
         });
       }
-    }else {
+    } else {
       this.missingDate = true;
     }
   }
@@ -125,7 +116,7 @@ export class Patient {
     const hours = this.selectedSlot!.timeSlot.getHours().toString().padStart(2, '0');
     const minutes = this.selectedSlot!.timeSlot.getMinutes().toString().padStart(2, '0');
     const formattedTime = `${hours}:${minutes}:00`;
-    const request : AppointmentRequest = {
+    const request: AppointmentRequest = {
       doctorTaj: this.selectedSlot!.doctorTaj,
       patientTaj: this.appService.getTaj()!,
       timeSlot: formattedTime,
@@ -135,11 +126,11 @@ export class Patient {
     this.patientService.postAppointment(request).subscribe({
       next: (response) => {
         this.searchAppointments();
-        this.successPopup();
+        this.appService.successPopup('Foglalás sikeres!');
       },
       error: (err) => {
         console.error('Error booking appointment:', err);
-        this.errorPopup();
+        this.appService.errorPopup('Hiba történt a foglalás során!');
       }
     });
 
@@ -147,63 +138,71 @@ export class Patient {
 
   private formatData(data: any): Appointment[] {
     return data.map((item: any) => ({
-    timeSlot: new Date(`${item.day}T${item.timeSlot}`),
-    doctorTaj: item.doctor?.taj, 
-    patientTaj: item.patient?.taj,
-    description: item.description,
-    status: item.status
-  }));
+      id: item.appointmentId,
+      timeSlot: new Date(`${item.day}T${item.timeSlot}`),
+      doctorTaj: item.doctor?.taj,
+      patientTaj: item.patient?.taj,
+      description: item.description,
+      status: item.status
+    }));
   }
 
-  searchDoctorNameByTaj(taj: string): string  {
+  private loadPatientAppointments() {
+    this.patientService.getAppointmentsByPatient(this.appService.getTaj()!).subscribe({
+      next: (response) => {
+        this.appointments = this.formatData(response.data);
+      },
+      error: (err) => {
+        console.error('Error fetching patient appointments:', err);
+      }
+    });
+  }
+
+  searchDoctorNameByTaj(taj: string): string {
     const doctor = this.doctors.find(doc => doc.taj === taj);
     return doctor ? `${doctor.lastName} ${doctor.firstName}` : 'Ismeretlen orvos';
   }
 
   onFilesSelected(event: any) {
-  const files: FileList = event.target.files;
-  this.selectedFiles = Array.from(files);
-}
-
-onUpload() {
-  if (this.selectedFiles.length === 0) {
-    this.errorPopup();
-    return;
+    const files: FileList = event.target.files;
+    this.selectedFiles = Array.from(files);
   }
 
-  const pTaj = this.appService.getTaj()!;
+  onCancelAppointment(appointmentId: number) {
+    this.appService.questionPopup('Biztosan le szeretné mondani a foglalást?').then((result) => {
+      if (result.isConfirmed) {
+        this.patientService.cancelAppointment(appointmentId).subscribe({
+          next: (res) => {
+            this.appService.successPopup('Foglalás sikeresen lemondva!');
+            this.loadPatientAppointments();
+          },
+          error: (err) => {
+            this.appService.errorPopup('Hiba történt a foglalás lemondása során!');
+          }
+        });
+      }
+    });
+  }
 
-  this.patientService.uploadToPatient(this.selectedFiles, pTaj).subscribe({
-    next: (res) => {
-      this.successPopup();
-      this.selectedFiles = []; 
-    },
-    error: (err) => {
-      this.errorPopup();
-      console.error(err);
+  onUpload() {
+    if (this.selectedFiles.length === 0) {
+      this.appService.errorPopup('Nincs kiválasztva fájl!');
+      return;
     }
-  });
-}
 
-  private successPopup() {
-    Swal.fire({
-        title: 'Sikeres foglalás!',
-        icon: 'success',
-        background: '#f8f9fa',
-        confirmButtonColor: '#0d6efd',
-        confirmButtonText: 'Szuper!',
-        timerProgressBar: true
-      });
+    const pTaj = this.appService.getTaj()!;
+
+    this.patientService.uploadToPatient(this.selectedFiles, pTaj).subscribe({
+      next: (res) => {
+        this.appService.successPopup('Fájlok sikeresen feltöltve!');
+        this.selectedFiles = [];
+      },
+      error: (err) => {
+        this.appService.errorPopup('Hiba történt a fájlok feltöltése során!');
+        console.error(err);
+      }
+    });
   }
 
-  private errorPopup() {
-    Swal.fire({
-        title: 'Hiba történt!',
-        icon: 'error',
-        confirmButtonColor: '#dc3545',
-        confirmButtonText: 'Értem'
-      });
-  }
 
-  
 }

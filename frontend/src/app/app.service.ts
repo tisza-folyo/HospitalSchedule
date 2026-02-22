@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import Swal from 'sweetalert2';
 
 
 
@@ -73,7 +74,39 @@ export class AppService {
                 return status;
         }
     }
-    constructor(private http: HttpClient) { 
+
+    successPopup(msg: string) {
+        Swal.fire({
+            title: msg,
+            icon: 'success',
+            background: '#f8f9fa',
+            confirmButtonColor: '#0d6efd',
+            confirmButtonText: 'Szuper!',
+            timerProgressBar: true
+        });
+    }
+
+    errorPopup(msg: string) {
+        Swal.fire({
+            title: msg,
+            icon: 'error',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Értem'
+        });
+    }
+
+    questionPopup(msg: string) {
+        return Swal.fire({
+            title: msg,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Igen',
+            cancelButtonText: 'Nem'
+        });
+    }
+    constructor(private http: HttpClient) {
     }
 
 
