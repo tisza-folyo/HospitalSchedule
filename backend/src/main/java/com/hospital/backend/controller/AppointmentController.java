@@ -80,7 +80,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/update-status")
-    public ResponseEntity<ApiResponse> updateAppointmentStatus(@RequestBody Status status, @RequestParam long appointmentId) {
+    public ResponseEntity<ApiResponse> updateAppointmentStatus(@RequestBody String status, @RequestParam long appointmentId) {
         AppointmentDto result = appointmentService.updateAppointmentStatus(appointmentId, status);
         return ResponseEntity.ok(new ApiResponse("Updated", result));
     }

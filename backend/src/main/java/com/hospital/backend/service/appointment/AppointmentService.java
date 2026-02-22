@@ -74,7 +74,8 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
-    public AppointmentDto updateAppointmentStatus(Long id, Status status){
+    public AppointmentDto updateAppointmentStatus(Long id, String statusName){
+        Status status = Status.valueOf(statusName.toUpperCase());
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Appointment"));
         appointment.setStatus(status);
         return appointmentMapper.toDto(appointmentRepository.save(appointment));

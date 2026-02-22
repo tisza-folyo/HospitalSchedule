@@ -26,7 +26,7 @@ public interface IAppointmentService {
 
     void deleteAppointment(Long id);
 
-    AppointmentDto updateAppointmentStatus(Long id, Status status);
+    AppointmentDto updateAppointmentStatus(Long id, String statusName);
 
     AppointmentDto updateAppointmentSymptomDescription(Long id, String description);
 
