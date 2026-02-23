@@ -10,6 +10,8 @@ import { PatientModel } from '../patient/patient.model';
 import { AssistantModel } from '../assistant/assistant.model';
 import { Assistant } from '../assistant/assistant';
 import { AssistantRequest } from '../assistant/assistant.requrest';
+import { WorkModel } from '../work.model';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-doctor',
@@ -31,17 +33,20 @@ export class Doctor {
   assistantName: string = '';
   assistantTaj: string = '';
   dateFilter: string = '';
-  assistants:AssistantModel[] = [];
+  assistants: AssistantModel[] = [];
   filteredAssistants: AssistantModel[] = [];
   assistant: Assistant | null = null;
   isFilterSubmitted: boolean = false;
   today: string = '';
+  works: WorkModel[] = [];
+  startDate: string = '';
+  endDate: string = '';
 
   constructor(private doctorService: DoctorService) { }
 
   ngOnInit() {
     this.today = new Date().toISOString().split('T')[0];
-     this.doctorService.getAllPatients(this.appService.getTaj()!).subscribe({
+    this.doctorService.getAllPatients(this.appService.getTaj()!).subscribe({
       next: (response) => {
         this.patients = response.data;
         this.filteredPatients = this.patients;
@@ -55,15 +60,15 @@ export class Doctor {
     this.patient = p;
   }
 
-  navigateToAppointments(){
-      this.doctorService.getAppointmentsByDoctor(this.appService.getTaj()!).subscribe({
-        next: (response) => {
-          this.appointments = this.appService.formatData(response.data);
-        },
-        error: (err) => {
-          console.error('Error fetching appointments:', err);
-        }
-      });
+  navigateToAppointments() {
+    this.doctorService.getAppointmentsByDoctor(this.appService.getTaj()!).subscribe({
+      next: (response) => {
+        this.appointments = this.appService.formatData(response.data);
+      },
+      error: (err) => {
+        console.error('Error fetching appointments:', err);
+      }
+    });
   }
 
   navigateToAssistant() {
@@ -91,7 +96,7 @@ export class Doctor {
   }
 
   filterAssistants() {
-    if(!this.filter) {
+    if (!this.filter) {
       this.filteredAssistants = this.assistants;
       return;
     }
@@ -121,10 +126,16 @@ export class Doctor {
 
   resetField(field: string) {
     if (field === 'date') {
-    this.dateFilter = '';
-    this.isFilterSubmitted = false;
-    this.filteredAssistants = [];
-  }
+      this.dateFilter = '';
+      this.isFilterSubmitted = false;
+      this.filteredAssistants = [];
+    }
+    if (field === 'date-to-date') {
+      this.startDate = '';
+      this.endDate = '';
+      this.isFilterSubmitted = false;
+      this.works = [];
+    }
 
   }
 
@@ -134,7 +145,7 @@ export class Doctor {
 
 
 
-  filterPatients(){
+  filterPatients() {
     if (!this.filter) {
       this.filteredPatients = this.patients;
       return;
@@ -149,7 +160,7 @@ export class Doctor {
     if (appointment.patientTaj) {
       this.getPatientByTaj(appointment.patientTaj);
     }
-    
+
     this.description = appointment.description || '';
     this.files = appointment.files || [];
   }
@@ -158,7 +169,7 @@ export class Doctor {
     const byteCharacters = atob(file.base64Data);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
     const byteArray = new Uint8Array(byteNumbers);
 
@@ -166,7 +177,87 @@ export class Doctor {
 
     const fileURL = URL.createObjectURL(blob);
     window.open(fileURL, '_blank');
-}
+  }
+  async onWorkSearch() {
+    this.isFilterSubmitted = true;
+    if (!this.startDate || !this.endDate) return;
+
+    this.works = [];
+    let current = new Date(this.startDate);
+    const last = new Date(this.endDate);
+
+    while (current <= last) {
+      const dateForRequest = current.toISOString().split('T')[0];
+      try {
+        const response = await firstValueFrom(
+          this.doctorService.getWorksByDoctorAndDate(this.appService.getTaj()!, dateForRequest)
+        );
+        if (response.data === null) {
+          this.works.push({
+            workId: null,
+            workDay: dateForRequest,
+            uTaj: this.appService.getTaj()!,
+            doctor: null,
+            assistants: null
+          });
+        } else { 
+          this.works.push(response.data);
+        }
+      } catch (err) {
+        console.error('Hiba:', err);
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    this.works.sort((a, b) => new Date(a.workDay).getTime() - new Date(b.workDay).getTime());
+  }
+
+  addWork(day: string) {
+    this.doctorService.postWork(day, this.appService.getTaj()!, this.appService.getTaj()!).subscribe({
+      next: (response) => {
+        this.appService.successPopup("Munka hozzáadva");
+        this.onWorkSearch();
+        console.log(response.data);
+      },
+      error: (err) => {
+        this.appService.errorPopup("Hiba");
+      }
+    });
+  }
+
+  removeWork(workId: number) {
+    if (workId === null) {
+      this.appService.errorPopup("Hiba: Nincs ilyen munka");
+      return;
+    }
+    this.appService.questionPopup("Biztosan le akarod adni ezt a munkát?").then((result) => {
+      if (result.isConfirmed) {
+        this.doctorService.deleteWork(workId).subscribe({
+          next: (response) => {
+            this.appService.successPopup("Munka törölve");
+            this.onWorkSearch();
+          },
+          error: (err) => {
+            this.appService.errorPopup("Hiba");
+          }
+        });
+      }
+    });  
+  }
+
+
+  get maxEndDate(): string {
+    if (!this.startDate) return '';
+    const date = new Date(this.startDate);
+    date.setDate(date.getDate() + 7);
+    return date.toISOString().split('T')[0];
+  }
+
+  get minStartDate(): string {
+    if (!this.endDate) return '';
+    const date = new Date(this.endDate);
+    date.setDate(date.getDate() - 7);
+    return date.toISOString().split('T')[0];
+  }
 
   private getPatientByTaj(taj: string) {
     this.doctorService.getPatientByTaj(taj).subscribe({

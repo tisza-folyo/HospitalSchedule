@@ -7,6 +7,7 @@ import { Patient } from '../patient/patient';
 import { PatientModel } from '../patient/patient.model';
 import { AssistantModel } from '../assistant/assistant.model';
 import { AssistantRequest } from '../assistant/assistant.requrest';
+import { WorkModel } from '../work.model';
 
 
 
@@ -19,6 +20,9 @@ export class DoctorService {
     private getAllPatientsEndpoint = (taj: string) => `${this.apiUrl}/people/patients/${taj}`;
     private getFreeAssistantsEndpoint = (date: string) => `${this.apiUrl}/works/assistants/free?day=${date}`;
     private assignAssistantEndpoint = `${this.apiUrl}/works/assign`;
+    private getWorksByDoctorAndDateEndpoint = (dTaj: string, day: string) => `${this.apiUrl}/works/doctor/day?dTaj=${dTaj}&day=${day}`;
+    private addWorkEndpoint = (day:string, dTaj: string, uTaj: string) => `${this.apiUrl}/works/add?day=${day}&dTaj=${dTaj}&uTaj=${uTaj}`;
+    private deleteWorkEndpoint = (workId: number) => `${this.apiUrl}/works/delete?workId=${workId}`;
 
     constructor(private http: HttpClient) { }
 
@@ -39,5 +43,17 @@ export class DoctorService {
 
     assignAssistant(request: AssistantRequest): Observable<{msg: string, data: any}> {
         return this.http.put<{msg: string, data: any}>(this.assignAssistantEndpoint, request);
+    }
+
+    getWorksByDoctorAndDate(dTaj: string, day: string): Observable<{msg: string, data: WorkModel}> {
+        return this.http.get<{msg: string, data: WorkModel}>(this.getWorksByDoctorAndDateEndpoint(dTaj, day));
+    }
+
+    postWork(day:string, dTaj: string, uTaj: string): Observable<{msg: string, data: WorkModel}> {
+        return this.http.post<{msg: string, data: WorkModel}>(this.addWorkEndpoint(day, dTaj, uTaj), {});
+    }
+
+    deleteWork(workId: number): Observable<{msg: string, data: any}> {
+        return this.http.delete<{msg: string, data: any}>(this.deleteWorkEndpoint(workId));
     }
 }
