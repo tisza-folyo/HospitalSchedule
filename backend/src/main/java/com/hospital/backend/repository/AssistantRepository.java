@@ -22,4 +22,6 @@ public interface AssistantRepository extends JpaRepository<Assistant,String> {
     Optional<Assistant> findByTaj(String aTaj);
 
     boolean existsByEmail(String email);
+
+
 }

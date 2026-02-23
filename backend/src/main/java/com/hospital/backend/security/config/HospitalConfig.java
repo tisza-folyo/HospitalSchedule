@@ -38,7 +38,6 @@ public class HospitalConfig {
                     "/hospital/appointments/**",
                     "/hospital/beds/**",
                     "/hospital/rooms/**",
-                    "/hospital/images/**",
                     "/hospital/cares/**",
                     "/hospital/sections/**",
                     "/hospital/specialties/**",

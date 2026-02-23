@@ -30,25 +30,25 @@ public class DoctorAssistantWorkController {
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
-    @GetMapping("/doctor/all")
+    @GetMapping("/doctors/all")
     public ResponseEntity<ApiResponse> getDoctorWorks(@RequestParam String dTaj) {
         List<DoctorAssistantWorkDto> results = doctorAssistantWorkService.getDoctorWorks(dTaj);
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
-    @GetMapping("/assistant/all")
+    @GetMapping("/assistants/all")
     public ResponseEntity<ApiResponse> getAssistantWork(@RequestParam String aTaj) {
         List<DoctorAssistantWorkDto> results = doctorAssistantWorkService.getAssistantWorks(aTaj);
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
-    @GetMapping("/assistant/free")
+    @GetMapping("/assistants/free")
     public ResponseEntity<ApiResponse> getFreeAssistants(@RequestParam LocalDate day) {
         List<AssistantDto> results = doctorAssistantWorkService.getFreeAssistants(day);
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
-    @GetMapping("/doctor/free")
+    @GetMapping("/doctors/free")
     public ResponseEntity<ApiResponse> getFreeDoctors(@RequestParam LocalDate day) {
         List<DoctorDto> results = doctorAssistantWorkService.getFreeDoctors(day);
         return ResponseEntity.ok(new ApiResponse("Success", results));

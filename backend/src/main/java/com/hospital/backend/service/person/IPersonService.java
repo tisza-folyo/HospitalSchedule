@@ -14,6 +14,8 @@ public interface IPersonService {
 
     PatientDto getPatientByTaj(String taj);
 
+    List<PatientDto> getAllPatientsByDoctorTaj(String doctorTaj);
+
     List<DoctorDto> getAllDoctor();
 
     Object addPerson(RegisterRequest request);

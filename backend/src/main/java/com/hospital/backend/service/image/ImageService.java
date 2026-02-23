@@ -26,7 +26,7 @@ public class ImageService implements IImageService{
     private final PatientRepository patientRepository;
     private final AppointmentRepository appointmentRepository;
     private final ImageMapper imageMapper;
-
+    private final String buildDwnUrl = "/hospital/images/download";
     @Override
     public List<ImageDto> saveImages(List<MultipartFile> files, String pTaj) {
         Patient patient = patientRepository.findByTaj(pTaj).orElseThrow(() -> new ResourceNotFoundException("Patient"));
@@ -39,7 +39,6 @@ public class ImageService implements IImageService{
                 image.setImage(new SerialBlob(file.getBytes()));
                 image.setPatient(patient);
 
-                String buildDwnUrl = "/hospital/images/download";
                 String dwnUrl = buildDwnUrl + image.getImageId();
                 image.setDwnUrl(dwnUrl);
                 Image savedImage = imageRepository.save(image);
@@ -62,7 +61,6 @@ public class ImageService implements IImageService{
     public List<ImageDto> saveImages(List<MultipartFile> files, Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new ResourceNotFoundException("Appointment"));
         List<ImageDto> savedImageDto = new ArrayList<>();
-        appointment.setSymptomImg(new ArrayList<>());
         for (MultipartFile file : files) {
             try {
                 Image image = new Image();
@@ -71,7 +69,6 @@ public class ImageService implements IImageService{
                 image.setImage(new SerialBlob(file.getBytes()));
                 appointment.getSymptomImg().add(image);
 
-                String buildDwnUrl = "/hospital/images/download";
                 String dwnUrl = buildDwnUrl + image.getImageId();
                 image.setDwnUrl(dwnUrl);
                 Image savedImage = imageRepository.save(image);

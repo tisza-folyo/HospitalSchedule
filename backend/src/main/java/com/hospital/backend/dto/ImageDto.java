@@ -10,7 +10,6 @@ public class ImageDto {
     private String fileName;
     private String fileType;
     private String dwnUrl;
-    @Lob
-    private Blob image;
+    private String base64Data;
     private String patientTaj;
 }

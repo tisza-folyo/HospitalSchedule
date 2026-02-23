@@ -50,6 +50,12 @@ public class PersonService implements IPersonService {
     }
 
     @Override
+    public List<PatientDto> getAllPatientsByDoctorTaj(String doctorTaj){
+        List<Patient> patients = patientRepository.findAllByDoctorTaj(doctorTaj);
+        return patients.stream().map(personMapper::toPatientDto).toList();
+    }
+
+    @Override
     public List<DoctorDto> getAllDoctor(){
         return doctorRepository.findAll().stream().map(personMapper::toDoctorDto).toList();
     }
