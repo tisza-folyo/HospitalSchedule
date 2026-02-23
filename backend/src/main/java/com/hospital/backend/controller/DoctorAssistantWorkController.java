@@ -42,6 +42,19 @@ public class DoctorAssistantWorkController {
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
+    @GetMapping("/doctor/day")
+    public ResponseEntity<ApiResponse> getWorkByDayAndDoctor(@RequestParam String dTaj, @RequestParam LocalDate day) {
+        try {
+            DoctorAssistantWorkDto result = doctorAssistantWorkService.getWorkByDateAndDTaj(day, dTaj);
+            return ResponseEntity.ok(new ApiResponse("Success", result));
+        } catch (ResourceNotFoundException e) {
+            if (e.getMessage().contains("Work")) {
+                return ResponseEntity.ok(new ApiResponse("Free work space", null));
+            }
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("Error", e.getMessage()));
+        }
+    }
+
     @GetMapping("/assistants/free")
     public ResponseEntity<ApiResponse> getFreeAssistants(@RequestParam LocalDate day) {
         List<AssistantDto> results = doctorAssistantWorkService.getFreeAssistants(day);

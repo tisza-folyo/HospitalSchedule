@@ -50,6 +50,13 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
     }
 
     @Override
+    public DoctorAssistantWorkDto getWorkByDateAndDTaj(LocalDate day, String doctorTaj){
+        Doctor doctor = doctorRepository.findByTaj(doctorTaj).orElseThrow(() -> new ResourceNotFoundException("Doctor"));
+        DoctorAssistantWork work = doctorAssistantWorkRepository.findByDoctorAndWorkDay(doctor, day).orElseThrow(() -> new ResourceNotFoundException("Work"));
+        return doctorAssistantWorkMapper.toDto(work);
+    }
+
+    @Override
     public List<AssistantDto> getFreeAssistants(LocalDate day){
         List<Assistant> freeAssistants = assistantRepository.findFreeAssistantsByDay(day);
         return freeAssistants.stream().map(personMapper::toAssistantDto).toList();

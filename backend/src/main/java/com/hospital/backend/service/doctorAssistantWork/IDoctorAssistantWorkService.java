@@ -16,6 +16,8 @@ public interface IDoctorAssistantWorkService {
 
     List<DoctorAssistantWorkDto> getAssistantWorks(String assistantTaj);
 
+    DoctorAssistantWorkDto getWorkByDateAndDTaj(LocalDate day, String doctorTaj);
+
     List<AssistantDto> getFreeAssistants(LocalDate day);
 
     List<DoctorDto> getFreeDoctors(LocalDate day);
