@@ -9,6 +9,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { inject } from '@angular/core';
 import Swal from 'sweetalert2';
 import { Appointment } from '../appointment.model';
+import { DoctorModel } from '../doctor/doctor.model';
 
 @Component({
   selector: 'app-patient',
@@ -19,9 +20,9 @@ import { Appointment } from '../appointment.model';
 export class Patient {
 
   sections: string[] = [];
-  doctors: Doctor[] = [];
+  doctors: DoctorModel[] = [];
   section: string | null = null;
-  doctor: Doctor | null = null;
+  doctor: DoctorModel | null = null;
   date: string | null = null;
   availableSlots: string[] = [];
   selectedSlot: Appointment | null = null;

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { App } from '../../app';
 import { Appointment } from '../appointment.model';
+import { DoctorModel } from '../doctor/doctor.model';
 
 
 
@@ -45,8 +46,8 @@ export class PatientService {
         return this.http.get<{msg: string, data: any}>(this.getAllSectionsEnpoint);
     }
 
-    getAllDoctors(): Observable<{msg: string, data: Doctor[]}> {
-        return this.http.get<{msg: string, data: Doctor[]}>(this.getAllDoctorsEnpoint);
+    getAllDoctors(): Observable<{msg: string, data: DoctorModel[]}> {
+        return this.http.get<{msg: string, data: DoctorModel[]}>(this.getAllDoctorsEnpoint);
     }
 
     postAppointment(request: AppointmentRequest): Observable<{msg: string,data: any}> {

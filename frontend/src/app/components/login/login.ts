@@ -42,28 +42,6 @@ export class Login {
     return entry ? entry[0] : huName;
   }
 
-  private navigateByRole(role: string) {
-    switch (role) {
-      case 'ADMIN':
-        this.router.navigate(['/admin']);
-        break;
-      case 'DOCTOR':
-        this.router.navigate(['/doctor']);
-        break;
-      case 'PATIENT':
-        this.router.navigate(['/patient']);
-        break;
-      case 'ASSISTANT':
-        this.router.navigate(['/assistant']);
-        break;
-      case 'NURSE':
-        this.router.navigate(['/nurse']);
-        break;
-      default:
-        this.router.navigate(['/']);
-    }
-  }
-
   resetError() {
     if (this.errorHappened) {
       this.errorHappened = false;
@@ -103,17 +81,17 @@ export class Login {
         console.log("Login response:", response);
         const token = response.data.token;
         this.appService.setToken(token);
+        this.appService.setRoleName(person.roleName);
         this.loginService.getPersonInfo(response.data.taj, person.roleName).subscribe({
           next: (infoResponse) => {
             console.log("Person info response:", infoResponse);
             const d = infoResponse.data;
             this.appService.setTaj(d.taj ?? null);
-            this.appService.setRoleName(d.roleName ?? null);
             this.appService.setFirstName(d.firstName ?? null);
             this.appService.setLastName(d.lastName ?? null);
             this.appService.setSpeciality(d.speciality ?? null);
             this.appService.setSection(d.section ?? null);
-            this.navigateByRole(person.roleName);
+            this.appService.navigateByRole(person.roleName);
           },
           error: (infoError) => {
             console.error("Error fetching person info:", infoError);

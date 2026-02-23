@@ -17,6 +17,13 @@ export class App {
 
   constructor(private router: Router) {}
 
+  ngOnInit() {
+    const role = this.appService.getRoleName();
+    this.appService.navigateByRole(role!);
+  }
+
+  
+
   onLogout() {
   Swal.fire({
     title: 'Kijelentkezés',

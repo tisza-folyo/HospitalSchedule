@@ -4,7 +4,7 @@
     <ul class="nav nav-pills nav-fill mb-4 shadow-sm p-2 bg-white rounded border" id="doctorTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active py-3" id="patients-tab" data-bs-toggle="tab" data-bs-target="#patients"
-                type="button">
+                type="button" (click)="navigateToPatients()">
                 <i class="bi bi-people-fill me-2"></i>Betegek Adatai
             </button>
         </li>
@@ -30,16 +30,18 @@
                     <div class="card shadow-sm border-0 h-100">
                         <div class="card-header bg-primary text-white fw-bold">Beteg Kereső</div>
                         <div class="card-body">
-                            <input type="text" class="form-control mb-3" placeholder="Név vagy TAJ szám alapján...">
+                            <input type="text" class="form-control mb-3" placeholder="Név vagy TAJ szám alapján..."
+                                [(ngModel)]="filter" (input)="filterPatients()">
                             <div class="list-group overflow-auto" style="max-height: 500px;">
-                                <button class="list-group-item list-group-item-action text-start">
-                                    <h6 class="mb-1 fw-bold">Kovács János</h6>
-                                    <small class="text-muted">TAJ: 123-456-789</small>
+                                @for (p of filteredPatients; track p.taj) {
+                                <button class="list-group-item list-group-item-action text-start"
+                                    [class.active]="patient === p" (click)="selectPatient(p)">
+                                    <h6 class="mb-1 fw-bold">{{p.firstName}} {{p.lastName}}</h6>
+                                    <small [class.text-white]="patient === p" [class.text-muted]="patient !== p">
+                                        TAJ: {{p.taj}}
+                                    </small>
                                 </button>
-                                <button class="list-group-item list-group-item-action text-start active">
-                                    <h6 class="mb-1 fw-bold">Nagy Erzsébet</h6>
-                                    <small>TAJ: 987-654-321</small>
-                                </button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -50,23 +52,60 @@
                         <div class="card-body text-start">
                             <div class="row mb-4">
                                 <div class="col-md-6">
-                                    <p><strong>Név:</strong> Nagy Erzsébet</p>
-                                    <p><strong>Születési idő:</strong> 1975.04.12.</p>
+                                    <p><strong>Név:</strong> {{patient?.firstName}} {{patient?.lastName}}</p>
+                                    <p><strong>Életkor:</strong> {{patient?.age}}</p>
                                 </div>
                                 <div class="col-md-6 text-md-end">
-                                    <p><strong>TAJ:</strong> 987-654-321</p>
-                                    <p><strong>Lakcím:</strong> Budapest, Példa u. 5.</p>
+                                    <p><strong>TAJ:</strong> {{patient?.taj}}</p>
+                                    <p><strong>Emal:</strong> {{patient?.email}}</p>
                                 </div>
                             </div>
                             <hr>
                             <h6 class="fw-bold mb-3">Feltöltött Dokumentumok</h6>
-                            <div class="list-group list-group-flush">
-                                <a href="#"
-                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                    <span><i
-                                            class="bi bi-file-earmark-pdf text-danger me-2"></i>Laborlelet_2024_02.pdf</span>
-                                    <span class="badge bg-secondary rounded-pill">Megnyitás</span>
-                                </a>
+                            <div class="document-container border p-3 rounded bg-light">
+                                @for (file of patient?.personalDocImages; track file.dwnUrl) {
+                                <div class="file-item mb-4 pb-3 border-bottom">
+
+                                    @if (file.fileType === 'application/pdf') {
+                                    <div class="pdf-box p-3 border rounded bg-light text-center">
+                                        <h6 class="text-info">
+                                            <i class="bi bi-file-earmark-pdf-fill"></i> {{ file.fileName }}
+                                        </h6>
+                                        <button (click)="downloadPdf(file)" class="btn btn-outline-info btn-sm">
+                                            <i class="bi bi-eye"></i> Megnyitás / Letöltés
+                                        </button>
+                                    </div>
+                                    }
+                                    @else if (file.fileType.includes('image')) {
+                                    <div class="image-viewer text-center">
+                                        <h6 class="text-primary">
+                                            <i class="bi bi-image-fill"></i>{{ file.fileName }}
+                                        </h6>
+                                        <img [src]="'data:' + file.fileType + ';base64,' + file.base64Data"
+                                            class="img-fluid">
+                                    </div>
+                                    }
+                                    @else {
+                                    <div class="alert alert-info d-flex align-items-center">
+                                        <i class="bi bi-info-circle-fill me-2"></i>
+                                        <div>
+                                            <strong>{{ file.fileName }}</strong> ({{ file.fileType }})
+                                            nem jeleníthető meg közvetlenül.
+                                            <br>
+                                            <a [href]="file.dwnUrl" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                                Fájl megnyitása / Letöltése
+                                            </a>
+                                        </div>
+                                    </div>
+                                    }
+
+                                </div>
+                                } @empty {
+                                <div class="text-center py-4 text-muted">
+                                    <i class="bi bi-files fs-1 d-block mb-2"></i>
+                                    <p>Ehhez az pácienshez nem tartoznak csatolt fájlok.</p>
+                                </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -128,25 +167,26 @@
                             <hr>
                             <h6 class="fw-bold mb-2">Csatolt fájlok az időponthoz</h6>
                             <div class="document-container border p-3 rounded bg-light">
-                                @for (file of files; track file.fileName) {
+                                @for (file of files; track file.dwnUrl) {
                                 <div class="file-item mb-4 pb-3 border-bottom">
 
                                     @if (file.fileType === 'application/pdf') {
-                                    <div class="pdf-viewer">
-                                        <h6 class="text-danger">
-                                            <i class="bi bi-file-earmark-pdf-fill"></i> PDF: {{ file.fileName }}
+                                    <div class="pdf-box p-3 border rounded bg-light text-center">
+                                        <h6 class="text-info">
+                                            <i class="bi bi-file-earmark-pdf-fill"></i> {{ file.fileName }}
                                         </h6>
-                                        <embed [src]="file.dwnUrl | safeUrl" type="application/pdf" width="100%"
-                                            height="500px" />
+                                        <button (click)="downloadPdf(file)" class="btn btn-outline-info btn-sm">
+                                            <i class="bi bi-eye"></i> Megnyitás / Letöltés
+                                        </button>
                                     </div>
                                     }
                                     @else if (file.fileType.includes('image')) {
                                     <div class="image-viewer text-center">
                                         <h6 class="text-primary">
-                                            <i class="bi bi-image-fill"></i> Kép: {{ file.fileName }}
+                                            <i class="bi bi-image-fill"></i>{{ file.fileName }}
                                         </h6>
-                                        <img [src]="file.dwnUrl" class="img-fluid rounded shadow-sm border"
-                                            [alt]="file.fileName" />
+                                        <img [src]="'data:' + file.fileType + ';base64,' + file.base64Data"
+                                            class="img-fluid">
                                     </div>
                                     }
                                     @else {
@@ -181,38 +221,57 @@
             <div class="row g-3 text-center">
                 <div class="col-lg-12">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-dark text-white fw-bold">Asszisztens Keresése és Hozzárendelése</div>
+                        <div class="card-header bg-primary text-white fw-bold">Asszisztens Keresése és Hozzárendelése
+                        </div>
                         <div class="card-body">
-                            <div class="row g-2 mb-4 justify-content-center">
-                                <div class="col-md-3">
-                                    <input type="date" class="form-control" title="Válasszon napot">
+                            <div class="row g-2 mb-4 justify-content-between align-items-start">
+
+                                <div class="col-md-5 d-flex gap-2 align-items-start">
+                                    <div style="flex-grow: 1;">
+                                        <input type="date" class="form-row form-control" [(ngModel)]="dateFilter"
+                                            #dateInput="ngModel" required
+                                            [min]="today"
+                                            [class.is-invalid]="isFilterSubmitted && !dateFilter">
+
+                                        <div class="invalid-feedback" *ngIf="isFilterSubmitted && !dateFilter">
+                                            A dátum megadása kötelező!
+                                        </div>
+                                    </div>
+
+                                    <button class="btn btn-outline-danger" type="button" (click)="resetField('date')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                                            width="24px" fill="currentColor">
+                                            <path
+                                                d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
+                                        </svg>
+                                    </button>
+
+                                    <button class="btn btn-primary px-4" (click)="onAssistantSearch()">
+                                        Szűrés
+                                    </button>
                                 </div>
-                                <div class="col-md-3 text-center">
-                                    <input type="text" class="form-control text-center"
-                                        placeholder="Asszisztens név...">
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control text-center"
-                                        placeholder="Asszisztens TAJ...">
-                                </div>
-                                <div class="col-md-2">
-                                    <button class="btn btn-primary w-100 text-center">Szűrés</button>
+
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control text-center" [(ngModel)]="filter"
+                                        (input)="filterAssistants()" placeholder="Név vagy TAJ szám alapján...">
                                 </div>
                             </div>
 
                             <div class="row row-cols-1 row-cols-md-3 g-4">
+                                @for (a of filteredAssistants; track a.taj) {
                                 <div class="col">
                                     <div class="card h-100 border-info border-2">
                                         <div class="card-body text-center">
                                             <div class="display-6 mb-2 text-info text-center"><i
                                                     class="bi bi-person-check-fill"></i></div>
-                                            <h5 class="card-title fw-bold">Kiss Katalin</h5>
-                                            <p class="card-text text-muted mb-1">TAJ: 555-111-222</p>
+                                            <h5 class="card-title fw-bold">{{ a.lastName }} {{ a.firstName }}</h5>
+                                            <p class="card-text text-muted mb-1">TAJ: {{ a.taj }}</p>
                                             <span class="badge bg-success mb-3">Elérhető</span>
-                                            <button class="btn btn-info w-100 text-white">Mellém rendelés</button>
+                                            <button class="btn btn-info w-100 text-white" (click)="selectAssistant(a)">Mellém rendelés</button>
                                         </div>
                                     </div>
                                 </div>
+                                }
                             </div>
                         </div>
                     </div>

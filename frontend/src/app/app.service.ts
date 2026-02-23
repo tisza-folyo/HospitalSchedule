@@ -1,13 +1,15 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Appointment } from './components/appointment.model';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
+    private router = inject(Router);
     token = signal<string>(localStorage.getItem('token') || '');
     taj = signal<string | null>(localStorage.getItem('taj'));
     roleName = signal<string | null>(localStorage.getItem('roleName'));
@@ -62,6 +64,28 @@ export class AppService {
         }
         sig.set(value);
     }
+
+    navigateByRole(role: string) {
+        switch (role) {
+          case 'ADMIN':
+            this.router.navigate(['/admin']);
+            break;
+          case 'DOCTOR':
+            this.router.navigate(['/doctor']);
+            break;
+          case 'PATIENT':
+            this.router.navigate(['/patient']);
+            break;
+          case 'ASSISTANT':
+            this.router.navigate(['/assistant']);
+            break;
+          case 'NURSE':
+            this.router.navigate(['/nurse']);
+            break;
+          default:
+            this.router.navigate(['/']);
+        }
+      }
 
     statusConverter(status: string): string {
         switch (status) {
@@ -121,7 +145,9 @@ export class AppService {
         });
     }
 
-    formatData(data: any): Appointment[] {
+    formatData(data: any): Appointment[] { 
+        console.log(data);
+                    
         return data.map((item: any) => ({
             id: item.appointmentId,
             timeSlot: new Date(`${item.day}T${item.timeSlot}`),
@@ -131,6 +157,18 @@ export class AppService {
             status: item.status,
             files: item.symptomImg
         }));
+    }
+
+    nameConcatenator(firstName: string | null, lastName: string | null): string {
+        if (firstName && lastName) {
+            return lastName + ' ' + firstName;
+        } else if (firstName) {
+            return firstName;
+        } else if (lastName) {
+            return lastName;
+        } else {
+            return '';
+        }
     }
     constructor(private http: HttpClient) {
     }

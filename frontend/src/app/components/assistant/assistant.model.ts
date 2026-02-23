@@ -1,7 +1,7 @@
-export interface DoctorModel {
+export interface AssistantModel {
+    taj: string;
     firstName: string;
     lastName: string;
-    taj: string;
     age: number;
     email: string;
 }
