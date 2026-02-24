@@ -94,7 +94,7 @@ export class Assistant {
       this.assistantService.uploadToAppointment(this.selectedFiles,a.appointmentId).subscribe({
             next: (res) => {
                 this.appService.successPopup('Sikeres feltöltés!');
-                this.searchAppointments();
+                this.selectPatient(this.patient!,true);
             },
             error: (err) => this.appService.errorPopup('Hiba a feltöltésnél!')
         });
@@ -197,13 +197,16 @@ export class Assistant {
   this.assistantService.postAppointment(request).subscribe({
     next: () => {
       this.appService.successPopup('Foglalás sikeres!');
-      this.isBookingMode = false;
+      this.selectedSlot = null;
+      this.patient = null;
+      this.appoints = [];
+      this.appoId = null;
       this.searchAppointments();
     },
     error: (err) => this.appService.errorPopup('Hiba történt!')
   });
 
-  this.selectedSlot = null;
+  
 }
 
   navigateToAppoints(){
