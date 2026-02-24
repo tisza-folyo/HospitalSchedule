@@ -89,7 +89,7 @@ export class Patient {
       } else if (this.section) {
         this.patientService.getAppointmentsBySection(this.section, this.date).subscribe({
           next: (response) => {
-            this.appointments = this.appService.formatData(response.data);
+            this.appointments = this.appService.formatData(response.data).filter((a: AppointmentModel) => a.status === 'FREE');
           },
           error: (err) => {
             console.error('Error fetching appointments by section:', err);
@@ -98,7 +98,7 @@ export class Patient {
       } else {
         this.patientService.getAppointmentsByDate(this.date).subscribe({
           next: (response) => {
-            this.appointments = this.appService.formatData(response.data);
+            this.appointments = this.appService.formatData(response.data).filter((a: AppointmentModel) => a.status === 'FREE');
           },
           error: (err) => {
             console.error('Error fetching appointments by date:', err);

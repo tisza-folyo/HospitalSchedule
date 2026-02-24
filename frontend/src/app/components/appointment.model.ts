@@ -1,7 +1,7 @@
 import { FileModel } from "./file.model";
 
 export interface AppointmentModel{
-    id: number;
+    appointmentId: number;
     timeSlot: Date;
     doctorTaj: string;
     patientTaj: string;

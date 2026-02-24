@@ -145,9 +145,37 @@ export class AppService {
         });
     }
 
+    inputPopUp(title: string, label: string, placeholder: string) {
+        return Swal.fire({
+            title: title,
+            input: 'textarea',
+            inputLabel: label,
+            inputPlaceholder: placeholder,
+            inputAttributes: {
+                'aria-label': 'Ide írjon'
+            },
+            showCancelButton: true
+        })
+    }
+    filePopUp(title: string) {
+        return Swal.fire({
+            title: title,
+            input: 'file',
+            inputAttributes: {
+                'accept': 'image/*,application/pdf',
+                'multiple': 'multiple'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Feltöltés',
+            cancelButtonText: 'Kihagyás'
+        });
+    }
+
     formatData(data: any): AppointmentModel[] { 
+        console.log(data);
+        
         return data.map((item: any) => ({
-            id: item.appointmentId,
+            appointmentId: item.appointmentId,
             timeSlot: new Date(`${item.day}T${item.timeSlot}`),
             doctorTaj: item.doctor?.taj,
             patientTaj: item.patient?.taj,
