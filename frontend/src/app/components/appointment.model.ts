@@ -1,6 +1,6 @@
 import { FileModel } from "./file.model";
 
-export interface Appointment{
+export interface AppointmentModel{
     id: number;
     timeSlot: Date;
     doctorTaj: string;

@@ -7,5 +7,5 @@ export interface WorkModel {
     workDay: string;
     uTaj: string;
     doctor: DoctorModel | null;
-    assistants: AssistantModel | null;
+    assistant: AssistantModel | null;
 }

@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { App } from '../../app';
-import { Appointment } from '../appointment.model';
 import { DoctorModel } from '../doctor/doctor.model';
+import { AppointmentModel } from '../appointment.model';
 
 
 
@@ -26,20 +26,20 @@ export class PatientService {
 
     constructor(private http: HttpClient) {}
 
-    getAppointmentsByDoctor(dTaj: string, day: string): Observable<{msg: string, data: Appointment[]}> {
-        return this.http.get<{msg: string, data: Appointment[]}>(this.getAppointmentsByDoctorEnpoint(dTaj, day));
+    getAppointmentsByDoctor(dTaj: string, day: string): Observable<{msg: string, data: AppointmentModel[]}> {
+        return this.http.get<{msg: string, data: AppointmentModel[]}>(this.getAppointmentsByDoctorEnpoint(dTaj, day));
     }
 
-    getAppointmentsByPatient(pTaj: string): Observable<{msg: string, data: Appointment[]}> {
-        return this.http.get<{msg: string, data: Appointment[]}>(this.getAppointmentsByPatientEnpoint(pTaj));
+    getAppointmentsByPatient(pTaj: string): Observable<{msg: string, data: AppointmentModel[]}> {
+        return this.http.get<{msg: string, data: AppointmentModel[]}>(this.getAppointmentsByPatientEnpoint(pTaj));
     }
 
-    getAppointmentsBySection(section: string, day: string): Observable<{msg: string, data: Appointment[]}> {
-        return this.http.get<{msg: string, data: Appointment[]}>(this.getAppointmentsBySectionEnpoint(section, day));
+    getAppointmentsBySection(section: string, day: string): Observable<{msg: string, data: AppointmentModel[]}> {
+        return this.http.get<{msg: string, data: AppointmentModel[]}>(this.getAppointmentsBySectionEnpoint(section, day));
     }
     
-    getAppointmentsByDate(date: string): Observable<{msg: string, data: Appointment[]}> {
-        return this.http.get<{msg: string, data: Appointment[]}>(this.getAppointmentsByDateEnpoint(date));
+    getAppointmentsByDate(date: string): Observable<{msg: string, data: AppointmentModel[]}> {
+        return this.http.get<{msg: string, data: AppointmentModel[]}>(this.getAppointmentsByDateEnpoint(date));
     }
 
     getAllSections(): Observable<{msg: string, data: any}> {

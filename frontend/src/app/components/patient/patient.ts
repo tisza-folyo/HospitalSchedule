@@ -8,8 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { inject } from '@angular/core';
 import Swal from 'sweetalert2';
-import { Appointment } from '../appointment.model';
 import { DoctorModel } from '../doctor/doctor.model';
+import { AppointmentModel } from '../appointment.model';
 
 @Component({
   selector: 'app-patient',
@@ -25,8 +25,8 @@ export class Patient {
   doctor: DoctorModel | null = null;
   date: string | null = null;
   availableSlots: string[] = [];
-  selectedSlot: Appointment | null = null;
-  appointments: Appointment[] = [];
+  selectedSlot: AppointmentModel | null = null;
+  appointments: AppointmentModel[] = [];
   today: string = '';
   missingDate: boolean = false;
   showProfile: boolean = false;
@@ -80,7 +80,7 @@ export class Patient {
       if (this.doctor) {
         this.patientService.getAppointmentsByDoctor(this.doctor.taj, this.date).subscribe({
           next: (response) => {
-            this.appointments = this.appService.formatData(response.data).filter((a: Appointment) => a.status === 'FREE');
+            this.appointments = this.appService.formatData(response.data).filter((a: AppointmentModel) => a.status === 'FREE');
           },
           error: (err) => {
             console.error('Error fetching appointments by doctor:', err);
@@ -110,7 +110,7 @@ export class Patient {
     }
   }
 
-  setSelectedSlot(appointment: Appointment) {
+  setSelectedSlot(appointment: AppointmentModel) {
     this.selectedSlot = appointment;
   }
 

@@ -77,7 +77,7 @@
                                         <h6 class="text-info">
                                             <i class="bi bi-file-earmark-pdf-fill"></i> {{ file.fileName }}
                                         </h6>
-                                        <button (click)="downloadPdf(file)" class="btn btn-outline-info btn-sm">
+                                        <button (click)="this.appService.downloadPdf(file)" class="btn btn-outline-info btn-sm">
                                             <i class="bi bi-eye"></i> Megnyitás / Letöltés
                                         </button>
                                     </div>
@@ -181,7 +181,7 @@
                                         <h6 class="text-info">
                                             <i class="bi bi-file-earmark-pdf-fill"></i> {{ file.fileName }}
                                         </h6>
-                                        <button (click)="downloadPdf(file)" class="btn btn-outline-info btn-sm">
+                                        <button (click)="this.appService.downloadPdf(file)" class="btn btn-outline-info btn-sm">
                                             <i class="bi bi-eye"></i> Megnyitás / Letöltés
                                         </button>
                                     </div>
@@ -236,7 +236,7 @@
                                     <div style="flex-grow: 1;">
                                         <input type="date" class="form-row form-control" [(ngModel)]="dateFilter"
                                             #dateInput="ngModel" required [min]="today"
-                                            [class.is-invalid]="isFilterSubmitted && !dateFilter">
+                                            [class.is-invalid]="isFilterSubmitted && !dateFilter" (click)="navigateToAssistant()">
 
                                         @if (isFilterSubmitted && !dateFilter) {
                                         <div class="invalid-feedback">

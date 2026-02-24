@@ -3,7 +3,6 @@ import { DoctorService } from './doctor.service';
 import { AppService } from '../../app.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Appointment } from '../appointment.model';
 import { FileModel } from '../file.model';
 import { environment } from '../../../environments/environment';
 import { PatientModel } from '../patient/patient.model';
@@ -12,6 +11,7 @@ import { Assistant } from '../assistant/assistant';
 import { AssistantRequest } from '../assistant/assistant.requrest';
 import { WorkModel } from '../work.model';
 import { firstValueFrom } from 'rxjs';
+import { AppointmentModel } from '../appointment.model';
 
 @Component({
   selector: 'app-doctor',
@@ -21,7 +21,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class Doctor {
   appService = inject(AppService);
-  appointments: Appointment[] = [];
+  appointments: AppointmentModel[] = [];
   patient: PatientModel | null = null;
   description: string = '';
   statusFilter: string = '';
@@ -156,7 +156,7 @@ export class Doctor {
     });
   }
 
-  selectAppointment(appointment: Appointment) {
+  selectAppointment(appointment: AppointmentModel) {
     if (appointment.patientTaj) {
       this.getPatientByTaj(appointment.patientTaj);
     }
@@ -165,19 +165,8 @@ export class Doctor {
     this.files = appointment.files || [];
   }
 
-  downloadPdf(file: any) {
-    const byteCharacters = atob(file.base64Data);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
+  
 
-    const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-    const fileURL = URL.createObjectURL(blob);
-    window.open(fileURL, '_blank');
-  }
   async onWorkSearch() {
     this.isFilterSubmitted = true;
     if (!this.startDate || !this.endDate) return;
@@ -198,7 +187,7 @@ export class Doctor {
             workDay: dateForRequest,
             uTaj: this.appService.getTaj()!,
             doctor: null,
-            assistants: null
+            assistant: null
           });
         } else { 
           this.works.push(response.data);

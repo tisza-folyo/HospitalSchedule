@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Appointment } from '../appointment.model';
 import { Patient } from '../patient/patient';
 import { PatientModel } from '../patient/patient.model';
 import { AssistantModel } from '../assistant/assistant.model';
 import { AssistantRequest } from '../assistant/assistant.requrest';
 import { WorkModel } from '../work.model';
+import { AppointmentModel } from '../appointment.model';
 
 
 
@@ -26,8 +26,8 @@ export class DoctorService {
 
     constructor(private http: HttpClient) { }
 
-    getAppointmentsByDoctor(dTaj: string): Observable<{msg: string, data: Appointment[]}> {
-        return this.http.get<{msg: string, data: Appointment[]}>(this.getAppointmentsByDoctorEndpoint(dTaj));
+    getAppointmentsByDoctor(dTaj: string): Observable<{msg: string, data: AppointmentModel[]}> {
+        return this.http.get<{msg: string, data: AppointmentModel[]}>(this.getAppointmentsByDoctorEndpoint(dTaj));
     }
 
     getPatientByTaj(taj: string): Observable<{msg: string, data: PatientModel}> {

@@ -1,9 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Appointment } from './components/appointment.model';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { AppointmentModel } from './components/appointment.model';
 
 
 
@@ -145,9 +145,7 @@ export class AppService {
         });
     }
 
-    formatData(data: any): Appointment[] { 
-        console.log(data);
-                    
+    formatData(data: any): AppointmentModel[] { 
         return data.map((item: any) => ({
             id: item.appointmentId,
             timeSlot: new Date(`${item.day}T${item.timeSlot}`),
@@ -170,6 +168,20 @@ export class AppService {
             return '';
         }
     }
+
+    downloadPdf(file: any) {
+    const byteCharacters = atob(file.base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+
+    const blob = new Blob([byteArray], { type: file.fileType });
+
+    const fileURL = URL.createObjectURL(blob);
+    window.open(fileURL, '_blank');
+  }
     constructor(private http: HttpClient) {
     }
 

@@ -1,7 +1,7 @@
 import { FileModel } from "../file.model";
 
 export interface PatientModel {
-    taj: number;
+    taj: string;
     firstName: string;
     lastName: string;
     age: number;
