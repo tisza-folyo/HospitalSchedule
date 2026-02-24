@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface DoctorRepository extends JpaRepository<Doctor,String> {
     boolean existsBySpecialtySpecialtyName(String specialtyName);
@@ -32,4 +33,7 @@ public interface DoctorRepository extends JpaRepository<Doctor,String> {
     Optional<Doctor> findByTaj(String dTaj);
 
     boolean existsByEmail(String email);
+
+    @Query("SELECT DISTINCT w.doctor FROM DoctorAssistantWork w WHERE w.assistant.taj = :aTaj AND w.doctor IS NOT NULL")
+    Set<Doctor> findUniqueDoctorsByAssistantTaj(@Param("aTaj") String aTaj);
 }

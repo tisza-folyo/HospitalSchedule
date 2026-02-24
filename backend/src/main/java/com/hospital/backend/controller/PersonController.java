@@ -43,6 +43,12 @@ public class PersonController {
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
+    @GetMapping("/doctors/patients/{aTaj}")
+    public ResponseEntity<ApiResponse> getAllPatientsByAssistantTaj(@PathVariable String aTaj){
+        List<PatientDto> results = personService.getAllPatientsByAssistantTaj(aTaj);
+        return ResponseEntity.ok(new ApiResponse("Success", results));
+    }
+
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> addPerson(@RequestBody RegisterRequest registerPatientRequest) {
         Object result = personService.addPerson(registerPatientRequest);

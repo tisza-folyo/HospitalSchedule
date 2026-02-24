@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +53,16 @@ public class PersonService implements IPersonService {
     @Override
     public List<PatientDto> getAllPatientsByDoctorTaj(String doctorTaj){
         List<Patient> patients = patientRepository.findAllByDoctorTaj(doctorTaj);
+        return patients.stream().map(personMapper::toPatientDto).toList();
+    }
+
+    @Override
+    public List<PatientDto> getAllPatientsByAssistantTaj(String assistantTaj){
+        Set<Doctor> doctors = doctorRepository.findUniqueDoctorsByAssistantTaj(assistantTaj);
+        List<Patient> patients = doctors.stream()
+                .flatMap(d -> patientRepository.findAllByDoctorTaj(d.getTaj()).stream())
+                .distinct()
+                .toList();
         return patients.stream().map(personMapper::toPatientDto).toList();
     }
 

@@ -20,4 +20,6 @@ public interface PatientRepository extends JpaRepository<Patient,String> {
     boolean existsByTaj(String taj);
     @Query("SELECT p FROM Patient p JOIN Appointment a ON p.taj = a.patient.taj WHERE a.doctor.taj = :doctorTaj")
     List<Patient> findAllByDoctorTaj(@Param("doctorTaj") String doctorTaj);
+
+
 }
