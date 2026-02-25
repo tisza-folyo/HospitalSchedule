@@ -23,4 +23,8 @@ public interface DoctorAssistantWorkRepository extends JpaRepository<DoctorAssis
     boolean existsByAssistantAndWorkDay(Assistant assistant, LocalDate day);
 
     Optional<DoctorAssistantWork> findFirstByAssistantIsNullAndWorkDay(LocalDate day);
+
+    List<DoctorAssistantWork> findAllByAssistantIsNullAndWorkDayAfter(LocalDate workDayIsGreaterThan);
+
+    List<DoctorAssistantWork> findAllByAssistantAndWorkDayBetween(Assistant assistant, LocalDate workDayAfter, LocalDate workDayBefore);
 }

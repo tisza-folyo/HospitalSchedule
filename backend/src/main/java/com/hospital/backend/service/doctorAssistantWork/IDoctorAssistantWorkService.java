@@ -12,6 +12,10 @@ import java.util.List;
 public interface IDoctorAssistantWorkService {
     List<DoctorAssistantWorkDto> getAllWorks();
 
+    List<DoctorAssistantWorkDto> getAllWorksAfterDay(LocalDate day);
+
+    List<DoctorAssistantWorkDto> getAllWorksByAssistantAndDate(String aTaj, LocalDate workDayAfter, LocalDate workDayBefore);
+
     List<DoctorAssistantWorkDto> getDoctorWorks(String doctorTaj);
 
     List<DoctorAssistantWorkDto> getAssistantWorks(String assistantTaj);

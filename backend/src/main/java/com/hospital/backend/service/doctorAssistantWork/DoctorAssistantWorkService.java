@@ -36,6 +36,19 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
     }
 
     @Override
+    public List<DoctorAssistantWorkDto> getAllWorksAfterDay(LocalDate day){
+        List<DoctorAssistantWork> works = doctorAssistantWorkRepository.findAllByAssistantIsNullAndWorkDayAfter(day);
+        return doctorAssistantWorkMapper.toDtoList(works);
+    }
+
+    @Override
+    public List<DoctorAssistantWorkDto> getAllWorksByAssistantAndDate(String aTaj, LocalDate workDayAfter, LocalDate workDayBefore){
+        Assistant assistant = assistantRepository.findByTaj(aTaj).orElseThrow(() -> new ResourceNotFoundException("Assistant"));
+        List<DoctorAssistantWork> works = doctorAssistantWorkRepository.findAllByAssistantAndWorkDayBetween(assistant,workDayAfter,workDayBefore);
+        return doctorAssistantWorkMapper.toDtoList(works);
+    }
+
+    @Override
     public List<DoctorAssistantWorkDto> getDoctorWorks(String doctorTaj){
         Doctor doctor = getDoctorByTaj(doctorTaj);
         List<DoctorAssistantWork> works = doctorAssistantWorkRepository.findAllByDoctor(doctor);
