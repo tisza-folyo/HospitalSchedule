@@ -72,6 +72,12 @@ public class PersonService implements IPersonService {
     }
 
     @Override
+    public List<NurseDto> getAllFreeNurse(){
+        List<Nurse> nurses = nurseRepository.findAvailableNurses();
+        return nurses.stream().map(personMapper::toNurseDto).toList();
+    }
+
+    @Override
     public Object addPerson(RegisterRequest request) {
         Role role = roleRepository.findByRoleName(request.getRoleName()).orElseThrow(() -> new ResourceNotFoundException(request.getRoleName()));
         String roleName = role.getRoleName();

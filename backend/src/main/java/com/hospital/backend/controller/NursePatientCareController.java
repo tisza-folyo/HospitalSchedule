@@ -1,6 +1,7 @@
 package com.hospital.backend.controller;
 
 import com.hospital.backend.dto.NursePatientCareDto;
+import com.hospital.backend.exception.ResourceNotFoundException;
 import com.hospital.backend.request.AddCareRequest;
 import com.hospital.backend.service.nursePatientCare.INursePatientCareService;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +45,12 @@ public class NursePatientCareController {
 
     @GetMapping("/active")
     public ResponseEntity<ApiResponse> getActiveCareByPatient(@RequestParam String pTaj) {
-        NursePatientCareDto result = nursePatientCareService.getActiveCareByPatient(pTaj);
-        return ResponseEntity.ok(new ApiResponse("Success", result));
+        try {
+            NursePatientCareDto result = nursePatientCareService.getActiveCareByPatient(pTaj);
+            return ResponseEntity.ok(new ApiResponse("Success", result));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.ok(new ApiResponse("No active care", null));
+        }
     }
 
     @PostMapping("/add")

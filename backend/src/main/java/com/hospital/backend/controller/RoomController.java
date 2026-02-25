@@ -23,6 +23,12 @@ public class RoomController {
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
+    @GetMapping("/all/free")
+    public ResponseEntity<ApiResponse> getAllRoomsWithFreeSpace() {
+        List<RoomDto> results = roomService.getAllRoomsWithFreeBeds();
+        return ResponseEntity.ok(new ApiResponse("Success", results));
+    }
+
     @GetMapping("/{roomId}/beds")
     public ResponseEntity<ApiResponse> getRoomBeds(@PathVariable long roomId) {
         List<BedDto> results = roomService.getRoomBeds(roomId);

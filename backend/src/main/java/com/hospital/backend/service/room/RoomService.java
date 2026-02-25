@@ -39,6 +39,12 @@ public class RoomService implements IRoomService {
     }
 
     @Override
+    public List<RoomDto> getAllRoomsWithFreeBeds(){
+        List<Room> rooms = roomRepository.findRoomsWithAvailableBeds();
+        return roomMapper.toDtoList(rooms);
+    }
+
+    @Override
     public RoomDto addRoom(RoomDto roomDto){
         if (roomRepository.existsByFloorAndRoomNumber(roomDto.getFloor(), roomDto.getRoomNumber())) throw new AlreadyExistsException("Room on this floor");
         Room room = roomMapper.toEntity(roomDto);

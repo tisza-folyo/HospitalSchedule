@@ -11,6 +11,8 @@ public interface IRoomService {
 
     List<RoomDto> getAllRooms();
 
+    List<RoomDto> getAllRoomsWithFreeBeds();
+
     RoomDto addRoom(RoomDto roomDto);
 
 

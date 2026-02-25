@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
@@ -16,6 +18,12 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("${api.prefix}/beds")
 public class BedController {
     private final IBedService bedService;
+
+    @GetMapping("/all/free")
+    public ResponseEntity<ApiResponse> getAllFreeBeds() {
+        List<BedDto> results = bedService.getAllFreeBeds();
+        return ResponseEntity.ok(new ApiResponse("Success", results));
+    }
 
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addBed(@RequestParam long roomId, @RequestParam int bedNumber) {

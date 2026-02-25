@@ -11,12 +11,20 @@ import com.hospital.backend.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BedService implements IBedService {
     private final BedRepository bedRepository;
     private final RoomRepository roomRepository;
     private final BedMapper bedMapper;
+
+    @Override
+    public List<BedDto> getAllFreeBeds(){
+        List<Bed> beds = bedRepository.findUnassignedBeds();
+        return bedMapper.toDtoList(beds);
+    }
 
     @Override
     public BedDto addBed(long roomId, int bedNumber){

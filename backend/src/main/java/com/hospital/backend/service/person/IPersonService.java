@@ -1,6 +1,7 @@
 package com.hospital.backend.service.person;
 
 import com.hospital.backend.dto.DoctorDto;
+import com.hospital.backend.dto.NurseDto;
 import com.hospital.backend.dto.PatientDto;
 import com.hospital.backend.model.Person;
 import com.hospital.backend.request.RegisterRequest;
@@ -19,6 +20,8 @@ public interface IPersonService {
     List<PatientDto> getAllPatientsByAssistantTaj(String assistantTaj);
 
     List<DoctorDto> getAllDoctor();
+
+    List<NurseDto> getAllFreeNurse();
 
     Object addPerson(RegisterRequest request);
 
