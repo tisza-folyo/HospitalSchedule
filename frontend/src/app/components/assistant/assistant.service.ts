@@ -9,6 +9,9 @@ import { AssistantRequest } from '../assistant/assistant.requrest';
 import { WorkModel } from '../work.model';
 import { AppointmentModel } from '../appointment.model';
 import { DoctorModel } from '../doctor/doctor.model';
+import { NurseModel } from '../nurse/nurse.model';
+import { RoomModel } from '../room.model';
+import { BedModel } from '../bed.model';
 
 
 
@@ -25,9 +28,12 @@ export class AssistantService {
     private getAllWorksAfterDayEnpoint= (day: string) => `${this.apiUrl}/works/all/after?day=${day}`;
     private getAllWorksBetweenEndpoint = (taj: string, dayA: string, dayB: string) => `${this.apiUrl}/works/all/between?aTaj=${taj}&dayAfter=${dayA}&dayBefore=${dayB}`;
     private getAllFreeAssistantsEndpoint = (day: string) => `${this.apiUrl}/works/assistants/free?day=${day}`;
-
     private getAllSectionsEnpoint: string = `${this.apiUrl}/sections/all`;
     private getAllDoctorsEnpoint: string = `${this.apiUrl}/people/doctors/all`;
+    private getAllFreeNursesEndpoint: string = `${this.apiUrl}/people/nurses/all/free`;
+    private getAllFreeRoomsEndpoint: string = `${this.apiUrl}/rooms/all/free`;
+    private getAllFreeBedsEndpoint: string = `${this.apiUrl}/beds/all/free`;
+
     private postAppointmentEnpoint: string = `${this.apiUrl}/appointments/add-request`;
     private postFileEnpoint = (id: number): string => `${this.apiUrl}/images/upload-to-appointment?appointmentId=${id}`;
     private updateAssistantEnpoint: string = `${this.apiUrl}/works/assign`;
@@ -75,6 +81,18 @@ export class AssistantService {
 
     getAllFreeAssistants(day: string):Observable<{msg: string, data: AssistantModel[]}>{
         return this.http.get<{msg: string, data: AssistantModel[]}>(this.getAllFreeAssistantsEndpoint(day));
+    }
+
+    getAllFreeNurses():Observable<{msg: string, data: NurseModel[]}>{
+        return this.http.get<{msg: string, data: NurseModel[]}>(this.getAllFreeNursesEndpoint);
+    }
+
+    getAllFreeRooms():Observable<{msg: string, data: RoomModel[]}>{
+        return this.http.get<{msg: string, data: RoomModel[]}>(this.getAllFreeRoomsEndpoint);
+    }
+
+    getAllFreeBeds():Observable<{msg: string, data: BedModel[]}>{
+        return this.http.get<{msg: string, data: BedModel[]}>(this.getAllFreeBedsEndpoint);
     }
 
     postAppointment(request: AppointmentRequest): Observable<{msg: string,data: any}> {

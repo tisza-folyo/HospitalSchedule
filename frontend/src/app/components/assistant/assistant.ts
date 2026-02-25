@@ -9,6 +9,10 @@ import { WorkModel } from '../work.model';
 import { AppointmentModel } from '../appointment.model';
 import { AssistantRequest } from './assistant.requrest';
 import { AssistantModel } from './assistant.model';
+import { CareModel } from '../care.model';
+import { RoomModel } from '../room.model';
+import { BedModel } from '../bed.model';
+import { NurseModel } from '../nurse/nurse.model';
 
 @Component({
   selector: 'app-assistant',
@@ -31,6 +35,14 @@ export class Assistant {
   works: WorkModel[] = [];
   assistants: AssistantModel[] = [];
   assistant: AssistantModel | null = null;
+  care: CareModel | null = null;
+  room: RoomModel | null = null;
+  rooms: RoomModel[] = [];
+  bed: BedModel | null = null;
+  beds: BedModel[] = [];
+  nurse: NurseModel | null = null;
+  nurses: NurseModel [] = [];
+
 
   appoId: number | null = null;
   filter: string= '';
@@ -43,6 +55,8 @@ export class Assistant {
   missingDate: boolean = false;
   section: string = '';
   sections: string[] = [];
+  isPostingCare: boolean = false;
+  isExitCare: boolean = false;
 
   constructor(private assistantService: AssistantService){}
 
@@ -57,6 +71,7 @@ export class Assistant {
         console.error('Error fetching patients:', err);
       }
     });
+    this.loadCareData();
   }
 
   filterPatients(){
@@ -260,7 +275,27 @@ export class Assistant {
   navigateToPatient(){
     this.filter = '';
     this.patient = null;
+    this.care = null;
+    
   }
+
+  postCare(){}
+
+  exitPatient(){}
+
+
+  openPostCare(){
+    this.isPostingCare = true;
+    this.loadCareData();
+  }
+
+  closePostCare(){
+    this.isPostingCare = false;
+    this.nurses = [];
+    this.rooms = [];
+    this.beds = [];
+  }
+
 
   switchToBooking(){
     if(this.isBookingMode){
@@ -342,6 +377,33 @@ export class Assistant {
       },
       error: (err) => {
         console.error('Error fetching', err);
+      }
+    });
+  }
+
+  private loadCareData(){
+    this.assistantService.getAllFreeNurses().subscribe({
+      next: (response) => {
+        this.nurses = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching patients:', err);
+      }
+    });
+    this.assistantService.getAllFreeRooms().subscribe({
+      next: (response) => {
+        this.rooms = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching patients:', err);
+      }
+    });
+    this.assistantService.getAllFreeBeds().subscribe({
+      next: (response) => {
+        this.beds = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching patients:', err);
       }
     });
   }
