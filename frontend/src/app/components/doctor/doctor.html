@@ -141,7 +141,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @for (a of appointments; track a.id) {
+                                        @for (a of appointments; track a.appointmentId) {
                                         @if (!statusFilter || a.status === statusFilter) {
                                         <tr style="cursor: pointer;" (click)="selectAppointment(a)">
                                             <td>{{ a.timeSlot.toISOString().split('T')[0] }}</td>

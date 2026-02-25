@@ -7,6 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { DoctorModel } from '../doctor/doctor.model';
 import { WorkModel } from '../work.model';
 import { AppointmentModel } from '../appointment.model';
+import { AssistantRequest } from './assistant.requrest';
+import { AssistantModel } from './assistant.model';
 
 @Component({
   selector: 'app-assistant',
@@ -22,14 +24,16 @@ export class Assistant {
   doctors: DoctorModel[] = [];
   filteredDoctors: DoctorModel[] = [];
   doctor:DoctorModel | null = null;
-  works: WorkModel[] = [];
   appoints: AppointmentModel[] = [];
   selectedSlot: AppointmentModel | null = null;
   selectedFiles: File[] = [];
+  work : WorkModel | null = null;
+  works: WorkModel[] = [];
+  assistants: AssistantModel[] = [];
+  assistant: AssistantModel | null = null;
 
   appoId: number | null = null;
   filter: string= '';
-  dateFilter: string = '';
   today: string = '';
   isFilterSubmitted: boolean = false;
   startDate: string = '';
@@ -114,18 +118,41 @@ export class Assistant {
       this.date = null;
       this.section = '';
       this.doctor = null;
+    }else if(field = 'date-to-date'){
+      this.date = null;
+      this.endDate = '';
+      this.startDate = '';
+      this.works = [];
+      this.work = null;
+      this.assistants = [];
+      this.assistant = null;
     }
   }
 
-  onDoctorSearch(){}
 
-  filterDoctors(){}
+  onWorkSearch(){
+    this.assistantService.getAllWorksBetween(this.appService.getTaj()!, this.startDate, this.endDate).subscribe({
+      next: (response) => {
+        this.works = response.data;
+        console.log(response.data);
+        
+      },
+      error: (err) => {
+        console.error('Error fetching', err);
+      }
+    });
+  }
 
-  selectDoctor(d: DoctorModel){}
+  selectWork(w: WorkModel){
+    if(w.workId == this.work?.workId){
+      this.work = null;
+    }else{
+      this.work = w;
+      this.loadOwnWorks(w.workDay);
+    }
+  }
 
-  onWorkSearch(){}
 
-  changeAssistant(w: WorkModel){}
 
   searchAppointments(){
     this.missingDate = false;
@@ -218,6 +245,16 @@ export class Assistant {
     this.date = null;
     this.section = '';
     this.doctor = null;
+    this.isBookingMode = false;
+  }
+
+  navigatToSchedule(){
+    this.date = null;
+    this.work = null;
+    this.works = [];
+    this.isBookingMode = false;
+    this.endDate = '';
+    this.startDate = '';
   }
 
   navigateToPatient(){
@@ -255,6 +292,23 @@ export class Assistant {
 
   }
 
+  switchBetweenWorks(field : string){
+    if(field == 'own'){
+      this.isBookingMode = false;
+    }else if(field == 'other'){
+      this.isBookingMode = true;
+      this.loadAvaliableWorks();
+    }
+  }
+
+  assign(w: WorkModel) {
+    this.updateAssistant(w.doctor!.taj, this.appService.getTaj()!, w.workDay, this.appService.getTaj()!,"assign");
+  }
+
+  changeAssistant(w: WorkModel, a: AssistantModel){
+    this.updateAssistant(w.doctor!.taj, a!.taj, w.workDay, this.appService.getTaj()!,"replace");
+  }
+
   get maxEndDate(): string {
     if (!this.startDate) return '';
     const date = new Date(this.startDate);
@@ -267,5 +321,64 @@ export class Assistant {
     const date = new Date(this.endDate);
     date.setDate(date.getDate() - 7);
     return date.toISOString().split('T')[0];
+  }
+
+  private loadAvaliableWorks(){
+    this.works = [];
+    this.assistantService.getAllWorksAfterDay(this.today).subscribe({
+      next: (response) => {
+        this.works = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching', err);
+      }
+    });
+  }
+
+  private loadOwnWorks(day:string){
+    this.assistantService.getAllFreeAssistants(day).subscribe({
+      next: (response) => {
+        this.assistants = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching', err);
+      }
+    });
+  }
+
+  private updateAssistant(dTaj: string, aTaj: string, day: string, uTaj: string, mode: string) {
+    const req: AssistantRequest = {
+      dTaj: dTaj,
+      aTaj: aTaj,
+      day: day,
+      uTaj: uTaj
+    };
+
+    if (mode == 'assign') {
+      this.assistantService.updateAssistant(req).subscribe({
+        next: (response) => {
+          this.appService.successPopup("Siker!");
+          this.loadAvaliableWorks();
+        },
+        error: (err) => {
+          this.appService.errorPopup("Hiba!");
+          console.log(err.error.message);
+
+        }
+      });
+    }else if(mode == 'replace'){
+      this.assistantService.replaceAssistant(req).subscribe({
+        next: (response) => {
+          this.appService.successPopup("Siker!");
+          this.loadOwnWorks(req.day);
+          this.work = null;
+        },
+        error: (err) => {
+          this.appService.errorPopup("Hiba!");
+          console.log(err.error.message);
+
+        }
+      });
+    }
   }
 }

@@ -22,11 +22,16 @@ export class AssistantService {
     private getAppointmentsBySectionEnpoint= (section: string, day: string): string => `${this.apiUrl}/appointments/section/${section}?day=${day}`;
     private getAppointmentsByDateEnpoint= (date: string): string => `${this.apiUrl}/appointments/daily?day=${date}`;
     private getAppointmentsByDoctorEnpoint= (dTaj: string, day: string): string => `${this.apiUrl}/appointments/doctor/${dTaj}?day=${day}`;
+    private getAllWorksAfterDayEnpoint= (day: string) => `${this.apiUrl}/works/all/after?day=${day}`;
+    private getAllWorksBetweenEndpoint = (taj: string, dayA: string, dayB: string) => `${this.apiUrl}/works/all/between?aTaj=${taj}&dayAfter=${dayA}&dayBefore=${dayB}`;
+    private getAllFreeAssistantsEndpoint = (day: string) => `${this.apiUrl}/works/assistants/free?day=${day}`;
 
     private getAllSectionsEnpoint: string = `${this.apiUrl}/sections/all`;
     private getAllDoctorsEnpoint: string = `${this.apiUrl}/people/doctors/all`;
     private postAppointmentEnpoint: string = `${this.apiUrl}/appointments/add-request`;
     private postFileEnpoint = (id: number): string => `${this.apiUrl}/images/upload-to-appointment?appointmentId=${id}`;
+    private updateAssistantEnpoint: string = `${this.apiUrl}/works/assign`;
+    private replaceAssistantEnpoint: string = `${this.apiUrl}/works/replace`;
 
     constructor(private http: HttpClient){}
 
@@ -60,9 +65,29 @@ export class AssistantService {
         return this.http.get<{msg: string, data: AppointmentModel[]}>(this.getAppointmentsByDoctorEnpoint(dTaj, day));
     }
 
+    getAllWorksAfterDay(day: string): Observable<{msg: string, data: WorkModel[]}>{
+        return this.http.get<{msg: string, data: WorkModel[]}>(this.getAllWorksAfterDayEnpoint(day));
+    }
+
+    getAllWorksBetween(taj: string, dayA: string, dayB: string): Observable<{msg: string, data: WorkModel[]}>{
+        return this.http.get<{msg: string, data: WorkModel[]}>(this.getAllWorksBetweenEndpoint(taj,dayA,dayB));
+    }
+
+    getAllFreeAssistants(day: string):Observable<{msg: string, data: AssistantModel[]}>{
+        return this.http.get<{msg: string, data: AssistantModel[]}>(this.getAllFreeAssistantsEndpoint(day));
+    }
+
     postAppointment(request: AppointmentRequest): Observable<{msg: string,data: any}> {
         return this.http.post<{msg: string,data: any}>(this.postAppointmentEnpoint, request);
     }
+
+    updateAssistant(request: AssistantRequest): Observable<{msg: string,data: AssistantModel}>{
+        return this.http.put<{msg: string,data: AssistantModel}>(this.updateAssistantEnpoint,request);
+    }
+    replaceAssistant(request: AssistantRequest): Observable<{msg: string,data: AssistantModel}>{
+        return this.http.put<{msg: string,data: AssistantModel}>(this.replaceAssistantEnpoint,request);
+    }
+
 
     uploadToAppointment(files: File[], id: number): Observable<{msg: string,data: any}> {
         const formData = new FormData();
@@ -71,5 +96,6 @@ export class AssistantService {
         });
         return this.http.post<{msg: string,data: any}>(this.postFileEnpoint(id), formData);
     }
+
 
 }
