@@ -13,10 +13,11 @@ import { CareModel } from '../care.model';
 import { RoomModel } from '../room.model';
 import { BedModel } from '../bed.model';
 import { NurseModel } from '../nurse/nurse.model';
+import { CareRequestModel } from '../care.request.model';
 
 @Component({
   selector: 'app-assistant',
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './assistant.html',
   styleUrl: './assistant.css',
 })
@@ -27,11 +28,11 @@ export class Assistant {
   patient: PatientModel | null = null;
   doctors: DoctorModel[] = [];
   filteredDoctors: DoctorModel[] = [];
-  doctor:DoctorModel | null = null;
+  doctor: DoctorModel | null = null;
   appoints: AppointmentModel[] = [];
   selectedSlot: AppointmentModel | null = null;
   selectedFiles: File[] = [];
-  work : WorkModel | null = null;
+  work: WorkModel | null = null;
   works: WorkModel[] = [];
   assistants: AssistantModel[] = [];
   assistant: AssistantModel | null = null;
@@ -41,11 +42,11 @@ export class Assistant {
   bed: BedModel | null = null;
   beds: BedModel[] = [];
   nurse: NurseModel | null = null;
-  nurses: NurseModel [] = [];
+  nurses: NurseModel[] = [];
 
 
   appoId: number | null = null;
-  filter: string= '';
+  filter: string = '';
   today: string = '';
   isFilterSubmitted: boolean = false;
   startDate: string = '';
@@ -58,9 +59,9 @@ export class Assistant {
   isPostingCare: boolean = false;
   isExitCare: boolean = false;
 
-  constructor(private assistantService: AssistantService){}
+  constructor(private assistantService: AssistantService) { }
 
-  ngOnInit(){
+  ngOnInit() {
     this.today = new Date().toISOString().split('T')[0];
     this.assistantService.getAllPatients(this.appService.getTaj()!).subscribe({
       next: (response) => {
@@ -74,7 +75,7 @@ export class Assistant {
     this.loadCareData();
   }
 
-  filterPatients(){
+  filterPatients() {
     if (!this.filter) {
       this.filteredPatients = this.patients;
       return;
@@ -85,24 +86,27 @@ export class Assistant {
     });
   }
 
-  selectPatient(p: PatientModel, req: boolean){
+  selectPatient(p: PatientModel, req: boolean) {
     this.patient = p;
     this.selectedSlot = null;
     this.date = null;
     this.section = '';
     this.doctor = null;
-    if(this.isBookingMode){
+    if (this.isBookingMode) {
       this.appoints = [];
     }
-    if(req && !this.isBookingMode){
+    if (req && !this.isBookingMode) {
       this.assistantService.getAppointmentsByPatient(p.taj).subscribe({
-          next: (response) => {
-            this.appoints = this.appService.formatData(response.data);
-          },
-          error: (err) => {
-            console.error('Error fetching appointments', err);
-          }
-        });
+        next: (response) => {
+          this.appoints = this.appService.formatData(response.data);
+        },
+        error: (err) => {
+          console.error('Error fetching appointments', err);
+        }
+      });
+    }
+    if(!req){
+      this.loadCareForPatient(p);
     }
   }
   async updateFile(a: AppointmentModel) {
@@ -110,30 +114,30 @@ export class Assistant {
     if (result.isConfirmed && result.value) {
       const files: FileList = result.value;
       this.selectedFiles = Array.from(files);
-      this.assistantService.uploadToAppointment(this.selectedFiles,a.appointmentId).subscribe({
-            next: (res) => {
-                this.appService.successPopup('Sikeres feltöltés!');
-                this.selectPatient(this.patient!,true);
-            },
-            error: (err) => this.appService.errorPopup('Hiba a feltöltésnél!')
-        });
+      this.assistantService.uploadToAppointment(this.selectedFiles, a.appointmentId).subscribe({
+        next: (res) => {
+          this.appService.successPopup('Sikeres feltöltés!');
+          this.selectPatient(this.patient!, true);
+        },
+        error: (err) => this.appService.errorPopup('Hiba a feltöltésnél!')
+      });
     }
   }
 
-  selectAppo(a: AppointmentModel){
-    if(this.appoId === a.appointmentId){
+  selectAppo(a: AppointmentModel) {
+    if (this.appoId === a.appointmentId) {
       this.appoId = null;
-    }else{
+    } else {
       this.appoId = a.appointmentId;
     }
   }
 
-  resetField(field:String){
-    if(field === 'book'){
+  resetField(field: String) {
+    if (field === 'book') {
       this.date = null;
       this.section = '';
       this.doctor = null;
-    }else if(field = 'date-to-date'){
+    } else if (field = 'date-to-date') {
       this.date = null;
       this.endDate = '';
       this.startDate = '';
@@ -145,12 +149,12 @@ export class Assistant {
   }
 
 
-  onWorkSearch(){
+  onWorkSearch() {
     this.assistantService.getAllWorksBetween(this.appService.getTaj()!, this.startDate, this.endDate).subscribe({
       next: (response) => {
         this.works = response.data;
         console.log(response.data);
-        
+
       },
       error: (err) => {
         console.error('Error fetching', err);
@@ -158,10 +162,10 @@ export class Assistant {
     });
   }
 
-  selectWork(w: WorkModel){
-    if(w.workId == this.work?.workId){
+  selectWork(w: WorkModel) {
+    if (w.workId == this.work?.workId) {
       this.work = null;
-    }else{
+    } else {
       this.work = w;
       this.loadOwnWorks(w.workDay);
     }
@@ -169,7 +173,7 @@ export class Assistant {
 
 
 
-  searchAppointments(){
+  searchAppointments() {
     this.missingDate = false;
     if (this.date) {
       if (this.doctor) {
@@ -205,53 +209,53 @@ export class Assistant {
     }
   }
 
-  setSelectedSlot(s: AppointmentModel){
+  setSelectedSlot(s: AppointmentModel) {
     this.selectedSlot = s;
   }
 
-  searchDoctorNameByTaj(taj: string){
+  searchDoctorNameByTaj(taj: string) {
     const doctor = this.doctors.find(doc => doc.taj === taj);
     return doctor ? `${doctor.lastName} ${doctor.firstName}` : 'Ismeretlen orvos';
   }
 
   async postAppointment() {
-  const textResult = await this.appService.inputPopUp(
-    'Időpont foglalás', 
-    'Panasz leírása', 
-    'Írja le a tüneteket...'
-  );
+    const textResult = await this.appService.inputPopUp(
+      'Időpont foglalás',
+      'Panasz leírása',
+      'Írja le a tüneteket...'
+    );
 
-  if (!textResult.isConfirmed) return;
+    if (!textResult.isConfirmed) return;
 
-  const description = textResult.value;
-  const hours = this.selectedSlot!.timeSlot.getHours().toString().padStart(2, '0');
-  const minutes = this.selectedSlot!.timeSlot.getMinutes().toString().padStart(2, '0');
-  const formattedTime = `${hours}:${minutes}:00`;
+    const description = textResult.value;
+    const hours = this.selectedSlot!.timeSlot.getHours().toString().padStart(2, '0');
+    const minutes = this.selectedSlot!.timeSlot.getMinutes().toString().padStart(2, '0');
+    const formattedTime = `${hours}:${minutes}:00`;
 
-  const request: AppointmentRequest = {
-    doctorTaj: this.selectedSlot!.doctorTaj,
-    patientTaj: this.patient?.taj!,
-    timeSlot: formattedTime, 
-    day: this.selectedSlot!.timeSlot.toISOString().split('T')[0],
-    description: description
-  };
+    const request: AppointmentRequest = {
+      doctorTaj: this.selectedSlot!.doctorTaj,
+      patientTaj: this.patient?.taj!,
+      timeSlot: formattedTime,
+      day: this.selectedSlot!.timeSlot.toISOString().split('T')[0],
+      description: description
+    };
 
-  this.assistantService.postAppointment(request).subscribe({
-    next: () => {
-      this.appService.successPopup('Foglalás sikeres!');
-      this.selectedSlot = null;
-      this.patient = null;
-      this.appoints = [];
-      this.appoId = null;
-      this.searchAppointments();
-    },
-    error: (err) => this.appService.errorPopup('Hiba történt!')
-  });
+    this.assistantService.postAppointment(request).subscribe({
+      next: () => {
+        this.appService.successPopup('Foglalás sikeres!');
+        this.selectedSlot = null;
+        this.patient = null;
+        this.appoints = [];
+        this.appoId = null;
+        this.searchAppointments();
+      },
+      error: (err) => this.appService.errorPopup('Hiba történt!')
+    });
 
-  
-}
 
-  navigateToAppoints(){
+  }
+
+  navigateToAppoints() {
     this.filter = '';
     this.patient = null;
     this.appoints = [];
@@ -263,7 +267,7 @@ export class Assistant {
     this.isBookingMode = false;
   }
 
-  navigatToSchedule(){
+  navigatToSchedule() {
     this.date = null;
     this.work = null;
     this.works = [];
@@ -272,24 +276,63 @@ export class Assistant {
     this.startDate = '';
   }
 
-  navigateToPatient(){
+  navigateToPatient() {
     this.filter = '';
     this.patient = null;
     this.care = null;
-    
+
   }
 
-  postCare(){}
+  postCare() {
+    const req: CareRequestModel = {
+      pTaj: this.patient?.taj!,
+      nTaj: this.nurse?.taj!,
+      roomId: this.room?.roomId!,
+      bedNumber: this.bed?.bedNumber!,
+      uTaj: this.appService.getTaj()!,
+      entryDay: this.today
+    };
 
-  exitPatient(){}
+    this.assistantService.postCare(req).subscribe({
+      next: (response) => {
+        this.appService.successPopup("Siker!");
+        this.loadCareForPatient(this.patient!);
+        this.loadCareData();
+      },
+      error: (err) => {
+        if (this.patient == null) {
+          this.appService.errorPopup("Nem választott pácienst!");
+        } else {
+          this.appService.errorPopup("Hiba!");
+        }
+      }
+    });
+  }
+
+  exitPatient() {
+    this.assistantService.exitPatient(this.patient?.taj!, this.today, this.appService.getTaj()!).subscribe({
+      next: (response) => {
+        this.appService.successPopup("Siker!");
+        this.loadCareForPatient(this.patient!);
+        this.loadCareData();
+      },
+      error: (err) => {
+        if (this.patient == null) {
+          this.appService.errorPopup("Nem választott pácienst!");
+        } else {
+          this.appService.errorPopup("Hiba!");
+        }
+      }
+    });
+  }
 
 
-  openPostCare(){
+  openPostCare() {
     this.isPostingCare = true;
     this.loadCareData();
   }
 
-  closePostCare(){
+  closePostCare() {
     this.isPostingCare = false;
     this.nurses = [];
     this.rooms = [];
@@ -297,51 +340,51 @@ export class Assistant {
   }
 
 
-  switchToBooking(){
-    if(this.isBookingMode){
+  switchToBooking() {
+    if (this.isBookingMode) {
       this.isBookingMode = false;
       this.patient = null;
       this.section = '';
       this.doctor = null;
       this.navigateToAppoints();
-    }else{
+    } else {
       this.isBookingMode = true;
       this.appoints = [];
       this.assistantService.getAllDoctors().subscribe({
-          next: (response) => {
-            this.doctors = response.data;
-          },
-          error: (err) => {
-            console.error('Error fetching', err);
-          }
-        });
-        this.assistantService.getAllSections().subscribe({
-          next: (response) => {
-            this.sections = response.data.map((s: any) => s.sectionName);
-          },
-          error: (err) => {
-            console.error('Error fetching', err);
-          }
-        });
+        next: (response) => {
+          this.doctors = response.data;
+        },
+        error: (err) => {
+          console.error('Error fetching', err);
+        }
+      });
+      this.assistantService.getAllSections().subscribe({
+        next: (response) => {
+          this.sections = response.data.map((s: any) => s.sectionName);
+        },
+        error: (err) => {
+          console.error('Error fetching', err);
+        }
+      });
     }
 
   }
 
-  switchBetweenWorks(field : string){
-    if(field == 'own'){
+  switchBetweenWorks(field: string) {
+    if (field == 'own') {
       this.isBookingMode = false;
-    }else if(field == 'other'){
+    } else if (field == 'other') {
       this.isBookingMode = true;
       this.loadAvaliableWorks();
     }
   }
 
   assign(w: WorkModel) {
-    this.updateAssistant(w.doctor!.taj, this.appService.getTaj()!, w.workDay, this.appService.getTaj()!,"assign");
+    this.updateAssistant(w.doctor!.taj, this.appService.getTaj()!, w.workDay, this.appService.getTaj()!, "assign");
   }
 
-  changeAssistant(w: WorkModel, a: AssistantModel){
-    this.updateAssistant(w.doctor!.taj, a!.taj, w.workDay, this.appService.getTaj()!,"replace");
+  changeAssistant(w: WorkModel, a: AssistantModel) {
+    this.updateAssistant(w.doctor!.taj, a!.taj, w.workDay, this.appService.getTaj()!, "replace");
   }
 
   get maxEndDate(): string {
@@ -358,7 +401,7 @@ export class Assistant {
     return date.toISOString().split('T')[0];
   }
 
-  private loadAvaliableWorks(){
+  private loadAvaliableWorks() {
     this.works = [];
     this.assistantService.getAllWorksAfterDay(this.today).subscribe({
       next: (response) => {
@@ -370,7 +413,7 @@ export class Assistant {
     });
   }
 
-  private loadOwnWorks(day:string){
+  private loadOwnWorks(day: string) {
     this.assistantService.getAllFreeAssistants(day).subscribe({
       next: (response) => {
         this.assistants = response.data;
@@ -381,7 +424,7 @@ export class Assistant {
     });
   }
 
-  private loadCareData(){
+  private loadCareData() {
     this.assistantService.getAllFreeNurses().subscribe({
       next: (response) => {
         this.nurses = response.data;
@@ -401,6 +444,17 @@ export class Assistant {
     this.assistantService.getAllFreeBeds().subscribe({
       next: (response) => {
         this.beds = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching patients:', err);
+      }
+    });
+  }
+
+  private loadCareForPatient(p: PatientModel){
+    this.assistantService.getActiveCare(p.taj).subscribe({
+      next: (response) => {
+        this.care = response.data;
       },
       error: (err) => {
         console.error('Error fetching patients:', err);
@@ -428,7 +482,7 @@ export class Assistant {
 
         }
       });
-    }else if(mode == 'replace'){
+    } else if (mode == 'replace') {
       this.assistantService.replaceAssistant(req).subscribe({
         next: (response) => {
           this.appService.successPopup("Siker!");

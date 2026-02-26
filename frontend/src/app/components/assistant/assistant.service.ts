@@ -12,6 +12,8 @@ import { DoctorModel } from '../doctor/doctor.model';
 import { NurseModel } from '../nurse/nurse.model';
 import { RoomModel } from '../room.model';
 import { BedModel } from '../bed.model';
+import { CareRequestModel } from '../care.request.model';
+import { CareModel } from '../care.model';
 
 
 
@@ -33,16 +35,23 @@ export class AssistantService {
     private getAllFreeNursesEndpoint: string = `${this.apiUrl}/people/nurses/all/free`;
     private getAllFreeRoomsEndpoint: string = `${this.apiUrl}/rooms/all/free`;
     private getAllFreeBedsEndpoint: string = `${this.apiUrl}/beds/all/free`;
+    private getActiveCareEnpoint= (pTaj:string) => `${this.apiUrl}/cares/active?pTaj=${pTaj}`;
 
     private postAppointmentEnpoint: string = `${this.apiUrl}/appointments/add-request`;
     private postFileEnpoint = (id: number): string => `${this.apiUrl}/images/upload-to-appointment?appointmentId=${id}`;
+    private postCareEndpoint: string = `${this.apiUrl}/cares/add`;
     private updateAssistantEnpoint: string = `${this.apiUrl}/works/assign`;
+    private exitPatientEndpoint = (pTaj: string, day: string, uTaj: string) => `${this.apiUrl}/cares/exit?pTaj=${pTaj}&exitDay=${day}&uTaj=${uTaj}`;
     private replaceAssistantEnpoint: string = `${this.apiUrl}/works/replace`;
 
     constructor(private http: HttpClient){}
 
     getPatientByTaj(taj: string): Observable<{msg: string, data: PatientModel}> {
         return this.http.get<{msg: string, data: PatientModel}>(this.getPatientByTajEndpoint(taj));
+    }
+
+    getActiveCare(taj: string): Observable<{msg: string, data: CareModel}> {
+        return this.http.get<{msg: string, data: CareModel}>(this.getActiveCareEnpoint(taj));
     }
 
     getAllPatients(taj: string): Observable<{msg: string, data: PatientModel[]}>{
@@ -97,6 +106,14 @@ export class AssistantService {
 
     postAppointment(request: AppointmentRequest): Observable<{msg: string,data: any}> {
         return this.http.post<{msg: string,data: any}>(this.postAppointmentEnpoint, request);
+    }
+
+    postCare(request: CareRequestModel): Observable<{msg: string,data: CareModel}> {
+        return this.http.post<{msg: string,data: CareModel}>(this.postCareEndpoint, request);
+    }
+
+    exitPatient(pTaj:string, day: string, uTaj:string): Observable<{msg: string,data: CareModel}>{
+        return this.http.put<{msg: string,data: CareModel}>(this.exitPatientEndpoint(pTaj,day,uTaj),null);
     }
 
     updateAssistant(request: AssistantRequest): Observable<{msg: string,data: AssistantModel}>{
