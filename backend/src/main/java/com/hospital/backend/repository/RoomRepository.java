@@ -16,6 +16,6 @@ public interface RoomRepository extends JpaRepository<Room,Long> {
 
     @Query("SELECT DISTINCT r FROM Room r " +
             "JOIN r.beds b " +
-            "WHERE b.bedId NOT IN (SELECT npc.bed.bedId FROM NursePatientCare npc)")
+            "WHERE b.bedId NOT IN (SELECT npc.bed.bedId FROM NursePatientCare npc WHERE npc.exitDay IS NULL)")
     List<Room> findRoomsWithAvailableBeds();
 }

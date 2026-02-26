@@ -7,6 +7,7 @@ import com.hospital.backend.mapper.NursePatientCareMapper;
 import com.hospital.backend.model.*;
 import com.hospital.backend.repository.*;
 import com.hospital.backend.request.AddCareRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -57,15 +58,17 @@ public class NursePatientCareService implements INursePatientCareService {
 
     @Override
     public NursePatientCareDto addCare(AddCareRequest request){
-        Room room = getRoom(request.getRoom().getRoomId());
-        Bed bed = getBed(room, request.getBed().getBedNumber());
-        Patient patient = getPatientByTaj(request.getPatient().getTaj());
+        Room room = getRoom(request.getRoomId());
+        Bed bed = getBed(room,request.getBedNumber());
+        Patient patient = getPatientByTaj(request.getPTaj());
+        Nurse nurse = getNurseByTaj(request.getNTaj());
         if (nursePatientCareRepository.existsByPatientAndExitDayIsNull(patient)) throw new CollisionException("Care exitDay");
         NursePatientCare care = new NursePatientCare();
         care.setPatient(patient);
         care.setEntryDay(request.getEntryDay());
         care.setRoom(room);
         care.setBed(bed);
+        care.setNurse(nurse);
         care.setUTaj(request.getUTaj());
         nursePatientCareRepository.save(care);
         return nursePatientCareMapper.toDto(care);
@@ -91,6 +94,7 @@ public class NursePatientCareService implements INursePatientCareService {
         return nursePatientCareMapper.toDto(care);
     }
 
+    @Transactional
     @Override
     public NursePatientCareDto exitPatientCare(String pTaj, LocalDate exitDay, String uTaj){
         Patient patient = getPatientByTaj(pTaj);
@@ -129,6 +133,6 @@ public class NursePatientCareService implements INursePatientCareService {
         return roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room"));
     }
     private Bed getBed(Room room, int bedNumber){
-        return bedRepository.findByRoomAndBedNumber(room,bedNumber).orElseThrow(() -> new ResourceNotFoundException("Bed"));
+        return bedRepository.findByRoomAndBedNumber(room, bedNumber).orElseThrow(() -> new ResourceNotFoundException("Bed"));
     }
 }

@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface BedRepository extends JpaRepository<Bed,Long> {
     Optional<Bed> findByRoomAndBedNumber(Room room, int bedNumber);
 
-    @Query("SELECT DISTINCT b FROM Bed b WHERE b.bedId NOT IN (SELECT npc.bed.bedId FROM NursePatientCare npc)")
+    @Query("SELECT DISTINCT b FROM Bed b WHERE b.bedId NOT IN (SELECT npc.bed.bedId FROM NursePatientCare npc WHERE npc.exitDay IS NULL)")
     List<Bed> findUnassignedBeds();
 }

@@ -12,9 +12,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class AddCareRequest {
-    private PatientDto patient;
-    private RoomDto room;
-    private BedDto bed;
+    private String pTaj;
+    private String nTaj;
+    private long roomId;
+    private int bedNumber;
     private String uTaj;
     private LocalDate entryDay;
 }

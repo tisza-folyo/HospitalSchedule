@@ -77,6 +77,7 @@ public class NursePatientCareController {
         return ResponseEntity.ok(new ApiResponse("Success", result));
     }
 
+
     @PutMapping("/change")
     public ResponseEntity<ApiResponse> changeNurse(@RequestParam String nTaj, @RequestParam String pTaj, @RequestParam String uTaj) {
         NursePatientCareDto result = nursePatientCareService.changeNurse(nTaj, pTaj, uTaj);

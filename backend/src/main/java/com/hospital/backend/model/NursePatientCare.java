@@ -40,7 +40,7 @@ public class NursePatientCare {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "bed_id")
     private Bed bed;
 }

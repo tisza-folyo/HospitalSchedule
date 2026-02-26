@@ -6,6 +6,7 @@ import com.hospital.backend.model.NursePatientCare;
 import com.hospital.backend.model.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 
 import java.util.List;
@@ -21,8 +22,8 @@ public interface NursePatientCareRepository extends JpaRepository<NursePatientCa
     List<NursePatientCare> findAllByNurse(Nurse nurse);
 
     @Query("SELECT npc FROM NursePatientCare npc " +
-            "WHERE npc.exitDay IS NULL")
-    Optional<NursePatientCare> findByPatientActiveCare(Patient patient);
+            "WHERE npc.exitDay IS NULL AND npc.patient = :patient")
+    Optional<NursePatientCare> findByPatientActiveCare(@Param("patient") Patient patient);
 
     boolean existsByPatientAndExitDayIsNull(Patient patient);
 
