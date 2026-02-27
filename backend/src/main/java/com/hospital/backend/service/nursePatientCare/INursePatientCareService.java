@@ -11,11 +11,17 @@ public interface INursePatientCareService {
 
     List<NursePatientCareDto> getAllNonCares();
 
+    List<NursePatientCareDto> getAllCaresForCare();
+
     List<NursePatientCareDto> getAllCaresByNurse(String nTaj);
 
     List<NursePatientCareDto> getAllCaresByPatient(String pTaj);
 
     NursePatientCareDto getActiveCareByPatient(String pTaj);
+
+    List<NursePatientCareDto> getAllActivesByNurse(String nTaj);
+
+    List<NursePatientCareDto> getAllNonActivesByNurse(String nTaj);
 
     NursePatientCareDto addCare(AddCareRequest request);
 

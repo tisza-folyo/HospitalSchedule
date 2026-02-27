@@ -31,6 +31,12 @@ public class NursePatientCareController {
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
+    @GetMapping("/all-for-care")
+    public ResponseEntity<ApiResponse> getAllCaresForCare() {
+        List<NursePatientCareDto> results = nursePatientCareService.getAllCaresForCare();
+        return ResponseEntity.ok(new ApiResponse("Success", results));
+    }
+
     @GetMapping("/all-by-nurse")
     public ResponseEntity<ApiResponse> getAllCaresByNurse(@RequestParam String nTaj) {
         List<NursePatientCareDto> results = nursePatientCareService.getAllCaresByNurse(nTaj);
@@ -51,6 +57,18 @@ public class NursePatientCareController {
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.ok(new ApiResponse("No active care", null));
         }
+    }
+
+    @GetMapping("/actives")
+    public ResponseEntity<ApiResponse> getAllActivesByPatient(@RequestParam String nTaj){
+        List<NursePatientCareDto> results = nursePatientCareService.getAllActivesByNurse(nTaj);
+        return ResponseEntity.ok(new ApiResponse("Success", results));
+    }
+
+    @GetMapping("/non-actives")
+    public ResponseEntity<ApiResponse> getAllNonActiveByNurse(@RequestParam String nTaj){
+        List<NursePatientCareDto> results = nursePatientCareService.getAllNonActivesByNurse(nTaj);
+        return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
     @PostMapping("/add")

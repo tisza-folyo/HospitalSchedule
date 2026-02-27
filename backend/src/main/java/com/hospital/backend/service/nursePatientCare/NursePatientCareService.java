@@ -36,6 +36,12 @@ public class NursePatientCareService implements INursePatientCareService {
     }
 
     @Override
+    public List<NursePatientCareDto> getAllCaresForCare(){
+        List<NursePatientCare> cares = nursePatientCareRepository.findAllByExitDayIsNullAndNurseIsNull();
+        return nursePatientCareMapper.toDtoList(cares);
+    }
+
+    @Override
     public List<NursePatientCareDto> getAllCaresByNurse(String nTaj){
         Nurse nurse = getNurseByTaj(nTaj);
         List<NursePatientCare> cares = nursePatientCareRepository.findAllByNurse(nurse);
@@ -57,11 +63,25 @@ public class NursePatientCareService implements INursePatientCareService {
     }
 
     @Override
+    public List<NursePatientCareDto> getAllActivesByNurse(String nTaj){
+        Nurse nurse = getNurseByTaj(nTaj);
+        List<NursePatientCare> cares = nursePatientCareRepository.findAllByNurseAndExitDayIsNull(nurse);
+        return nursePatientCareMapper.toDtoList(cares);
+    }
+
+    @Override
+    public List<NursePatientCareDto> getAllNonActivesByNurse(String nTaj){
+        Nurse nurse = getNurseByTaj(nTaj);
+        List<NursePatientCare> cares = nursePatientCareRepository.findAllByNurseAndExitDayIsNotNull(nurse);
+        return nursePatientCareMapper.toDtoList(cares);
+    }
+
+    @Override
     public NursePatientCareDto addCare(AddCareRequest request){
         Room room = getRoom(request.getRoomId());
         Bed bed = getBed(room,request.getBedNumber());
         Patient patient = getPatientByTaj(request.getPTaj());
-        Nurse nurse = getNurseByTaj(request.getNTaj());
+        Nurse nurse = nurseRepository.findByTaj(request.getNTaj()).orElse(null);
         if (nursePatientCareRepository.existsByPatientAndExitDayIsNull(patient)) throw new CollisionException("Care exitDay");
         NursePatientCare care = new NursePatientCare();
         care.setPatient(patient);
@@ -109,9 +129,10 @@ public class NursePatientCareService implements INursePatientCareService {
         Nurse nurse = getNurseByTaj(nTaj);
         Patient patient = getPatientByTaj(pTaj);
         NursePatientCare care = nursePatientCareRepository.findByPatientActiveCare(patient).orElseThrow(() -> new ResourceNotFoundException("Care"));
-        if (!care.getNurse().getTaj().equals(nTaj)) throw new ResourceNotFoundException("Nurse");
+        if (care.getNurse() != null && !care.getNurse().getTaj().equals(uTaj)) throw new ResourceNotFoundException("Nurse");
         care.setNurse(nurse);
         care.setUTaj(uTaj);
+        nursePatientCareRepository.save(care);
         return nursePatientCareMapper.toDto(care);
     }
 

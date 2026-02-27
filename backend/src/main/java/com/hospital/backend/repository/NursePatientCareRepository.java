@@ -25,6 +25,10 @@ public interface NursePatientCareRepository extends JpaRepository<NursePatientCa
             "WHERE npc.exitDay IS NULL AND npc.patient = :patient")
     Optional<NursePatientCare> findByPatientActiveCare(@Param("patient") Patient patient);
 
+    List<NursePatientCare> findAllByNurseAndExitDayIsNull(Nurse nurse);
+    List<NursePatientCare> findAllByNurseAndExitDayIsNotNull(Nurse nurse);
+    List<NursePatientCare> findAllByExitDayIsNullAndNurseIsNull();
+
     boolean existsByPatientAndExitDayIsNull(Patient patient);
 
 

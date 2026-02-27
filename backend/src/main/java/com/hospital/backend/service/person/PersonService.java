@@ -29,6 +29,7 @@ public class PersonService implements IPersonService {
     private final PersonMapper personMapper;
     private final SpecialtyRepository specialtyRepository;
     private final PasswordEncoder passwordEncoder;
+    private final int PATIENT_NUMBER_FOR_NURSE = 5;
 
 
     @Override
@@ -73,7 +74,7 @@ public class PersonService implements IPersonService {
 
     @Override
     public List<NurseDto> getAllFreeNurse(){
-        List<Nurse> nurses = nurseRepository.findAvailableNurses();
+        List<Nurse> nurses = nurseRepository.findAvailableNurses(PATIENT_NUMBER_FOR_NURSE);
         return nurses.stream().map(personMapper::toNurseDto).toList();
     }
 
