@@ -18,6 +18,14 @@ export class AppService {
     speciality = signal<string | null>(localStorage.getItem('speciality'));
     section = signal<string | null>(localStorage.getItem('section'));
 
+    private readonly ROLE_MAP: Record<string, string> = {
+        'ADMIN': 'Adminisztrátor',
+        'DOCTOR': 'Orvos',
+        'PATIENT': 'Páciens',
+        'ASSISTANT': 'Asszisztens',
+        'NURSE': 'Ápoló'
+    };
+
     getToken(): string {
         return this.token();
     }
@@ -67,25 +75,25 @@ export class AppService {
 
     navigateByRole(role: string) {
         switch (role) {
-          case 'ADMIN':
-            this.router.navigate(['/admin']);
-            break;
-          case 'DOCTOR':
-            this.router.navigate(['/doctor']);
-            break;
-          case 'PATIENT':
-            this.router.navigate(['/patient']);
-            break;
-          case 'ASSISTANT':
-            this.router.navigate(['/assistant']);
-            break;
-          case 'NURSE':
-            this.router.navigate(['/nurse']);
-            break;
-          default:
-            this.router.navigate(['/']);
+            case 'ADMIN':
+                this.router.navigate(['/admin']);
+                break;
+            case 'DOCTOR':
+                this.router.navigate(['/doctor']);
+                break;
+            case 'PATIENT':
+                this.router.navigate(['/patient']);
+                break;
+            case 'ASSISTANT':
+                this.router.navigate(['/assistant']);
+                break;
+            case 'NURSE':
+                this.router.navigate(['/nurse']);
+                break;
+            default:
+                this.router.navigate(['/']);
         }
-      }
+    }
 
     statusConverter(status: string): string {
         switch (status) {
@@ -98,6 +106,10 @@ export class AppService {
             default:
                 return status;
         }
+    }
+
+    translateToHU(techName: string): string {
+        return this.ROLE_MAP[techName] || techName;
     }
 
     stausColorConverter(status: string): string {
@@ -171,9 +183,9 @@ export class AppService {
         });
     }
 
-    formatData(data: any): AppointmentModel[] { 
+    formatData(data: any): AppointmentModel[] {
         console.log(data);
-        
+
         return data.map((item: any) => ({
             appointmentId: item.appointmentId,
             timeSlot: new Date(`${item.day}T${item.timeSlot}`),
@@ -198,18 +210,18 @@ export class AppService {
     }
 
     downloadPdf(file: any) {
-    const byteCharacters = atob(file.base64Data);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
+        const byteCharacters = atob(file.base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], { type: file.fileType });
+
+        const fileURL = URL.createObjectURL(blob);
+        window.open(fileURL, '_blank');
     }
-    const byteArray = new Uint8Array(byteNumbers);
-
-    const blob = new Blob([byteArray], { type: file.fileType });
-
-    const fileURL = URL.createObjectURL(blob);
-    window.open(fileURL, '_blank');
-  }
     constructor(private http: HttpClient) {
     }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { LoginService } from './login.service';
@@ -13,7 +13,7 @@ import { AppService } from '../../app.service';
   styleUrl: './login.css',
 })
 export class Login {
-
+  appService = inject(AppService);
   email = '';
   password = '';
   roleName = '';
@@ -24,23 +24,9 @@ export class Login {
   errorHappened = false;
 
 
-  private readonly ROLE_MAP: Record<string, string> = {
-    'ADMIN': 'Adminisztrátor',
-    'DOCTOR': 'Orvos',
-    'PATIENT': 'Páciens',
-    'ASSISTANT': 'Asszisztens',
-    'NURSE': 'Ápoló'
-  };
+  
 
-  private translateToHU(techName: string): string {
-    return this.ROLE_MAP[techName] || techName;
-  }
-
-
-  private translateToEN(huName: string): string {
-    const entry = Object.entries(this.ROLE_MAP).find(([en, hu]) => hu === huName);
-    return entry ? entry[0] : huName;
-  }
+  
 
   resetError() {
     if (this.errorHappened) {
@@ -49,13 +35,12 @@ export class Login {
     }
   }
 
-  constructor(private loginService: LoginService, private router: Router, private appService: AppService) { }
+  constructor(private loginService: LoginService, private router: Router) { }
 
   ngOnInit(): void {
     this.loginService.getRoles().subscribe({
       next: (response) => {
-        const rawRoles = response.data.map((role: any) => role.roleName);
-        this.roleNames = rawRoles.map((techName: string) => this.translateToHU(techName));
+        this.roleNames = response.data.map((role: any) => role.roleName);
       },
       error: (error) => {
         console.error('Error fetching roles:', error);
@@ -73,7 +58,7 @@ export class Login {
     const person: PersonLoginRequest = {
       email: this.email,
       password: this.password,
-      roleName: this.translateToEN(this.roleName)
+      roleName: this.roleName
     };
 
     this.loginService.loginPerson(person).subscribe({

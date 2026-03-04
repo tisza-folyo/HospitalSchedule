@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PersonRegistrationRequest } from './registration.request';
+import { PatientRegistrationRequest } from './patient.registration.request.model';
 import { environment } from '../../../environments/environment';
 
 
@@ -14,7 +14,7 @@ export class RegistrationService {
 
   constructor(private http: HttpClient) {}
 
-  registerPerson(request: PersonRegistrationRequest): Observable<{msg: string, data: any}> {
+  registerPerson(request: PatientRegistrationRequest): Observable<{msg: string, data: any}> {
     return this.http.post<{msg: string, data: any}>(this.registrationEndpoint, request);
   }
 

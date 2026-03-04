@@ -50,8 +50,8 @@
                 #roleModel="ngModel" [class.is-invalid]="submitAttempted && roleModel.invalid">
 
                 <option value="" disabled selected hidden>Válassz szerepkört...</option>
-                @for (roleName of roleNames; track roleName) {
-                <option [value]="roleName">{{ roleName }}</option>
+                @for (r of roleNames; track r) {
+                <option [value]="r">{{ this.appService.translateToHU(r) }}</option>
                 }
               </select>
               <div class="invalid-feedback">Kérlek, válassz egy szerepkört!</div>

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RegistrationService } from './registration.service';
 import { Route, Router } from '@angular/router';
-import { PersonRegistrationRequest } from './registration.request'; 
+import { PatientRegistrationRequest } from './patient.registration.request.model'; 
 import { provideHttpClient } from '@angular/common/http';
 
 @Component({
@@ -35,7 +35,7 @@ export class Registration {
       console.log("Password mismatch");
       return;
     }
-    const person: PersonRegistrationRequest = {
+    const person: PatientRegistrationRequest = {
       taj: this.taj,
       firstName: this.firstName,
       lastName: this.lastName,

@@ -11,8 +11,8 @@
                         data-bs-target="#schedules">Beosztások</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link py-3 fw-bold rounded-0" data-bs-toggle="pill"
-                        data-bs-target="#users">Felhasználók</button>
+                    <button class="nav-link py-3 fw-bold rounded-0" data-bs-toggle="pill" data-bs-target="#people"
+                        (click)="loadRoles()">Felhasználók</button>
                 </li>
             </ul>
 
@@ -25,7 +25,8 @@
                                 data-bs-target="#doc-assist">Doktor & Asszisztens beosztás</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#nurse-care" (click)="loadCares()">Ápoló
+                            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#nurse-care"
+                                (click)="loadCares()">Ápoló
                                 & Ellátás beosztás</button>
                         </li>
                     </ul>
@@ -114,7 +115,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="align-middle">
-                                            @for (care of cares; track care) {
+                                            @for (care of cares; track $index; let i = $index) {
                                             <tr>
                                                 <td>
                                                     {{care.entryDay}}
@@ -154,9 +155,140 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="users">
-                    <div class="p-5 text-center bg-light border rounded text-muted">Válaszd ki a felhasználói típust a
-                        kezeléshez.</div>
+                <div class="tab-pane fade" id="people">
+                    <div class="p-4">
+
+                        @if (!showForm) {
+                        <div
+                            class="row g-3 mb-4 align-items-end border p-3 rounded bg-light shadow-sm animate__animated animate__fadeIn">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small text-muted">Keresés TAJ alapján</label>
+                                <input type="text" class="form-control" placeholder="123-456-789" [(ngModel)]="taj">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small text-muted">Szerepkör szűrő</label>
+                                <div class="d-flex gap-2">
+                                    <select class="form-select border-primary" name="role" [(ngModel)]="role" required #roleRef="ngModel">
+                                        <option value="" disabled selected>Válassz szerepkört...</option>
+                                        @for (r of roles; track r) {
+                                        <option [value]="r">{{ this.appService.translateToHU(r) }}</option>
+                                        }
+                                    </select>
+                                    <button class="btn btn-primary" type="button" (click)="searchPerson()" [disabled]="!role">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-success d-flex align-items-center gap-2 ms-auto"
+                                    (click)="resetField('add-person')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                    </svg>
+                                    Új felhasználó hozzáadása
+                                </button>
+                            </div>
+                        </div>
+                        }
+
+                        @if (showForm) {
+                        <div class="card border-primary mb-4 shadow-sm animate__animated animate__fadeIn">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">Új felhasználó rögzítése</h5>
+                            </div>
+                            <div class="card-body">
+                                <form class="row g-3" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)">
+
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-bold">TAJ szám</label>
+                                        <input type="text" class="form-control" name="taj" [(ngModel)]="taj" required
+                                            pattern="^[0-9]{9}$" maxlength="9" placeholder="123456789" #tajRef="ngModel"
+                                            [class.is-invalid]="tajRef.invalid && tajRef.touched">
+
+                                        @if (tajRef.invalid && tajRef.touched) {
+                                        <div class="text-danger small mt-1">
+                                            A TAJ számnak pontosan 9 számjegyből kell állnia!
+                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-bold">Vezetéknév</label>
+                                        <input type="text" class="form-control" name="lastName" [(ngModel)]="lastName"
+                                            required #lnRef="ngModel">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-bold">Keresztnév</label>
+                                        <input type="text" class="form-control" name="firstName" [(ngModel)]="firstName"
+                                            required #fnRef="ngModel">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-bold">Életkor</label>
+                                        <input type="number" class="form-control" name="age" [(ngModel)]="age" required
+                                            min="0" #ageRef="ngModel">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Email</label>
+                                        <input type="email" class="form-control" name="email" [(ngModel)]="email"
+                                            required email #emailRef="ngModel">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Jelszó</label>
+                                        <input type="password" class="form-control" name="password"
+                                            [(ngModel)]="password" required #pwRef="ngModel">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Szerepkör</label>
+                                        <select class="form-select border-primary" name="role" [(ngModel)]="role"
+                                            required #roleRef="ngModel">
+                                            <option value="" disabled selected>Válassz szerepkört...</option>
+                                            @for (r of roles; track r) {
+                                            <option [value]="r">{{ this.appService.translateToHU(r) }}</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    @if (role === 'DOCTOR' || role === 'NURSE' || role === 'ASSISTANT') {
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold text-primary">Munkaidő kezdete</label>
+                                        <input type="time" class="form-control" name="workHourStart"
+                                            [(ngModel)]="workHourStart" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold text-primary">Munkaidő vége</label>
+                                        <input type="time" class="form-control" name="workHourEnd"
+                                            [(ngModel)]="workHourEnd" required>
+                                    </div>
+                                    }
+
+                                    @if (role === 'DOCTOR') {
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold text-primary">Specializáció</label>
+                                        <input type="text" class="form-control" name="specialty" [(ngModel)]="specialty"
+                                            placeholder="pl. Kardiológus" required>
+                                    </div>
+                                    }
+
+                                    <div class="col-12 text-end mt-4">
+                                        <button type="button" class="btn btn-secondary me-2"
+                                            (click)="resetField('cancel-add')">Mégse</button>
+                                        <button type="submit" class="btn btn-primary px-5 shadow"
+                                            [disabled]="userForm.invalid">
+                                            Mentés
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        }
+                    </div>
                 </div>
 
             </div>

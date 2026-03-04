@@ -1,4 +1,4 @@
-export interface PersonRegistrationRequest {
+export interface PatientRegistrationRequest {
     taj: string;
     firstName: string;
     lastName: string;
