@@ -1,1 +1,165 @@
-<p>admin works!</p>
+<div class="container mt-5 mb-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-white text-center py-4 border-0">
+            <h2 class="text-primary fw-bold">Adminisztrátori Vezérlőpult</h2>
+        </div>
+
+        <div class="card-body p-0">
+            <ul class="nav nav-pills nav-justified border-bottom" id="mainTab" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active py-3 fw-bold rounded-0" data-bs-toggle="pill"
+                        data-bs-target="#schedules">Beosztások</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link py-3 fw-bold rounded-0" data-bs-toggle="pill"
+                        data-bs-target="#users">Felhasználók</button>
+                </li>
+            </ul>
+
+            <div class="tab-content p-4">
+
+                <div class="tab-pane fade show active" id="schedules">
+                    <ul class="nav nav-tabs nav-justified mb-4" id="scheduleSubTab">
+                        <li class="nav-item">
+                            <button class="nav-link active fw-semibold" data-bs-toggle="tab"
+                                data-bs-target="#doc-assist">Doktor & Asszisztens beosztás</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#nurse-care" (click)="loadCares()">Ápoló
+                                & Ellátás beosztás</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-3">
+                        <div class="tab-pane fade show active" id="doc-assist">
+
+                            <div class="row g-3 mb-4 align-items-end border p-3 rounded bg-light">
+                                <div class="col-md-3 text-start">
+                                    <label class="form-label fw-bold small text-muted">Kezdő dátum</label>
+                                    <input type="date" class="form-control shadow-sm" [(ngModel)]="startDate"
+                                        [min]="minStartDate" [max]="endDate || ''" (change)="works = []">
+                                </div>
+                                <div class="col-md-5 text-start">
+                                    <label class="form-label fw-bold small text-muted">Záró dátum</label>
+                                    <div class="d-flex gap-2">
+                                        <input type="date" class="form-control shadow-sm" [(ngModel)]="endDate"
+                                            [min]="startDate || ''" [max]="maxEndDate" (change)="works = []">
+                                        <button
+                                            class="btn btn-outline-danger shadow-sm d-flex align-items-center justify-content-center"
+                                            (click)="resetField('date-to-date')">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="20px"
+                                                viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                                                <path
+                                                    d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <button class="btn btn-primary shadow-sm px-4" (click)="loadWorks()">Szűrés</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-hover border">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>Munkanap</th>
+                                            <th>Doktor Neve</th>
+                                            <th>Doktor TAJ</th>
+                                            <th>Asszisztens Neve</th>
+                                            <th>Asszisztens TAJ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="align-middle">
+                                        @for (work of works; track work.workId) {
+                                        <tr>
+                                            <td>{{ work.workDay }}</td>
+                                            <td class="fw-bold">{{ work.doctor?.lastName }} {{ work.doctor?.firstName}}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">{{ work.doctor?.taj }}</span>
+                                            </td>
+                                            <td>{{ work.assistant?.lastName }} {{work.assistant?.firstName}}</td>
+                                            <td>
+                                                <span class="badge bg-secondary">{{ work.assistant?.taj }}</span>
+                                            </td>
+                                        </tr>
+                                        } @empty {
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted py-4">
+                                                Nincs megjeleníthető beosztás a megadott időszakban.
+                                            </td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane fade" id="nurse-care">
+                            <div class="p-5 text-center bg-light border rounded">
+                                <div class="table-responsive">
+                                    <table class="table table-hover border">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th>Beírás napja</th>
+                                                <th>Ápoló Neve</th>
+                                                <th>Ápoló TAJ</th>
+                                                <th>Páciens Neve</th>
+                                                <th>Páciens TAJ</th>
+                                                <th>Helyszín (Emelet/Szoba)</th>
+                                                <th>Ágy</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="align-middle">
+                                            @for (care of cares; track care) {
+                                            <tr>
+                                                <td>
+                                                    {{care.entryDay}}
+                                                </td>
+                                                <td class="fw-bold">
+                                                    {{ care.nurse.lastName }} {{ care.nurse.firstName }}
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-secondary">{{ care.nurse.taj }}</span>
+                                                </td>
+                                                <td>
+                                                    {{ care.patient.lastName }} {{ care.patient.firstName }}
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-secondary">{{ care.patient.taj }}</span>
+                                                </td>
+                                                <td>
+                                                    {{ care.room.floor }}. emelet / {{ care.room.roomNumber }}. szoba
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-info text-dark">{{ care.bed.bedNumber }}.
+                                                        ágy</span>
+                                                </td>
+                                            </tr>
+                                            } @empty {
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted py-4">
+                                                    Nincs megjeleníthető ápolási feladat a megadott időszakban.
+                                                </td>
+                                            </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="users">
+                    <div class="p-5 text-center bg-light border rounded text-muted">Válaszd ki a felhasználói típust a
+                        kezeléshez.</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
