@@ -37,6 +37,12 @@ public class NursePatientCareController {
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
+    @GetMapping("/all/actives")
+    public ResponseEntity<ApiResponse> getAllActiveCares(){
+        List<NursePatientCareDto> results = nursePatientCareService.getAllActiveCares();
+        return ResponseEntity.ok(new ApiResponse("Success", results));
+    }
+
     @GetMapping("/all-by-nurse")
     public ResponseEntity<ApiResponse> getAllCaresByNurse(@RequestParam String nTaj) {
         List<NursePatientCareDto> results = nursePatientCareService.getAllCaresByNurse(nTaj);

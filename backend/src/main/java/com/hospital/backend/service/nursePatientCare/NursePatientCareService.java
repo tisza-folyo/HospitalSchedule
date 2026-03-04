@@ -36,6 +36,12 @@ public class NursePatientCareService implements INursePatientCareService {
     }
 
     @Override
+    public List<NursePatientCareDto> getAllActiveCares(){
+        List<NursePatientCare> cares = nursePatientCareRepository.findAllByExitDayIsNullAndNurseIsNotNull();
+        return nursePatientCareMapper.toDtoList(cares);
+    }
+
+    @Override
     public List<NursePatientCareDto> getAllCaresForCare(){
         List<NursePatientCare> cares = nursePatientCareRepository.findAllByExitDayIsNullAndNurseIsNull();
         return nursePatientCareMapper.toDtoList(cares);

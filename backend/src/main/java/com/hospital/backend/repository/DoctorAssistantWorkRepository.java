@@ -27,4 +27,6 @@ public interface DoctorAssistantWorkRepository extends JpaRepository<DoctorAssis
     List<DoctorAssistantWork> findAllByAssistantIsNullAndWorkDayAfter(LocalDate workDayIsGreaterThan);
 
     List<DoctorAssistantWork> findAllByAssistantAndWorkDayBetween(Assistant assistant, LocalDate workDayAfter, LocalDate workDayBefore);
+
+    List<DoctorAssistantWork> findAllByWorkDayBetween(LocalDate workDayAfter, LocalDate workDayBefore);
 }

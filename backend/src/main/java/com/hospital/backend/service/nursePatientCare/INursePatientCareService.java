@@ -11,6 +11,8 @@ public interface INursePatientCareService {
 
     List<NursePatientCareDto> getAllNonCares();
 
+    List<NursePatientCareDto> getAllActiveCares();
+
     List<NursePatientCareDto> getAllCaresForCare();
 
     List<NursePatientCareDto> getAllCaresByNurse(String nTaj);

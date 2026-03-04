@@ -29,6 +29,8 @@ public interface NursePatientCareRepository extends JpaRepository<NursePatientCa
     List<NursePatientCare> findAllByNurseAndExitDayIsNotNull(Nurse nurse);
     List<NursePatientCare> findAllByExitDayIsNullAndNurseIsNull();
 
+    List<NursePatientCare> findAllByExitDayIsNullAndNurseIsNotNull();
+
     boolean existsByPatientAndExitDayIsNull(Patient patient);
 
 

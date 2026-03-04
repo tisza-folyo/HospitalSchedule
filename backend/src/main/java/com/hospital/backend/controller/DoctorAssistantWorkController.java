@@ -54,6 +54,12 @@ public class DoctorAssistantWorkController {
         return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
+    @GetMapping("/all-in-interval")
+    public ResponseEntity<ApiResponse> getAllByDate(@RequestParam LocalDate dayAfter, @RequestParam LocalDate dayBefore) {
+        List<DoctorAssistantWorkDto> results = doctorAssistantWorkService.getAllWorksByDate(dayAfter,dayBefore);
+        return ResponseEntity.ok(new ApiResponse("Success", results));
+    }
+
     @GetMapping("/doctor/day")
     public ResponseEntity<ApiResponse> getWorkByDayAndDoctor(@RequestParam String dTaj, @RequestParam LocalDate day) {
         try {

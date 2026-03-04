@@ -49,6 +49,12 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
     }
 
     @Override
+    public List<DoctorAssistantWorkDto> getAllWorksByDate(LocalDate workDayAfter, LocalDate workDayBefore){
+        List<DoctorAssistantWork> works = doctorAssistantWorkRepository.findAllByWorkDayBetween(workDayAfter,workDayBefore);
+        return doctorAssistantWorkMapper.toDtoList(works);
+    }
+
+    @Override
     public List<DoctorAssistantWorkDto> getDoctorWorks(String doctorTaj){
         Doctor doctor = getDoctorByTaj(doctorTaj);
         List<DoctorAssistantWork> works = doctorAssistantWorkRepository.findAllByDoctor(doctor);
