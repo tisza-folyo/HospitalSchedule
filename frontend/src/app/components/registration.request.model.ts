@@ -8,5 +8,5 @@ export interface RegistrationRequest{
     roleName: string;
     workHoursStart: string,
     workHoursEnd: string,
-    specialty: string
+    specialtyName: string
 }

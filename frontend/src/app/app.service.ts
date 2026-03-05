@@ -144,6 +144,16 @@ export class AppService {
             confirmButtonText: 'Értem'
         });
     }
+    infoPopup(msg: string) {
+    Swal.fire({
+        title: msg,
+        icon: 'info',
+        background: '#f8f9fa',
+        confirmButtonColor: '#0dcaf0',
+        confirmButtonText: 'OK',
+        allowOutsideClick: false 
+    });
+}
 
     questionPopup(msg: string) {
         return Swal.fire({

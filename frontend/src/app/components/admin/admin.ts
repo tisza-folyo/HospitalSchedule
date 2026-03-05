@@ -19,6 +19,7 @@ export class Admin {
   works: WorkModel[] = [];
   cares: CareModel[] = [];
   roles: string[] = [];
+  specialties: string[] = [];
   taj: string = '';
   firstName : string = '';
   lastName : string = '';
@@ -28,8 +29,11 @@ export class Admin {
   workHourStart: string = '';
   workHourEnd: string = '';
   role: string = '';
+  grantRole: string = '';
   password: string = '';
   showForm: boolean = false;
+  searched: boolean = false;
+  showGrantForm: boolean = false;
 
   startDate: string = '';
   endDate: string = '';
@@ -37,7 +41,57 @@ export class Admin {
   constructor(private adminService: AdminService){}
 
 
-  searchPerson(){}
+  searchPerson(){
+    if(this.appService.getTaj() === this.taj){
+      this.appService.infoPopup("Magadra nem szűrhetsz!")
+      return;
+    }
+    this.adminService.getPerson(this.taj,this.role).subscribe({
+      next: (response) =>{
+        this.resetField("search-person")
+        const data = response.data;
+        console.log(data);
+        this.taj = data.taj;
+        this.role = data.role.roleName;
+        this.firstName = data.firstName;
+        this.lastName = data.lastName;
+        this.age = data.age;
+        this.email = data.email;
+        this.workHourStart = data.workHoursStart ?? '';
+        this.workHourEnd = data.workHoursEnd ?? '';
+        this.specialty = data.specialty?.specialtyName ?? '';
+        this.searched = true;
+      },
+      error: (error) =>{
+        if (error.status === 404) {
+        this.appService.infoPopup("Nincs ilyen személy!");
+      } else {
+        this.appService.errorPopup("Hiba!");
+      }
+      }
+    });
+  }
+
+  modifyRole(){
+    this.showGrantForm = true;
+  }
+
+  deletePerson() {
+  this.appService.questionPopup("Biztos törölni akarja?").then((result) => {
+    if (result.isConfirmed) {
+      this.adminService.deletePerson(this.taj, this.role).subscribe({
+        next: (response) => {
+          this.appService.successPopup("Siker!");
+          this.resetField("search-person");
+          this.searched = false;
+        },
+        error: (error) => {
+          this.appService.errorPopup("Hiba!");
+        }
+      });
+    }
+  });
+}
 
   resetField(field:string){
     if(field === "date-to-date"){
@@ -60,29 +114,42 @@ export class Admin {
       this.workHourEnd = '';
       this.workHourStart = '';
       this.specialty = '';
+      this.loadRoles();
+      this.loadSpecialties();
+    }else if(field === "search-person"){
+      this.taj = '';
+      this.role = '';
+      this.firstName = '';
+      this.lastName = '';
+      this.age = 0;
+      this.email = '';
+      this.workHourStart = '';
+      this.workHourEnd = '';
+      this.specialty = '';
+      this.grantRole = '';
+      this.showGrantForm = false;
     }
   }
   onSubmit(form: NgForm){
-    const request: RegistrationRequest={
-      taj: this.taj,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      age: this.age,
-      email: this.email,
-      password:this.password,
-      roleName: this.role,
-      workHoursStart: this.workHourStart + ":00",
-      workHoursEnd: this.workHourEnd + ":00",
-      specialty: this.specialty
-    }
-    this.adminService.registerPerson(request).subscribe({
+    this.workHourStart = this.workHourStart + ":00";
+    this.workHourEnd = this.workHourEnd + ":00";
+    this.postRegist();
+  }
+
+  onGrantRole(){
+    this.role = this.grantRole;
+    this.postRegist();
+    this.showGrantForm = false;
+    this.searched = false;
+  }
+
+  loadSpecialties(){
+    this.adminService.getSpecialties().subscribe({
       next: (response) => {
-        this.appService.successPopup("Hozzáadva!");
-        this.resetField("add-person");
-        this.showForm = false;
+        this.specialties = response.data.map((spec: any) => spec.specialtyName);
       },
       error: (error) => {
-        this.appService.errorPopup("Hiba!");
+        console.error('Error fetching roles:', error);
       }
     });
   }
@@ -120,6 +187,33 @@ export class Admin {
         console.error('Error fetching', err);
         console.log(err.error.message);
         
+      }
+    });
+  }
+
+  private postRegist(){
+    const request: RegistrationRequest={
+      taj: this.taj,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      age: this.age,
+      email: this.email,
+      password: this.taj + "_" + this.firstName,
+      roleName: this.role,
+      workHoursStart: this.workHourStart,
+      workHoursEnd: this.workHourEnd,
+      specialtyName: this.specialty
+    }
+    console.log(request);
+    
+    this.adminService.registerPerson(request).subscribe({
+      next: (response) => {
+        this.appService.successPopup("Hozzáadva!");
+        this.resetField("add-person");
+        this.showForm = false;
+      },
+      error: (error) => {
+        this.appService.errorPopup("Hiba!");
       }
     });
   }
