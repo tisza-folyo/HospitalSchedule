@@ -6,6 +6,7 @@ import { AppService } from '../../app.service';
 import { WorkModel } from '../work.model';
 import { CareModel } from '../care.model';
 import { RegistrationRequest } from '../registration.request.model';
+import { PersonModel } from '../person.model';
 
 @Component({
   selector: 'app-admin',
@@ -19,7 +20,10 @@ export class Admin {
   works: WorkModel[] = [];
   cares: CareModel[] = [];
   roles: string[] = [];
+  rolesForPerson: string[] = [];
+  avalaibleRoles: string [] = [];
   specialties: string[] = [];
+  personAccounts: PersonModel[] = [];
   taj: string = '';
   firstName : string = '';
   lastName : string = '';
@@ -46,23 +50,31 @@ export class Admin {
       this.appService.infoPopup("Magadra nem szűrhetsz!")
       return;
     }
-    this.adminService.getPerson(this.taj,this.role).subscribe({
-      next: (response) =>{
-        this.resetField("search-person")
-        const data = response.data;
-        console.log(data);
-        this.taj = data.taj;
-        this.role = data.role.roleName;
-        this.firstName = data.firstName;
-        this.lastName = data.lastName;
-        this.age = data.age;
-        this.email = data.email;
-        this.workHourStart = data.workHoursStart ?? '';
-        this.workHourEnd = data.workHoursEnd ?? '';
-        this.specialty = data.specialty?.specialtyName ?? '';
-        this.searched = true;
+    this.adminService.getRolesForPerson(this.taj).subscribe({
+      next: (response) => {
+        this.rolesForPerson = response.data.map((role: any) => role.roleName);
+        this.calculateAvalaibleRoles();
+        this.rolesForPerson.forEach(r => {
+          this.adminService.getPerson(this.taj, r).subscribe({
+            next: (response) => {
+              const data = response.data;
+              this.personAccounts.push({
+                taj : data.taj,
+                role : data.role.roleName,
+                firstName : data.firstName,
+                lastName : data.lastName,
+                age : data.age,
+                email: data.email
+              })
+              this.searched = true;
+            },
+            error: (error) => {
+              console.log(error);
+            }
+          });
+        });
       },
-      error: (error) =>{
+      error: (error) => {
         if (error.status === 404) {
         this.appService.infoPopup("Nincs ilyen személy!");
       } else {
@@ -70,16 +82,17 @@ export class Admin {
       }
       }
     });
+    
   }
 
   modifyRole(){
     this.showGrantForm = true;
   }
 
-  deletePerson() {
+  deletePerson(r: string) {
   this.appService.questionPopup("Biztos törölni akarja?").then((result) => {
     if (result.isConfirmed) {
-      this.adminService.deletePerson(this.taj, this.role).subscribe({
+      this.adminService.deletePerson(this.taj, r).subscribe({
         next: (response) => {
           this.appService.successPopup("Siker!");
           this.resetField("search-person");
@@ -117,17 +130,18 @@ export class Admin {
       this.loadRoles();
       this.loadSpecialties();
     }else if(field === "search-person"){
-      this.taj = '';
       this.role = '';
       this.firstName = '';
       this.lastName = '';
       this.age = 0;
       this.email = '';
-      this.workHourStart = '';
+      this.password = '';
       this.workHourEnd = '';
+      this.workHourStart = '';
       this.specialty = '';
-      this.grantRole = '';
+      this.personAccounts = [];
       this.showGrantForm = false;
+      this.searched = false;
     }
   }
   onSubmit(form: NgForm){
@@ -138,9 +152,12 @@ export class Admin {
 
   onGrantRole(){
     this.role = this.grantRole;
+    const person = this.personAccounts[0];
+    this.firstName = person.firstName;
+    this.lastName = person.lastName;
+    this.age = person.age;
     this.postRegist();
-    this.showGrantForm = false;
-    this.searched = false;
+    this.resetField("search-person")
   }
 
   loadSpecialties(){
@@ -161,6 +178,17 @@ export class Admin {
       },
       error: (error) => {
         console.error('Error fetching roles:', error);
+      }
+    });
+  }
+
+  loadRolesForPerson(){
+    this.adminService.getRolesForPerson(this.taj).subscribe({
+      next: (response) => {
+        this.rolesForPerson = response.data.map((r:any) => r.roleName);
+      },
+      error: (error) => {
+        console.log(error);
       }
     });
   }
@@ -189,6 +217,10 @@ export class Admin {
         
       }
     });
+  }
+
+  private calculateAvalaibleRoles(){
+    this.avalaibleRoles = this.roles.filter(r => !this.rolesForPerson.includes(r));
   }
 
   private postRegist(){

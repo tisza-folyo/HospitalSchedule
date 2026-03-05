@@ -20,6 +20,7 @@ export class AdminService {
     private registrationEndpoint = `${this.apiUrl}/people/register`;
     private getPersonEndpoint = (taj:string, role:string) => `${this.apiUrl}/people/${taj}/person?role=${role}`;
     private deletePersonEndpoint = (taj:string, role: string) => `${this.apiUrl}/people/delete/${taj}/person?role=${role}`;
+    private getRolesForPersonEndpoint = (taj: string) => `${this.apiUrl}/people/${taj}/roles`;
 
     constructor(private http: HttpClient){}
 
@@ -32,6 +33,10 @@ export class AdminService {
     getRoles(): Observable<{msg: string, data: any}> {
         return this.http.get<{msg: string, data: any}>(this.getRolesEndpoint);
     }
+    getRolesForPerson(taj: string): Observable<{msg: string, data: any}> {
+        return this.http.get<{msg: string, data: any}>(this.getRolesForPersonEndpoint(taj));
+    }
+
     getSpecialties(): Observable<{msg: string, data: any}> {
         return this.http.get<{msg: string, data: any}>(this.getSpecialtiesEndpoint);
     }

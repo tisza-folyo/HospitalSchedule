@@ -12,7 +12,7 @@
                 </li>
                 <li class="nav-item">
                     <button class="nav-link py-3 fw-bold rounded-0" data-bs-toggle="pill" data-bs-target="#people"
-                        (click)="loadRoles()">Felhasználók</button>
+                        (click)="loadSpecialties(); loadRoles();">Felhasználók</button>
                 </li>
             </ul>
 
@@ -164,21 +164,13 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold small text-muted">Keresés TAJ alapján</label>
                                 <input type="text" class="form-control" placeholder="123456789" [(ngModel)]="taj"
-                                    (input)="searched=false" pattern="^[0-9]{9}$" maxlength="9" required
+                                    (input)="resetField('search-person')" pattern="^[0-9]{9}$" maxlength="9" required
                                     #tajSearchRef="ngModel">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold small text-muted">Szerepkör szűrő</label>
                                 <div class="d-flex gap-2">
-                                    <select class="form-select border-primary" name="role" [(ngModel)]="role" required
-                                        #roleRef="ngModel" (change)="searched=false">
-                                        <option value="" disabled selected>Válassz szerepkört...</option>
-                                        @for (r of roles; track r) {
-                                        <option [value]="r">{{ this.appService.translateToHU(r) }}</option>
-                                        }
-                                    </select>
                                     <button class="btn btn-primary" type="button" (click)="searchPerson()"
-                                        [disabled]="!role || tajSearchRef.invalid">
+                                        [disabled]="tajSearchRef.invalid">
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                                             width="24px" fill="currentColor">
                                             <path
@@ -210,113 +202,119 @@
                                         <thead class="bg-light">
                                             <tr>
                                                 <th class="ps-3">TAJ</th>
-                                                <th>Vezetéknév</th>
-                                                <th>Keresztnév</th>
+                                                <th>Név</th>
+                                                <th>Email</th>
                                                 <th>Szerepkör</th>
                                                 <th class="text-end pe-3">Műveletek</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @for (acc of personAccounts; track acc.role) {
                                             <tr>
-                                                <td class="ps-3 fw-bold">{{ taj }}</td>
-                                                <td>{{ lastName }}</td>
-                                                <td>{{ firstName }}</td>
+                                                <td class="ps-3 fw-bold">{{ acc.taj }}</td>
+                                                <td>{{ acc.lastName }} {{ acc.firstName }}</td>
+                                                <td>{{ acc.email }}</td>
                                                 <td>
                                                     <span class="badge bg-info text-dark">
-                                                        {{ this.appService.translateToHU(role) }}
+                                                        {{ this.appService.translateToHU(acc.role) }}
                                                     </span>
                                                 </td>
                                                 <td class="text-end pe-3">
-                                                    <div class="btn-group btn-group-sm">
-                                                        <button class="btn btn-outline-success" (click)="modifyRole()"
-                                                            title="Szerepkör módosítása">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                height="16" fill="currentColor" class="bi bi-pencil"
-                                                                viewBox="0 0 16 16">
-                                                                <path
-                                                                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
-                                                            </svg>
-                                                            Szerepkör hozzáadás
-                                                        </button>
-
-                                                        <button class="btn btn-outline-danger" (click)="deletePerson()"
-                                                            title="Törlés">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                height="16" fill="currentColor" class="bi bi-trash"
-                                                                viewBox="0 0 16 16">
-                                                                <path
-                                                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                                                <path
-                                                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                                            </svg>
-                                                            Törlés
-                                                        </button>
-                                                    </div>
+                                                    <button class="btn btn-sm btn-outline-danger"
+                                                        (click)="deletePerson(acc.role)" title="Szerepkör törlése">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                            <path
+                                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                                        </svg>
+                                                    </button>
                                                 </td>
                                             </tr>
+                                            }
                                         </tbody>
                                     </table>
-                                    @if (!showForm && searched && showGrantForm) {
-                                    <div class="card border-success mb-4 shadow-sm animate__animated animate__fadeInUp">
-                                        <div class="card-header bg-success text-white">
-                                            <h6 class="mb-0">Új jogosultság hozzáadása: {{lastName}} {{firstName}}</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <form #grantForm="ngForm">
-                                                <div class="row g-3 align-items-end">
-                                                    <div class="col-md-4">
-                                                        <label class="form-label fw-bold">Új szerepkör</label>
-                                                        <select class="form-select border-success" name="grantRole"
-                                                            [(ngModel)]="grantRole" required>
-                                                            <option value="" hidden disabled selected>Válassz...
-                                                            </option>
-                                                            @for (r of roles; track r) {
-                                                            @if (r !== role) {
-                                                            <option [value]="r">{{ this.appService.translateToHU(r) }}
-                                                            </option>
-                                                            }
-                                                            }
-                                                        </select>
-                                                    </div>
-
-                                                    @if (grantRole === 'NURSE' || grantRole === 'ASSISTANT' || grantRole
-                                                    === 'DOCTOR') {
-                                                    <div class="col-md-2">
-                                                        <label class="form-label small">Munkaidő kezdete</label>
-                                                        <input type="time" class="form-control" name="gStart"
-                                                            [(ngModel)]="workHourStart" required>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <label class="form-label small">Munkaidő vége</label>
-                                                        <input type="time" class="form-control" name="gEnd"
-                                                            [(ngModel)]="workHourEnd" required>
-                                                    </div>
-                                                    }
-
-                                                    @if (grantRole === 'DOCTOR') {
-                                                    <div class="col-md-4">
-                                                        <label class="form-label small">Specializáció</label>
-                                                        <input type="text" class="form-control" name="gSpecialty"
-                                                            [(ngModel)]="specialty" required placeholder="pl. Sebész">
-                                                    </div>
-                                                    }
-
-                                                    <div class="col text-end">
-                                                        <button type="button" class="btn btn-light me-2"
-                                                            (click)="showGrantForm = false">Mégse</button>
-                                                        <button type="submit" class="btn btn-success"
-                                                            [disabled]="grantForm.invalid" (click)="onGrantRole()">
-                                                            Jogosultság mentése
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    }
                                 </div>
                             </div>
                         </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-muted mb-0">Jogosultságok kezelése</h5>
+                            @if (!showGrantForm) {
+                            <button class="btn btn-success btn-sm" (click)="modifyRole()">
+                                + Új szerepkör hozzáadása
+                            </button>
+                            }
+                        </div>
+
+                        @if (showGrantForm) {
+                        <div class="card border-success mb-4 shadow-sm animate__animated animate__fadeInUp">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">Új jogosultság: {{lastName}} {{firstName}}</h6>
+                            </div>
+                            <div class="card-body">
+                                <form #grantForm="ngForm">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Válasszon szerepkört</label>
+                                            <select class="form-select" name="grantRole" [(ngModel)]="grantRole"
+                                                required>
+                                                <option value="" hidden disabled selected>Válassz...</option>
+                                                @for (r of avalaibleRoles; track r) {
+                                                <option [value]="r">{{ this.appService.translateToHU(r) }}</option>
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Email cím</label>
+                                            <input type="email" class="form-control" name="gEmail" [(ngModel)]="email"
+                                                placeholder="pelda@email.hu" required email #emailRef="ngModel"
+                                                [class.is-invalid]="emailRef.invalid && emailRef.touched">
+                                            <div class="invalid-feedback">Kérjük, adjon meg egy érvényes email címet!
+                                            </div>
+                                        </div>
+
+                                        @if (['DOCTOR', 'NURSE', 'ASSISTANT'].includes(grantRole)) {
+                                        <div class="col-md-2">
+                                            <label class="form-label fw-bold">Kezdés</label>
+                                            <input type="time" class="form-control" name="gStart"
+                                                [(ngModel)]="workHourStart" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label fw-bold">Vége</label>
+                                            <input type="time" class="form-control" name="gEnd"
+                                                [(ngModel)]="workHourEnd" required>
+                                        </div>
+                                        }
+
+                                        @if (grantRole === 'DOCTOR') {
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Specializáció</label>
+                                            <select class="form-select" name="gSpecialty" [(ngModel)]="specialty"
+                                                required>
+                                                <option value="" disabled selected>Válassz szakmát...</option>
+                                                @for (s of specialties; track s) {
+                                                <option [value]="s">{{ s }}</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        }
+
+                                        <div class="col-12 text-end mt-3 border-top pt-3">
+                                            <button type="button" class="btn btn-light me-2"
+                                                (click)="showGrantForm = false">Mégse</button>
+                                            <button type="submit" class="btn btn-success" [disabled]="grantForm.invalid"
+                                                (click)="onGrantRole()">
+                                                Mentés és hozzáadás
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        }
                         }
 
                         @if (showForm) {
@@ -348,7 +346,8 @@
                                     <div class="col-md-4">
                                         <label class="form-label fw-bold">TAJ szám</label>
                                         <input type="text" class="form-control" name="taj" [(ngModel)]="taj" required
-                                            pattern="^[0-9]{9}$" maxlength="9" placeholder="123456789" #tajRef="ngModel">
+                                            pattern="^[0-9]{9}$" maxlength="9" placeholder="123456789"
+                                            #tajRef="ngModel">
                                     </div>
 
                                     <div class="col-md-4">
