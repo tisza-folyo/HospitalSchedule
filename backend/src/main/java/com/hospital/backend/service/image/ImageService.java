@@ -97,12 +97,6 @@ public class ImageService implements IImageService{
     }
 
     @Override
-    public void deleteImageByDwnUrl(String dwnUrl){
-        Image image = imageRepository.findByDwnUrl(dwnUrl).orElseThrow(() -> new ResourceNotFoundException("Image"));
-        imageRepository.delete(image);
-    }
-
-    @Override
     public List<ImageDto> getPatientImages(String pTaj){
         List<Image> images = imageRepository.findAllByPatient_Taj(pTaj);
         if (images.isEmpty()) throw new ResourceNotFoundException("Image");
@@ -119,6 +113,11 @@ public class ImageService implements IImageService{
         } catch (IOException | SQLException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    @Override
+    public void deleteImage(long id){
+        Image image = imageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Image"));
+        imageRepository.delete(image);
     }
 }

@@ -30,6 +30,7 @@ public class PersonService implements IPersonService {
     private final SpecialtyRepository specialtyRepository;
     private final PasswordEncoder passwordEncoder;
     private final int PATIENT_NUMBER_FOR_NURSE = 5;
+    private final RoleMapper roleMapper;
 
 
     @Override
@@ -37,6 +38,12 @@ public class PersonService implements IPersonService {
         Role role = roleRepository.findByRoleName(roleName).orElseThrow(() -> new ResourceNotFoundException(roleName));
         Person person = personRepository.findByTajAndRole(taj,role).orElseThrow(() -> new ResourceNotFoundException(taj + " " + roleName));
         personRepository.delete(person);
+    }
+
+    @Override
+    public List<RoleDto> getAllRolesForPerson(String taj){
+        List<Role> roles = personRepository.findAllRolesByTaj(taj);
+        return roleMapper.toDtoList(roles);
     }
 
     @Override

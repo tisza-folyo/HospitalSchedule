@@ -40,9 +40,10 @@ public class ImageController {
         return ResponseEntity.ok(new ApiResponse("Deleted", null));
     }
 
-    @DeleteMapping("/delete/{dwnUrl}/image")
-    public ResponseEntity<ApiResponse> deleteImage(@PathVariable String dwnUrl) {
-        imageService.deleteImageByDwnUrl(dwnUrl);
+    @DeleteMapping("/delete/{id}/image")
+    public ResponseEntity<ApiResponse> deleteImage(@PathVariable long id) {
+        imageService.deleteImage(id);
         return ResponseEntity.ok(new ApiResponse("Deleted", null));
     }
+
 }

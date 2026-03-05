@@ -12,9 +12,9 @@ public interface IImageService {
 
     void deleteImagesByTaj(String pTaj);
 
-    void deleteImageByDwnUrl(String dwnUrl);
-
     List<ImageDto> getPatientImages(String pTaj);
 
     void updateImage(MultipartFile file, String dwnUrl);
+
+    void deleteImage(long id);
 }

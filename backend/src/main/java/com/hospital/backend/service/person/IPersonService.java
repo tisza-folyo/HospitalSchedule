@@ -3,6 +3,7 @@ package com.hospital.backend.service.person;
 import com.hospital.backend.dto.DoctorDto;
 import com.hospital.backend.dto.NurseDto;
 import com.hospital.backend.dto.PatientDto;
+import com.hospital.backend.dto.RoleDto;
 import com.hospital.backend.model.Person;
 import com.hospital.backend.request.RegisterRequest;
 
@@ -10,6 +11,8 @@ import java.util.List;
 
 public interface IPersonService {
     void deletePerson(String taj, String roleName);
+
+    List<RoleDto> getAllRolesForPerson(String taj);
 
     Person getPersonByTajAndRole(String taj, String roleName);
 

@@ -3,6 +3,7 @@ package com.hospital.backend.controller;
 import com.hospital.backend.dto.DoctorDto;
 import com.hospital.backend.dto.NurseDto;
 import com.hospital.backend.dto.PatientDto;
+import com.hospital.backend.dto.RoleDto;
 import com.hospital.backend.model.Person;
 import com.hospital.backend.request.RegisterRequest;
 import com.hospital.backend.response.ApiResponse;
@@ -24,6 +25,12 @@ public class PersonController {
     public ResponseEntity<ApiResponse> getPersonDetails(@PathVariable String pTaj, @RequestParam String role) {
         Person result = personService.getPersonByTajAndRole(pTaj, role);
         return ResponseEntity.ok(new ApiResponse("Success", result));
+    }
+
+    @GetMapping("/{taj}/roles")
+    public ResponseEntity<ApiResponse> getAllRolesForPerson(@PathVariable String taj){
+        List<RoleDto> results = personService.getAllRolesForPerson(taj);
+        return ResponseEntity.ok(new ApiResponse("Success", results));
     }
 
     @GetMapping("/doctors/all")
