@@ -21,6 +21,11 @@ export class AdminService {
     private getPersonEndpoint = (taj:string, role:string) => `${this.apiUrl}/people/${taj}/person?role=${role}`;
     private deletePersonEndpoint = (taj:string, role: string) => `${this.apiUrl}/people/delete/${taj}/person?role=${role}`;
     private getRolesForPersonEndpoint = (taj: string) => `${this.apiUrl}/people/${taj}/roles`;
+    private deleteSpecialtyEndpoint = (name: string) => `${this.apiUrl}/specialties/delete?name=${name}`;
+    private addSpecialtyEndpoint : string = `${this.apiUrl}/specialties/add`;
+    private addSectionEndpint = (name: string) => `${this.apiUrl}/sections/add?name=${name}`;
+    private deleteSectionEndpint = (name: string) => `${this.apiUrl}/sections/delete?name=${name}`;
+    private getAllSectionsEndpoint = `${this.apiUrl}/sections/all`;
 
     constructor(private http: HttpClient){}
 
@@ -50,4 +55,20 @@ export class AdminService {
     deletePerson(taj:string, role:string): Observable<{msg: string, data: any}>{
         return this.http.delete<{msg: string, data: any}>(this.deletePersonEndpoint(taj,role));
     }
+    deleteSpecialty(name:string): Observable<{msg: string, data: any}>{
+        return this.http.delete<{msg: string, data: any}>(this.deleteSpecialtyEndpoint(name));
+    }
+    addSpecialty(spec:any): Observable<{msg: string, data: any}>{
+        return this.http.post<{msg: string, data: any}>(this.addSpecialtyEndpoint,spec);
+    }
+    addSection(name:string): Observable<{msg: string, data: any}>{
+        return this.http.post<{msg: string, data: any}>(this.addSectionEndpint(name),"");
+    }
+    deleteSection(name:string): Observable<{msg: string, data: any}>{
+        return this.http.delete<{msg: string, data: any}>(this.deleteSectionEndpint(name));
+    }
+    getSections(): Observable<{msg: string, data: any}> {
+        return this.http.get<{msg: string, data: any}>(this.getAllSectionsEndpoint);
+    }
+
 }

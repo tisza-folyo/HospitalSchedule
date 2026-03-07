@@ -14,6 +14,14 @@
                     <button class="nav-link py-3 fw-bold rounded-0" data-bs-toggle="pill" data-bs-target="#people"
                         (click)="loadSpecialties(); loadRoles();">Felhasználók</button>
                 </li>
+                <li class="nav-item">
+                    <button class="nav-link py-3 fw-bold rounded-0" data-bs-toggle="pill"
+                        data-bs-target="#specialties-tab" (click)="loadSpecialties()">Szakterületek</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link py-3 fw-bold rounded-0" data-bs-toggle="pill" data-bs-target="#sections-tab"
+                        (click)="loadSections()">Osztályok</button>
+                </li>
             </ul>
 
             <div class="tab-content p-4">
@@ -404,6 +412,138 @@
                                         </button>
                                     </div>
                                 </form>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="specialties-tab">
+                    <div class="p-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="text-primary fw-bold mb-0">Szakterületek kezelése</h4>
+                            @if (!showSpecialtyForm) {
+                            <button class="btn btn-success d-flex align-items-center gap-2"
+                                (click)="toggleSpecialtyForm()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                    viewBox="0 0 16 16">
+                                    <path
+                                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                </svg>
+                                Új szakterület
+                            </button>
+                            }
+                        </div>
+
+                        @if (!showSpecialtyForm) {
+                        <div class="list-group shadow-sm animate__animated animate__fadeIn">
+                            @for (s of specialties; track s) {
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <span class="fw-semibold text-dark">{{ s }}</span>
+                                <button class="btn btn-outline-danger btn-sm" (click)="deleteSpecialty(s)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                        <path
+                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            }
+                        </div>
+                        }
+
+                        @if (showSpecialtyForm) {
+                        <div class="card border-primary shadow-sm animate__animated animate__fadeInUp">
+                            <div class="card-header bg-primary text-white fw-bold">Új szakterület hozzáadása</div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-7">
+                                        <label class="form-label fw-bold">Szakterület neve</label>
+                                        <input type="text" class="form-control" [(ngModel)]="specialty"
+                                            placeholder="pl. Kardiológia">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label fw-bold">Ellátási idő (perc)</label>
+                                        <input type="number" [min]="0" class="form-control"
+                                            [(ngModel)]="treatmentTimeInMinute">
+                                    </div>
+                                    <div class="col-12 text-end mt-3 border-top pt-3">
+                                        <button class="btn btn-light me-2"
+                                            (click)="toggleSpecialtyForm()">Mégse</button>
+                                        <button class="btn btn-primary px-4" (click)="addSpecialty()"
+                                            [disabled]="!specialty || treatmentTimeInMinute <= 0">
+                                            Mentés
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="sections-tab">
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="text-primary fw-bold mb-0">Osztályok kezelése</h4>
+                            @if (!showSectionForm) {
+                            <button class="btn btn-success d-flex align-items-center gap-2"
+                                (click)="toggleSectionForm()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                    viewBox="0 0 16 16">
+                                    <path
+                                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                </svg>
+                                Új osztály
+                            </button>
+                            }
+                        </div>
+
+                        @if (!showSectionForm) {
+                        <div class="list-group shadow-sm animate__animated animate__fadeIn">
+                            @for (sec of sections; track sec) {
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <span class="fw-semibold text-dark">{{ sec }}</span>
+                                <button class="btn btn-outline-danger btn-sm" (click)="deleteSection(sec)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                        <path
+                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            } @empty {
+                            <div class="p-4 text-center text-muted border rounded bg-light">
+                                Nincsenek rögzített osztályok.
+                            </div>
+                            }
+                        </div>
+                        }
+
+                        @if (showSectionForm) {
+                        <div class="card border-primary shadow-sm animate__animated animate__fadeInUp">
+                            <div class="card-header bg-primary text-white fw-bold">Új osztály hozzáadása</div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">Osztály neve</label>
+                                        <input type="text" class="form-control" [(ngModel)]="section"
+                                            placeholder="pl. Belgyógyászat">
+                                    </div>
+                                    <div class="col-12 text-end mt-3 border-top pt-3">
+                                        <button class="btn btn-light me-2"
+                                            (click)="toggleSectionForm()">Mégse</button>
+                                        <button class="btn btn-primary px-4" (click)="addSection()"
+                                            [disabled]="!section">
+                                            Mentés
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         }

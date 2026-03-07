@@ -10,7 +10,7 @@ import { PersonModel } from '../person.model';
 
 @Component({
   selector: 'app-admin',
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
@@ -19,17 +19,20 @@ export class Admin {
   appService = inject(AppService);
   works: WorkModel[] = [];
   cares: CareModel[] = [];
+  sections: string[] = [];
   roles: string[] = [];
   rolesForPerson: string[] = [];
-  avalaibleRoles: string [] = [];
+  avalaibleRoles: string[] = [];
   specialties: string[] = [];
   personAccounts: PersonModel[] = [];
   taj: string = '';
-  firstName : string = '';
-  lastName : string = '';
+  firstName: string = '';
+  lastName: string = '';
   email: string = '';
   age: number = 0;
+  treatmentTimeInMinute: number = 0;
   specialty: string = '';
+  section: string = '';
   workHourStart: string = '';
   workHourEnd: string = '';
   role: string = '';
@@ -38,15 +41,17 @@ export class Admin {
   showForm: boolean = false;
   searched: boolean = false;
   showGrantForm: boolean = false;
+  showSpecialtyForm: boolean = false;
+  showSectionForm: boolean = false;
 
   startDate: string = '';
   endDate: string = '';
 
-  constructor(private adminService: AdminService){}
+  constructor(private adminService: AdminService) { }
 
 
-  searchPerson(){
-    if(this.appService.getTaj() === this.taj){
+  searchPerson() {
+    if (this.appService.getTaj() === this.taj) {
       this.appService.infoPopup("Magadra nem szűrhetsz!")
       return;
     }
@@ -59,11 +64,11 @@ export class Admin {
             next: (response) => {
               const data = response.data;
               this.personAccounts.push({
-                taj : data.taj,
-                role : data.role.roleName,
-                firstName : data.firstName,
-                lastName : data.lastName,
-                age : data.age,
+                taj: data.taj,
+                role: data.role.roleName,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                age: data.age,
                 email: data.email
               })
               this.searched = true;
@@ -76,46 +81,126 @@ export class Admin {
       },
       error: (error) => {
         if (error.status === 404) {
-        this.appService.infoPopup("Nincs ilyen személy!");
-      } else {
-        this.appService.errorPopup("Hiba!");
-      }
+          this.appService.infoPopup("Nincs ilyen személy!");
+        } else {
+          this.appService.errorPopup("Hiba!");
+        }
       }
     });
-    
+
   }
 
-  modifyRole(){
+  deleteSpecialty(s: string) {
+    this.appService.questionPopup("Biztos törölni akarja?\n(Csak abban az esetben törölheti ha semmilyen orvos nem rendelkezik ezzel a specializációval!)").then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.deleteSpecialty(s).subscribe({
+          next: (response) => {
+            this.appService.successPopup("Siker!");
+            this.loadSpecialties();
+          },
+          error: (error) => {
+            this.appService.errorPopup("Hiba!");
+          }
+        })
+      }
+    });
+  }
+
+  toggleSpecialtyForm() {
+    if (this.showSpecialtyForm) {
+      this.showSpecialtyForm = false;
+      this.specialty = '';
+    } else {
+      this.showSpecialtyForm = true,
+        this.specialty = '';
+      this.treatmentTimeInMinute = 0;
+    }
+  }
+
+  addSpecialty() {
+    const request = {
+      specialtyName: this.specialty,
+      treatmentTimeInMinutes: this.treatmentTimeInMinute
+    }
+    this.adminService.addSpecialty(request).subscribe({
+      next: (response) => {
+        this.appService.successPopup("Siker!");
+        this.loadSpecialties();
+        this.toggleSpecialtyForm();
+      },
+      error: (error) => {
+        this.appService.errorPopup("Hiba!");
+      }
+    });
+  }
+
+  deleteSection(sec: string) {
+    this.appService.questionPopup("Biztos törölni akarja?\n(Csak abban az esetben törölheti ha semmilyen orvos nincs ezen az osztályon!)").then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.deleteSection(sec).subscribe({
+          next: (response) => {
+            this.appService.successPopup("Siker!");
+            this.loadSections();
+          },
+          error: (error) => {
+            this.appService.errorPopup("Hiba!");
+          }
+        });
+      }
+    })
+  }
+  toggleSectionForm() {
+    if (this.showSectionForm) {
+      this.showSectionForm = false;
+    } else {
+      this.showSectionForm = true;
+      this.section = '';
+    }
+  }
+  addSection() {
+    this.adminService.addSection(this.section).subscribe({
+      next: (response) => {
+        this.appService.successPopup("Siker!");
+        this.loadSections();
+        this.toggleSectionForm();
+      },
+      error: (error) => {
+        this.appService.errorPopup("Hiba!");
+      }
+    })
+  }
+
+  modifyRole() {
     this.showGrantForm = true;
   }
 
   deletePerson(r: string) {
-  this.appService.questionPopup("Biztos törölni akarja?").then((result) => {
-    if (result.isConfirmed) {
-      this.adminService.deletePerson(this.taj, r).subscribe({
-        next: (response) => {
-          this.appService.successPopup("Siker!");
-          this.resetField("search-person");
-          this.searched = false;
-        },
-        error: (error) => {
-          this.appService.errorPopup("Hiba!");
-        }
-      });
-    }
-  });
-}
+    this.appService.questionPopup("Biztos törölni akarja?").then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.deletePerson(this.taj, r).subscribe({
+          next: (response) => {
+            this.appService.successPopup("Siker!");
+            this.resetField("search-person");
+            this.searched = false;
+          },
+          error: (error) => {
+            this.appService.errorPopup("Hiba!");
+          }
+        });
+      }
+    });
+  }
 
-  resetField(field:string){
-    if(field === "date-to-date"){
+  resetField(field: string) {
+    if (field === "date-to-date") {
       this.startDate = '';
       this.endDate = '';
       this.works = [];
-    }else if(field === "cancel-add"){
+    } else if (field === "cancel-add") {
       this.role = '';
       this.showForm = false;
       this.taj = '';
-    }else if(field === "add-person"){
+    } else if (field === "add-person") {
       this.role = '';
       this.showForm = true;
       this.taj = '';
@@ -129,7 +214,7 @@ export class Admin {
       this.specialty = '';
       this.loadRoles();
       this.loadSpecialties();
-    }else if(field === "search-person"){
+    } else if (field === "search-person") {
       this.role = '';
       this.firstName = '';
       this.lastName = '';
@@ -144,13 +229,13 @@ export class Admin {
       this.searched = false;
     }
   }
-  onSubmit(form: NgForm){
+  onSubmit(form: NgForm) {
     this.workHourStart = this.workHourStart + ":00";
     this.workHourEnd = this.workHourEnd + ":00";
     this.postRegist();
   }
 
-  onGrantRole(){
+  onGrantRole() {
     this.role = this.grantRole;
     const person = this.personAccounts[0];
     this.firstName = person.firstName;
@@ -160,7 +245,7 @@ export class Admin {
     this.resetField("search-person")
   }
 
-  loadSpecialties(){
+  loadSpecialties() {
     this.adminService.getSpecialties().subscribe({
       next: (response) => {
         this.specialties = response.data.map((spec: any) => spec.specialtyName);
@@ -170,8 +255,18 @@ export class Admin {
       }
     });
   }
+  loadSections() {
+    this.adminService.getSections().subscribe({
+      next: (response) => {
+        this.sections = response.data.map((sec: any) => sec.sectionName);
+      },
+      error: (error) => {
+        console.error('Error fetching roles:', error);
+      }
+    });
+  }
 
-  loadRoles(){
+  loadRoles() {
     this.adminService.getRoles().subscribe({
       next: (response) => {
         this.roles = response.data.map((role: any) => role.roleName);
@@ -182,10 +277,10 @@ export class Admin {
     });
   }
 
-  loadRolesForPerson(){
+  loadRolesForPerson() {
     this.adminService.getRolesForPerson(this.taj).subscribe({
       next: (response) => {
-        this.rolesForPerson = response.data.map((r:any) => r.roleName);
+        this.rolesForPerson = response.data.map((r: any) => r.roleName);
       },
       error: (error) => {
         console.log(error);
@@ -193,20 +288,20 @@ export class Admin {
     });
   }
 
-  loadWorks(){
-    this.adminService.getAllWorksBetween(this.startDate,this.endDate).subscribe({
+  loadWorks() {
+    this.adminService.getAllWorksBetween(this.startDate, this.endDate).subscribe({
       next: (response) => {
         this.works = response.data;
       },
       error: (err) => {
         console.error('Error fetching', err);
         console.log(err.error.message);
-        
+
       }
     });
   }
 
-  loadCares(){
+  loadCares() {
     this.adminService.getAllActiveCares().subscribe({
       next: (response) => {
         this.cares = response.data;
@@ -214,17 +309,17 @@ export class Admin {
       error: (err) => {
         console.error('Error fetching', err);
         console.log(err.error.message);
-        
+
       }
     });
   }
 
-  private calculateAvalaibleRoles(){
+  private calculateAvalaibleRoles() {
     this.avalaibleRoles = this.roles.filter(r => !this.rolesForPerson.includes(r));
   }
 
-  private postRegist(){
-    const request: RegistrationRequest={
+  private postRegist() {
+    const request: RegistrationRequest = {
       taj: this.taj,
       firstName: this.firstName,
       lastName: this.lastName,
@@ -237,7 +332,7 @@ export class Admin {
       specialtyName: this.specialty
     }
     console.log(request);
-    
+
     this.adminService.registerPerson(request).subscribe({
       next: (response) => {
         this.appService.successPopup("Hozzáadva!");
