@@ -10,6 +10,10 @@ import com.hospital.backend.request.RegisterRequest;
 import java.util.List;
 
 public interface IPersonService {
+    void updateSection(String taj, String sectionName);
+
+    void updatePassword(String taj, String roleName, String oldPassword, String newPassword);
+
     void deletePerson(String taj, String roleName);
 
     List<RoleDto> getAllRolesForPerson(String taj);

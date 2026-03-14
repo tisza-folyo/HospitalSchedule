@@ -34,6 +34,23 @@ public class PersonService implements IPersonService {
 
 
     @Override
+    public void updateSection(String taj, String sectionName){
+        Section section = sectionRepository.findBySectionName(sectionName).orElseThrow(() -> new ResourceNotFoundException("Section"));
+        Doctor doctor = doctorRepository.findByTaj(taj).orElseThrow(() -> new ResourceNotFoundException(taj));
+        doctor.setSection(section);
+        doctorRepository.save(doctor);
+    }
+
+    @Override
+    public void updatePassword(String taj, String roleName, String oldPassword, String newPassword){
+        Role role = roleRepository.findByRoleName(roleName).orElseThrow(() -> new ResourceNotFoundException(roleName));
+        Person person = personRepository.findByTajAndRole(taj,role).orElseThrow(() -> new ResourceNotFoundException(taj + " " + roleName));
+        if(!passwordEncoder.matches(oldPassword, person.getPassword())) throw new CollisionException("Password");
+        person.setPassword(passwordEncoder.encode(newPassword));
+        personRepository.save(person);
+    }
+
+    @Override
     public void deletePerson(String taj, String roleName) {
         Role role = roleRepository.findByRoleName(roleName).orElseThrow(() -> new ResourceNotFoundException(roleName));
         Person person = personRepository.findByTajAndRole(taj,role).orElseThrow(() -> new ResourceNotFoundException(taj + " " + roleName));

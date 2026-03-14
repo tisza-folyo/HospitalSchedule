@@ -26,6 +26,7 @@ public class AppointmentService implements IAppointmentService {
     private final RoleRepository roleRepository;
     private final PatientRepository patientRepository;
     private final AppointmentMapper appointmentMapper;
+    private final DoctorAssistantWorkRepository doctorAssistantWorkRepository;
 
     @Override
     public AppointmentDto addAppointment(AppointmentRequest request){
@@ -91,7 +92,7 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public List<AppointmentDto> getAllAndFreeAppointments(String dTaj, LocalDate day){
-        if(isWeekend(day)) return appointmentMapper.toDtoList(new ArrayList<>());
+        if (!doctorAssistantWorkRepository.existsByWorkDay(day)) return appointmentMapper.toDtoList(new ArrayList<>());
         Doctor doctor = getDoctorByTaj(dTaj);
         List<Appointment> appointments = appointmentRepository.findAllByDoctorAndDay(doctor, day);
         List<LocalTime> times = appointments.stream().map(Appointment::getTimeSlot).toList();
@@ -106,7 +107,7 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public List<AppointmentDto> getAllAndFreeAppointments(LocalDate day){
-        if(isWeekend(day)) return appointmentMapper.toDtoList(new ArrayList<>());
+        if (!doctorAssistantWorkRepository.existsByWorkDay(day)) return appointmentMapper.toDtoList(new ArrayList<>());
         List<AppointmentDto> freeAppointments = new ArrayList<>();
         for (Doctor doctor : doctorRepository.findAll()) freeAppointments.addAll(getAllAndFreeAppointments(doctor.getTaj(), day));
         return freeAppointments;
@@ -114,7 +115,7 @@ public class AppointmentService implements IAppointmentService {
 
     @Override
     public List<AppointmentDto> getAllAndFreeAppointments(LocalDate day, String sectionName){
-        if(isWeekend(day)) return appointmentMapper.toDtoList(new ArrayList<>());
+        if (!doctorAssistantWorkRepository.existsByWorkDay(day)) return appointmentMapper.toDtoList(new ArrayList<>());
         Section section = sectionRepository.findBySectionName(sectionName).orElseThrow(() -> new ResourceNotFoundException(sectionName));
         List<AppointmentDto> appointments = new ArrayList<>();
         List<Doctor> doctors = doctorRepository.findAllBySection(section);
@@ -125,7 +126,7 @@ public class AppointmentService implements IAppointmentService {
     }
 
     private boolean isAppointmentPlaceable(Doctor doctor, LocalDate day, LocalTime timeSlot){
-        if (timeSlot.isBefore(doctor.getWorkHoursStart()) || timeSlot.isAfter(doctor.getWorkHoursEnd().minusMinutes(doctor.getSpecialty().getTreatmentTimeInMinutes())) || isWeekend(day)) return false;
+        if (timeSlot.isBefore(doctor.getWorkHoursStart()) || timeSlot.isAfter(doctor.getWorkHoursEnd().minusMinutes(doctor.getSpecialty().getTreatmentTimeInMinutes()))) return false;
         return !appointmentRepository.existsByDoctorAndDayAndTimeSlot(doctor, day, timeSlot);
     }
 
@@ -141,10 +142,6 @@ public class AppointmentService implements IAppointmentService {
         return appointment;
     }
 
-    private boolean isWeekend(LocalDate date) {
-        DayOfWeek day = date.getDayOfWeek();
-        return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
-    }
 
     private Doctor getDoctorByTaj(String dTaj){
         return doctorRepository.findByTaj(dTaj).orElseThrow(() -> new ResourceNotFoundException("Doctor"));

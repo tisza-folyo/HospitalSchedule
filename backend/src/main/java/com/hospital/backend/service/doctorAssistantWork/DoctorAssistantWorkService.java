@@ -9,10 +9,7 @@ import com.hospital.backend.exception.ResourceNotFoundException;
 import com.hospital.backend.mapper.DoctorAssistantWorkMapper;
 import com.hospital.backend.mapper.PersonMapper;
 import com.hospital.backend.model.*;
-import com.hospital.backend.repository.AssistantRepository;
-import com.hospital.backend.repository.DoctorAssistantWorkRepository;
-import com.hospital.backend.repository.DoctorRepository;
-import com.hospital.backend.repository.RoleRepository;
+import com.hospital.backend.repository.*;
 import com.hospital.backend.request.UpdateAssistantWorkRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +26,7 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
     private final AssistantRepository assistantRepository;
     private final RoleRepository roleRepository;
     private final PersonMapper personMapper;
+    private final AppointmentRepository appointmentRepository;
 
     @Override
     public List<DoctorAssistantWorkDto> getAllWorks(){
@@ -77,6 +75,8 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
 
     @Override
     public List<AssistantDto> getFreeAssistants(LocalDate day){
+        if (!doctorAssistantWorkRepository.existsByWorkDay(day)) return List.of();
+        if (doctorAssistantWorkRepository.existsByAssistantIsNotNullAndWorkDay(day)) return List.of();
         List<Assistant> freeAssistants = assistantRepository.findFreeAssistantsByDay(day);
         return freeAssistants.stream().map(personMapper::toAssistantDto).toList();
     }
@@ -146,6 +146,7 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
     @Override
     public void deleteWork(Long workId){
         DoctorAssistantWork work = doctorAssistantWorkRepository.findById(workId).orElseThrow(() -> new ResourceNotFoundException("Work"));
+        if (appointmentRepository.existsByDayAndDoctor(work.getWorkDay(),work.getDoctor())) throw new CollisionException("Appointment");
         doctorAssistantWorkRepository.delete(work);
     }
 

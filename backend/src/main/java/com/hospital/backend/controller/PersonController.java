@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -79,5 +80,19 @@ public class PersonController {
     public ResponseEntity<ApiResponse> setDoctorSection(@RequestParam String taj, @RequestParam String role, @RequestParam String section) {
         DoctorDto result = personService.setSection(taj, role, section);
         return ResponseEntity.ok(new ApiResponse("Updated", result));
+    }
+
+    @PutMapping("/{taj}/change-password")
+    public ResponseEntity<ApiResponse> updatePassword(@PathVariable String taj,@RequestParam String role,@RequestBody Map<String, String> passwords) {
+        String oldPassword = passwords.get("oldPassword");
+        String newPassword = passwords.get("newPassword");
+        personService.updatePassword(taj, role, oldPassword, newPassword);
+        return ResponseEntity.ok(new ApiResponse("Updated", null));
+    }
+
+    @PutMapping("/{taj}/change-section")
+    public ResponseEntity<ApiResponse> updateSection(@PathVariable String taj, @RequestBody String section) {
+        personService.updateSection(taj, section);
+        return ResponseEntity.ok(new ApiResponse("Updated", null));
     }
 }

@@ -10,8 +10,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment,Long> {
-    Appointment findByDoctorAndDay(Doctor doctor, LocalDate day);
-
     List<Appointment> findAllByDoctorAndDay(Doctor doctor, LocalDate day);
 
     boolean existsByDoctorAndDayAndTimeSlot(Doctor doctor, LocalDate day, LocalTime timeSlot);
@@ -21,4 +19,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment,Long> {
     List<Appointment> findAllByDay(LocalDate day);
 
     List<Appointment> findAllByPatient(Patient patient);
+
+    boolean existsByDayAndDoctor(LocalDate day, Doctor doctor);
 }
