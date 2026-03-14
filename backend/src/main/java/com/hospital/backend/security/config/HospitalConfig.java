@@ -62,7 +62,8 @@ public class HospitalConfig {
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider(){
-        var authProvider = new DaoAuthenticationProvider(personDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(personDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

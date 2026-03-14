@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Configuration
 public class CorsConfig {
 
-    @Value("${FRONTEND_URL}")
+    @Value("${FRONTEND_URL:http://localhost:4200}")
     private String frontendUrl;
 
     @Bean
