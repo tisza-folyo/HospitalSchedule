@@ -75,6 +75,7 @@ export class Doctor {
     this.assistant = null;
     this.assistants = [];
     this.filteredAssistants = [];
+    this.isFilterSubmitted = false;
   }
 
   onAssistantSearch() {
@@ -88,6 +89,15 @@ export class Doctor {
       next: (response) => {
         this.assistants = response.data;
         this.filteredAssistants = this.assistants;
+        if (this.assistants.length === 0) {
+          this.appService.infoPopup(`
+            Nincs találat!
+            Lehetséges okok:
+            • Nincs munkanap bejegyezve az adott dátumra
+            • Már vett fel asszisztenst az adott munkanapra
+            • Nincs szabad asszisztens az adott munkanapra
+          `);
+        }
       },
       error: (err) => {
         console.error('Error fetching assistants:', err);
@@ -143,6 +153,11 @@ export class Doctor {
     this.patient = null;
   }
 
+  navigateToSchedule() {
+    this.works = [];
+    this.isFilterSubmitted = false;
+  }
+
 
 
   filterPatients() {
@@ -165,7 +180,7 @@ export class Doctor {
     this.files = appointment.files || [];
   }
 
-  
+
 
   async onWorkSearch() {
     this.isFilterSubmitted = true;
@@ -189,7 +204,7 @@ export class Doctor {
             doctor: null,
             assistant: null
           });
-        } else { 
+        } else {
           this.works.push(response.data);
         }
       } catch (err) {
@@ -225,12 +240,16 @@ export class Doctor {
             this.appService.successPopup("Munka törölve");
             this.onWorkSearch();
           },
-          error: (err) => {
-            this.appService.errorPopup("Hiba");
+          error: (error) => {
+            if (error.status === 409) {
+              this.appService.errorPopup("Nem törölhető időpont ütközés miatt!");
+            } else {
+              this.appService.errorPopup("Hiba!");
+            }
           }
         });
       }
-    });  
+    });
   }
 
 

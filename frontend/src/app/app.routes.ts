@@ -6,8 +6,14 @@ import { Nurse } from './components/nurse/nurse';
 import { Admin } from './components/admin/admin';
 import { Assistant } from './components/assistant/assistant';
 import { Doctor } from './components/doctor/doctor';
+import { App } from './app';
 
 export const routes: Routes = [
+    {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full'
+    },
     {
         path: 'registration',
         component: Registration

@@ -16,13 +16,13 @@
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link py-3" id="assistants-tab" data-bs-toggle="tab" data-bs-target="#assistants"
-                type="button">
+                type="button" (click)="navigateToAssistant()">
                 <i class="bi bi-person-badge me-2"></i>Asszisztens Rendelés
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link py-3" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#schedule"
-                type="button">
+                type="button" (click)="navigateToSchedule()">
                 <i class="bi bi-clock-history me-2"></i>Munkabeosztás
             </button>
         </li>
@@ -77,7 +77,8 @@
                                         <h6 class="text-info">
                                             <i class="bi bi-file-earmark-pdf-fill"></i> {{ file.fileName }}
                                         </h6>
-                                        <button (click)="this.appService.downloadPdf(file)" class="btn btn-outline-info btn-sm">
+                                        <button (click)="this.appService.downloadPdf(file)"
+                                            class="btn btn-outline-info btn-sm">
                                             <i class="bi bi-eye"></i> Megnyitás / Letöltés
                                         </button>
                                     </div>
@@ -181,7 +182,8 @@
                                         <h6 class="text-info">
                                             <i class="bi bi-file-earmark-pdf-fill"></i> {{ file.fileName }}
                                         </h6>
-                                        <button (click)="this.appService.downloadPdf(file)" class="btn btn-outline-info btn-sm">
+                                        <button (click)="this.appService.downloadPdf(file)"
+                                            class="btn btn-outline-info btn-sm">
                                             <i class="bi bi-eye"></i> Megnyitás / Letöltés
                                         </button>
                                     </div>
@@ -236,7 +238,8 @@
                                     <div style="flex-grow: 1;">
                                         <input type="date" class="form-row form-control" [(ngModel)]="dateFilter"
                                             #dateInput="ngModel" required [min]="today"
-                                            [class.is-invalid]="isFilterSubmitted && !dateFilter" (click)="navigateToAssistant()">
+                                            [class.is-invalid]="isFilterSubmitted && !dateFilter"
+                                            (click)="navigateToAssistant()">
 
                                         @if (isFilterSubmitted && !dateFilter) {
                                         <div class="invalid-feedback">
@@ -294,14 +297,14 @@
                         <div class="col-md-3 text-start">
                             <label class="form-label fw-bold small text-muted">Kezdő dátum</label>
                             <input type="date" class="form-control" [(ngModel)]="startDate" [min]="minStartDate"
-                                [max]="endDate || ''" [class.is-invalid]="isFilterSubmitted && !startDate" >
+                                [max]="endDate || ''" [class.is-invalid]="isFilterSubmitted && !startDate">
                         </div>
 
                         <div class="col-md-5 text-start">
                             <label class="form-label fw-bold small text-muted">Záró dátum</label>
                             <div class="d-flex gap-2">
                                 <input type="date" class="form-control" [(ngModel)]="endDate" [min]="startDate || ''"
-                                    [max]="maxEndDate" [class.is-invalid]="isFilterSubmitted && !endDate" >
+                                    [max]="maxEndDate" [class.is-invalid]="isFilterSubmitted && !endDate">
 
 
                                 <button class="btn btn-outline-danger shadow-sm" type="button"
@@ -327,17 +330,26 @@
                         <div class="list-group-item d-flex justify-content-between align-items-center py-3">
                             <div>
                                 <span class="fw-bold me-2">{{ day.workDay }}</span>
+                                @if (day.assistant?.taj !== null) {
+                                <span>| Asszisztens: </span>
+                                <span class="fw-bold me-2">{{ day.assistant?.lastName }} {{ day.assistant?.firstName}}</span>
+                                }
                             </div>
 
                             <div class="btn-group shadow-sm">
                                 @if (day.workDay >= today && !day.workId) {
-                                <button class="btn btn-outline-success" title="Munkára jelentkezés" (click)="addWork(day.workDay)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-120v-640q0-33 23.5-56.5T280-840h240v80H280v518l200-86 200 86v-278h80v400L480-240 200-120Zm80-640h240-240Zm400 160v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80Z"/></svg>
+                                <button class="btn btn-outline-success" title="Munkára jelentkezés"
+                                    (click)="addWork(day.workDay)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                                        width="24px" fill="currentColor">
+                                        <path
+                                            d="M200-120v-640q0-33 23.5-56.5T280-840h240v80H280v518l200-86 200 86v-278h80v400L480-240 200-120Zm80-640h240-240Zm400 160v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80Z" />
+                                    </svg>
                                 </button>
                                 }
-
-                                @if (day.workDay > today) {
+                                @if (day.workDay > today && day.doctor?.taj == appService.getTaj()) {
                                 <button class="btn btn-outline-danger" title="Leadás" (click)="removeWork(day.workId!)">
+
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                                         width="24px" fill="currentColor">
                                         <path

@@ -4,12 +4,14 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { AppointmentModel } from './components/appointment.model';
+import { environment } from '../environments/environment';
 
 
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
     private router = inject(Router);
+    private refreshTimer: any;
     token = signal<string>(localStorage.getItem('token') || '');
     taj = signal<string | null>(localStorage.getItem('taj'));
     roleName = signal<string | null>(localStorage.getItem('roleName'));
@@ -17,6 +19,27 @@ export class AppService {
     lastName = signal<string | null>(localStorage.getItem('lastName'));
     speciality = signal<string | null>(localStorage.getItem('speciality'));
     section = signal<string | null>(localStorage.getItem('section'));
+
+    private apiUrl = environment.apiUrl;
+    private updatePasswordEndpoint = (taj: string, role: string, oldPassword: string, newPassword: string) => `${this.apiUrl}/people/${taj}/change-password?role=${role}`;
+    private getAllSectionsEndpoint = `${this.apiUrl}/sections/all`;
+    private updateSectionEndpoint = (taj: string) => `${this.apiUrl}/people/${taj}/change-section`;
+
+    updatePassword(taj: string, role: string, oldPassword: string, newPassword: string): Observable<{ msg: string, data: any }> {
+        const body = {
+            oldPassword: oldPassword,
+            newPassword: newPassword
+        };
+        return this.http.put<{ msg: string, data: any }>(this.updatePasswordEndpoint(taj, role, oldPassword, newPassword), body);
+    }
+
+    updateSection(taj: string, section: string): Observable<{ msg: string, data: any }> {
+        return this.http.put<{ msg: string, data: any }>(this.updateSectionEndpoint(taj), section);
+    }
+
+    getSections(): Observable<{msg: string, data: any}> {
+        return this.http.get<{msg: string, data: any}>(this.getAllSectionsEndpoint);
+    }
 
     private readonly ROLE_MAP: Record<string, string> = {
         'ADMIN': 'Adminisztrátor',
@@ -39,6 +62,9 @@ export class AppService {
 
     setToken(newToken: string): void {
         this.updateStorageAndSignal('token', newToken, this.token);
+        if (newToken) {
+            this.autoLogout(newToken);
+        }
     }
     setTaj(newTaj: string | null): void {
         this.updateStorageAndSignal('taj', newTaj, this.taj);
@@ -71,6 +97,43 @@ export class AppService {
             localStorage.removeItem(key);
         }
         sig.set(value);
+    }
+
+    private getExpirationTimeout(token: string): number {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const expiresAt = payload.exp * 1000;
+            return expiresAt - Date.now();
+        } catch (e) {
+            return -1;
+        }
+    }
+
+    private autoLogout(token: string) {
+        if (this.refreshTimer) clearTimeout(this.refreshTimer);
+
+        const timeout = this.getExpirationTimeout(token);
+
+        if (timeout <= 0) {
+            this.logout();
+        } else {
+            this.refreshTimer = setTimeout(() => {
+                this.logout();
+            }, timeout);
+        }
+    }
+
+    logout() {
+        localStorage.clear();
+        this.setToken('');
+        this.roleName.set(null);
+        this.firstName.set(null);
+        this.lastName.set(null);
+        this.speciality.set(null);
+        this.section.set(null);
+        this.taj.set(null);
+        if (this.refreshTimer) clearTimeout(this.refreshTimer);
+        this.router.navigate(['/']);
     }
 
     navigateByRole(role: string) {
@@ -145,15 +208,15 @@ export class AppService {
         });
     }
     infoPopup(msg: string) {
-    Swal.fire({
-        title: msg,
-        icon: 'info',
-        background: '#f8f9fa',
-        confirmButtonColor: '#0dcaf0',
-        confirmButtonText: 'OK',
-        allowOutsideClick: false 
-    });
-}
+        Swal.fire({
+            title: msg,
+            icon: 'info',
+            background: '#f8f9fa',
+            confirmButtonColor: '#0dcaf0',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false
+        });
+    }
 
     questionPopup(msg: string) {
         return Swal.fire({
@@ -233,6 +296,10 @@ export class AppService {
         window.open(fileURL, '_blank');
     }
     constructor(private http: HttpClient) {
+        const savedToken = this.token();
+        if (savedToken) {
+            this.autoLogout(savedToken);
+        }
     }
 
 

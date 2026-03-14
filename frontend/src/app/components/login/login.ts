@@ -75,7 +75,9 @@ export class Login {
             this.appService.setFirstName(d.firstName ?? null);
             this.appService.setLastName(d.lastName ?? null);
             this.appService.setSpeciality(d.speciality ?? null);
-            this.appService.setSection(d.section ?? null);
+            if(d.section){
+              this.appService.setSection(d.section.sectionName ?? null);
+            }
             this.appService.navigateByRole(person.roleName);
           },
           error: (infoError) => {
