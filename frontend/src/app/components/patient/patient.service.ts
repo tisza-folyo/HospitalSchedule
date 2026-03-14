@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { App } from '../../app';
 import { DoctorModel } from '../doctor/doctor.model';
 import { AppointmentModel } from '../appointment.model';
+import { FileModel } from '../file.model';
 
 
 
@@ -16,6 +17,7 @@ export class PatientService {
     private getAppointmentsByPatientEnpoint= (pTaj: string): string => `${this.apiUrl}/appointments/all-by-patient/${pTaj}`;
     private getAppointmentsBySectionEnpoint= (section: string, day: string): string => `${this.apiUrl}/appointments/section/${section}?day=${day}`;
     private getAppointmentsByDateEnpoint= (date: string): string => `${this.apiUrl}/appointments/daily?day=${date}`;
+    private getPatientFilesEndpoint = (taj:string) => `${this.apiUrl}/images/${taj}/images`;
 
     private getAllSectionsEnpoint: string = `${this.apiUrl}/sections/all`;
     private getAllDoctorsEnpoint: string = `${this.apiUrl}/people/doctors/all`;
@@ -25,6 +27,10 @@ export class PatientService {
     private cancelAppointmentEnpoint = (appointmentId: number): string => `${this.apiUrl}/appointments/cancel?appointmentId=${appointmentId}`;
 
     constructor(private http: HttpClient) {}
+
+    getPatientFiles(taj:string): Observable<{msg:string, data: FileModel[]}>{
+        return this.http.get<{msg: string, data: FileModel[]}>(this.getPatientFilesEndpoint(taj));
+    }
 
     getAppointmentsByDoctor(dTaj: string, day: string): Observable<{msg: string, data: AppointmentModel[]}> {
         return this.http.get<{msg: string, data: AppointmentModel[]}>(this.getAppointmentsByDoctorEnpoint(dTaj, day));

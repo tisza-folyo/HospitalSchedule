@@ -10,6 +10,7 @@ import { inject } from '@angular/core';
 import Swal from 'sweetalert2';
 import { DoctorModel } from '../doctor/doctor.model';
 import { AppointmentModel } from '../appointment.model';
+import { FileModel } from '../file.model';
 
 @Component({
   selector: 'app-patient',
@@ -33,6 +34,7 @@ export class Patient {
   statusFilter: string = '';
   appService = inject(AppService);
   selectedFiles: File[] = [];
+  files: FileModel[] = [];
 
   constructor(private patientService: PatientService, private router: Router) { }
 
@@ -69,8 +71,10 @@ export class Patient {
   onSwitch() {
     if (this.showProfile) {
       this.loadPatientAppointments();
+      this.loadFiles();
     } else {
       this.appointments = [];
+      this.files = [];
     }
   }
 
@@ -189,12 +193,24 @@ export class Patient {
       next: (res) => {
         this.appService.successPopup('Fájlok sikeresen feltöltve!');
         this.selectedFiles = [];
+        this.loadFiles();
       },
       error: (err) => {
         this.appService.errorPopup('Hiba történt a fájlok feltöltése során!');
         console.error(err);
       }
     });
+  }
+
+  loadFiles(){
+    this.patientService.getPatientFiles(this.appService.getTaj()!).subscribe({
+      next: (response) => {
+        this.files = response.data;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    })
   }
 
 

@@ -4,9 +4,10 @@
       <i class="bi" [ngClass]="showProfile ? 'bi-person-circle' : 'bi-calendar-plus'"></i>
       {{ showProfile ? 'Saját adatok és leletek' : 'Időpont foglalás' }}
     </h2>
-    
+
     <div class="form-check form-switch fs-5">
-      <input class="form-check-input" type="checkbox" role="switch" id="viewToggle" [(ngModel)]="showProfile" (change)="onSwitch()">
+      <input class="form-check-input" type="checkbox" role="switch" id="viewToggle" [(ngModel)]="showProfile"
+        (change)="onSwitch()">
       <label class="form-check-label small text-muted" for="viewToggle">Profil nézet</label>
     </div>
   </div>
@@ -21,7 +22,8 @@
           <div class="mb-3">
             <label class="form-label fw-bold">Dátum kiválasztása</label>
             <div class="d-flex gap-1">
-              <input type="date" class="form-control" [(ngModel)]="date" [min]="today" (focus)="missingDate = false" (change)="missingDate = false">
+              <input type="date" class="form-control" [(ngModel)]="date" [min]="today" (focus)="missingDate = false"
+                (change)="missingDate = false">
               <button class="btn btn-outline-danger" type="button" (click)="resetField('date')">
                 <i class="bi bi-x-lg">
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
@@ -70,7 +72,7 @@
               <button class="btn btn-outline-danger" type="button" (click)="resetField('doctor')">
                 <i class="bi bi-x-lg">
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill= "currentColor">
+                    fill="currentColor">
                     <path
                       d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
                   </svg>
@@ -111,7 +113,8 @@
           </div>
 
           <div class="mt-4 d-grid">
-            <button class="btn btn-success btn-lg fw-bold" [disabled]="!selectedSlot" type="button" (click)="postAppointment()">
+            <button class="btn btn-success btn-lg fw-bold" [disabled]="!selectedSlot" type="button"
+              (click)="postAppointment()">
               <i class="bi bi-bookmark-check me-2"></i>Foglalás megerősítése
             </button>
           </div>
@@ -120,78 +123,145 @@
     </div>
   </div>
   }@else {
-    <div class="row g-4 animate__animated animate__fadeIn">
-      
-      <div class="col-lg-4">
-        <div class="card shadow-sm border-0 mb-4">
-          <div class="card-header bg-primary text-white">Dokumentumok feltöltése</div>
-          <div class="card-body">
-            <p class="small text-muted">Formátumok (PDF, JPG, PNG).</p>
-            <input type="file" class="form-control mb-3" (change)="onFilesSelected($event)" multiple accept=".pdf,.jpg,.png">
-            <div class="d-grid">
-              <button class="btn btn-outline-success btn-sm" (click)="onUpload()"><i class="bi bi-cloud-upload me-2"></i>Feltöltés indítása</button>
-            </div>
-          </div>
-        </div>
+  <div class="row g-4 animate__animated animate__fadeIn">
 
-        <div class="card shadow-sm border-0">
-          <div class="card-header bg-primary text-white">Időpontok szűrése</div>
-          <div class="card-body">
-            <label class="form-label fw-bold">Státusz alapján</label>
-            <select class="form-select" [(ngModel)]="statusFilter">
-              <option selected value="" >Összes</option>
-              <option value="DONE">Befejezett</option>
-              <option value="LOCKED">Lefoglalt</option>
-            </select>
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white">Időpontok szűrése</div>
+        <div class="card-body">
+          <label class="form-label fw-bold">Státusz alapján</label>
+          <select class="form-select" [(ngModel)]="statusFilter">
+            <option selected value="">Összes</option>
+            <option value="DONE">Befejezett</option>
+            <option value="LOCKED">Lefoglalt</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white">Dokumentumok feltöltése</div>
+        <div class="card-body">
+          <p class="small text-muted">Formátumok (PDF, JPG, PNG).</p>
+          <input type="file" class="form-control mb-3" (change)="onFilesSelected($event)" multiple
+            accept=".pdf,.jpg,.png">
+          <div class="d-grid">
+            <button class="btn btn-outline-success btn-sm" (click)="onUpload()">
+              <i class="bi bi-cloud-upload me-2"></i>Feltöltés indítása
+            </button>
           </div>
         </div>
       </div>
 
-      <div class="col-lg-8">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h5 class="card-title mb-3">Saját korábbi és jövőbeli időpontok</h5>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th>Dátum</th>
-                    <th>Orvos</th>
-                    <th>Státusz</th>
-                    <th class="text-center align-middle">Lemondás</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (my of appointments; track my) {
-                    @if (!statusFilter || my.status === statusFilter) {
-                      <tr>
-                        <td>{{ my.timeSlot | date:'yyyy-MM-dd HH:mm' }} </td>
-                        <td>{{ searchDoctorNameByTaj(my.doctorTaj) }}</td>
-                        <td>{{ appService.statusConverter(my.status) }}</td>
-                        <td class="text-center align-middle">
-                          @if (my.status == "LOCKED") {
-                          <button class="btn btn-sm btn-outline-danger" title="Lemondás" (click)="onCancelAppointment(my.appointmentId)">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
-                              <path
-                                d="M280-440h400v-80H280v80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
-                            </svg>
-                          </button>
-                        }
-                        </td>
-                        </tr>
-                        }
-                        } @empty {
-                        <tr>
-                      <td colspan="4" class="text-center py-4 text-muted">Nincs megjeleníthető időpont.</td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">Csatolt dokumentumok</div>
+        <div class="card-body p-2">
+
+          <div class="mb-4">
+            <h6 class="fw-bold text-muted border-bottom pb-2 px-2 small">PDF LELETEK</h6>
+            @for (file of files; track file.dwnUrl) {
+            @if (file.fileType === 'application/pdf') {
+            <div class="file-item mb-2 p-2 border rounded bg-light text-center">
+              <div class="small fw-bold text-truncate mb-2">{{ file.fileName }}</div>
+              <button (click)="this.appService.downloadPdf(file)" class="btn btn-outline-info btn-sm w-100">
+                <i class="bi bi-eye"></i> Megnyitás
+              </button>
             </div>
+            }
+            } @empty {
+            <p class="text-muted small ps-2">Nincs PDF.</p>
+            }
           </div>
+
+          <div>
+            <h6 class="fw-bold text-muted border-bottom pb-2 px-2 small">KÉPI LELETEK</h6>
+            @for (file of files; track file.dwnUrl) {
+            @if (file.fileType.includes('image')) {
+            <div class="file-item mb-3 text-center px-2">
+              <div class="small mb-1">
+                <a href="javascript:void(0)" (click)="this.appService.downloadPdf(file)" class="text-decoration-none">
+                  {{ file.fileName }}
+                </a>
+              </div>
+
+              <div class="image-viewer d-flex justify-content-center">
+                <div
+                  class="position-relative bg-light border rounded d-flex align-items-center justify-content-center overflow-hidden"
+                  style="width: 120px; height: 80px; cursor: pointer;" (click)="this.appService.downloadPdf(file)">
+
+                  <img [src]="'data:' + file.fileType + ';base64,' + file.base64Data" class="mw-100 mh-100"
+                    style="object-fit: contain;" alt="ikon">
+
+                  <div
+                    class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-10 opacity-75">
+                    <i class="bi bi-zoom-in text-white fs-4"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
+            } @empty {
+            <p class="text-muted small ps-2">Nincs kép.</p>
+            }
+          </div>
+
+          @for (file of files; track file.dwnUrl) {
+          @if (file.fileType !== 'application/pdf' && !file.fileType.includes('image')) {
+          <div class="alert alert-info p-2 mt-2 small">
+            <i class="bi bi-info-circle me-1"></i> {{ file.fileName }}
+            <a [href]="file.dwnUrl" target="_blank" class="d-block mt-1">Megnyitás</a>
+          </div>
+          }
+          }
         </div>
       </div>
-
     </div>
-   }
+
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Saját korábbi és jövőbeli időpontok</h5>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Dátum</th>
+                  <th>Orvos</th>
+                  <th>Státusz</th>
+                  <th class="text-center align-middle">Lemondás</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (my of appointments; track my) {
+                @if (!statusFilter || my.status === statusFilter) {
+                <tr>
+                  <td>{{ my.timeSlot | date:'yyyy-MM-dd HH:mm' }} </td>
+                  <td>{{ searchDoctorNameByTaj(my.doctorTaj) }}</td>
+                  <td>{{ appService.statusConverter(my.status) }}</td>
+                  <td class="text-center align-middle">
+                    @if (my.status == "LOCKED") {
+                    <button class="btn btn-sm btn-outline-danger" title="Lemondás"
+                      (click)="onCancelAppointment(my.appointmentId)">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                        fill="currentColor">
+                        <path
+                          d="M280-440h400v-80H280v80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                      </svg>
+                    </button>
+                    }
+                  </td>
+                </tr>
+                }
+                } @empty {
+                <tr>
+                  <td colspan="4" class="text-center py-4 text-muted">Nincs megjeleníthető időpont.</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
 </div>

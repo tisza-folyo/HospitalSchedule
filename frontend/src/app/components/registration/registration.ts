@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RegistrationService } from './registration.service';
 import { Route, Router } from '@angular/router';
-import { PatientRegistrationRequest } from './patient.registration.request.model'; 
+import { PatientRegistrationRequest } from './patient.registration.request.model';
 import { provideHttpClient } from '@angular/common/http';
+import { AppService } from '../../app.service';
 
 @Component({
   selector: 'app-registration',
@@ -13,6 +14,7 @@ import { provideHttpClient } from '@angular/common/http';
   styleUrl: './registration.css',
 })
 export class Registration {
+  appService = inject(AppService);
   taj = '';
   firstName = '';
   lastName = '';
@@ -22,7 +24,7 @@ export class Registration {
   passwordConfirm = '';
   roleName = 'PATIENT';
 
-  constructor(private registrationService: RegistrationService, private router: Router) {}
+  constructor(private registrationService: RegistrationService, private router: Router) { }
 
   submitAttempted = false;
   showPassword = false;
@@ -52,7 +54,11 @@ export class Registration {
         this.submitAttempted = false;
       },
       error: (error) => {
-        console.error('Registration failed:', error.error.message);
+        if (error.status === 409) {
+          this.appService.errorPopup(this.appService.translateToHU(this.appService.getRoleName() ?? "PATIENT") + " már létezik ezzel az email címmel vagy tajszámmal!")
+        } else {
+          this.appService.errorPopup("Hiba!");
+        }
       }
     });
 
