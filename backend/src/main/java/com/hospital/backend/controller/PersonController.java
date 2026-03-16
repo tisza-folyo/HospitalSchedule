@@ -11,7 +11,6 @@ import com.hospital.backend.service.person.IPersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
 import java.util.Map;
@@ -71,7 +70,7 @@ public class PersonController {
     }
 
     @DeleteMapping("/delete/{pTaj}/person")
-    public ResponseEntity<ApiResponse> deletePatient(@PathVariable String pTaj, @RequestParam String role) {
+    public ResponseEntity<ApiResponse> deletePerson(@PathVariable String pTaj, @RequestParam String role) {
         personService.deletePerson(pTaj, role);
         return ResponseEntity.ok(new ApiResponse("Deleted", null));
     }

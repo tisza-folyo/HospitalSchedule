@@ -1,5 +1,6 @@
 package com.hospital.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ public class NursePatientCareDto {
     private NurseDto nurse;
     private RoomDto room;
     private BedDto bed;
+    @JsonProperty("uTaj")
     private String uTaj;
     private LocalDate entryDay;
     private LocalDate exitDay;
