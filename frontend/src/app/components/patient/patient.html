@@ -98,10 +98,13 @@
           <div class="list-group appointment-list">
             @for (a of appointments; track a.timeSlot) {
             <button type="button" (click)="setSelectedSlot(a)"
-              class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2 rounded border">
-              <div>
-                <span class="fw-bold fs-5 me-3">{{ a.timeSlot | date:'HH:mm' }}</span>
-                <span class="text-muted small">Orvos: {{ searchDoctorNameByTaj(a.doctorTaj) }}</span>
+              class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2 rounded border"
+              [class.active]="selectedSlot === a">
+              <div [class.text-white]="selectedSlot === a"> <span class="fw-bold fs-5 me-3">{{ a.timeSlot | date:'HH:mm'
+                  }}</span>
+                <span [class.text-white-50]="selectedSlot === a" [class.text-muted]="selectedSlot !== a" class="small">
+                  Orvos: {{ searchDoctorNameByTaj(a.doctorTaj) }}
+                </span>
               </div>
             </button>
             } @empty {

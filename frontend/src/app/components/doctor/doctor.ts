@@ -61,6 +61,8 @@ export class Doctor {
   }
 
   navigateToAppointments() {
+    this.patient = null;
+    this.description = '';
     this.doctorService.getAppointmentsByDoctor(this.appService.getTaj()!).subscribe({
       next: (response) => {
         this.appointments = this.appService.formatData(response.data);
