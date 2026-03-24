@@ -24,6 +24,7 @@ public class Image {
     private String dwnUrl;
 
     @Lob
+    @JsonIgnore
     private Blob image;
 
     @JsonIgnore
