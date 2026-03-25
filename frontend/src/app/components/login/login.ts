@@ -79,12 +79,14 @@ export class Login {
               this.appService.setSection(d.section.sectionName ?? null);
             }
             this.appService.navigateByRole(person.roleName);
+            this.appService.loadSections();
+            console.log(this.appService.getSections());
+            
           },
           error: (infoError) => {
             console.error("Error fetching person info:", infoError);
           }
         });
-        
       },
       error: (error) => {
         console.error("Login error:", error.error.message);

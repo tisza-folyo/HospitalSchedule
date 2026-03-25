@@ -63,15 +63,7 @@ export class Assistant {
 
   ngOnInit() {
     this.today = new Date().toISOString().split('T')[0];
-    this.assistantService.getAllPatients(this.appService.getTaj()!).subscribe({
-      next: (response) => {
-        this.patients = response.data;
-        this.filteredPatients = this.patients;
-      },
-      error: (err) => {
-        console.error('Error fetching patients:', err);
-      }
-    });
+    this.loadPatients();
     this.loadCareData();
   }
 
@@ -265,6 +257,7 @@ export class Assistant {
     this.section = '';
     this.doctor = null;
     this.isBookingMode = false;
+    this.loadPatients();
   }
 
   navigatToSchedule() {
@@ -280,7 +273,7 @@ export class Assistant {
     this.filter = '';
     this.patient = null;
     this.care = null;
-
+    this.loadPatients();
   }
 
   postCare() {
@@ -292,10 +285,15 @@ export class Assistant {
       uTaj: this.appService.getTaj()!,
       entryDay: this.today
     };
-
+    console.log(req);
+    
     this.assistantService.postCare(req).subscribe({
       next: (response) => {
         this.appService.successPopup("Siker!");
+        this.isPostingCare = false;
+        this.nurse = null;
+        this.room = null;
+        this.bed = null;
         this.loadCareForPatient(this.patient!);
         this.loadCareData();
       },
@@ -303,7 +301,9 @@ export class Assistant {
         if (this.patient == null) {
           this.appService.errorPopup("Nem választott pácienst!");
         } else {
-          this.appService.errorPopup("Hiba!");
+          this.appService.errorPopup("Hiba!\nKitöltötte az adatokat?");
+          console.log(err.error.message);
+          
         }
       }
     });
@@ -372,9 +372,11 @@ export class Assistant {
 
   switchBetweenWorks(field: string) {
     if (field == 'own') {
+      this.works = [];
       this.isBookingMode = false;
     } else if (field == 'other') {
       this.isBookingMode = true;
+      this.works = [];
       this.loadAvaliableWorks();
     }
   }
@@ -460,6 +462,19 @@ export class Assistant {
         console.error('Error fetching patients:', err);
       }
     });
+  }
+
+  private loadPatients(){
+    this.assistantService.getAllPatients(this.appService.getTaj()!).subscribe({
+      next: (response) => {
+        this.patients = response.data;
+        this.filteredPatients = this.patients;
+      },
+      error: (err) => {
+        console.error('Error fetching patients:', err);
+      }
+    });
+    this.loadCareData();
   }
 
   private updateAssistant(dTaj: string, aTaj: string, day: string, uTaj: string, mode: string) {

@@ -18,21 +18,9 @@ export class App {
 
   constructor(private router: Router) { }
 
-  ngOnInit() {
-    const role = this.appService.getRoleName();
-    this.appService.navigateByRole(role!);
-    this.appService.getSections().subscribe({
-      next: (response) => {
-        this.sections = response.data.map((sec: any) => sec.sectionName);
-      },
-      error: (error) => {
-        console.error('Error fetching roles:', error);
-      }
-    });
-  }
 
   onSetSection() {
-    const optionsHtml = this.sections.map(name =>
+    const optionsHtml = this.appService.sections().map(name =>
       `<option value="${name}">${name}</option>`
     ).join('');
 
@@ -63,7 +51,7 @@ export class App {
     }).then((result) => {
       if (result.isConfirmed) {
         const sec = result.value;
-        this.appService.updateSection(this.appService.getTaj()!,sec).subscribe({
+        this.appService.updateSection(this.appService.getTaj()!, sec).subscribe({
           next: () => {
             this.appService.successPopup("Siker!");
             this.appService.setSection(sec);
@@ -72,7 +60,7 @@ export class App {
             this.appService.errorPopup("Hiba!");
           }
         });
-        
+
       }
     });
   }
@@ -159,6 +147,11 @@ export class App {
       }
     });
   }
+
+  private loadSections() {
+
+  }
+
   onLogout() {
     Swal.fire({
       title: 'Kijelentkezés',

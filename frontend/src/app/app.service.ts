@@ -19,6 +19,7 @@ export class AppService {
     lastName = signal<string | null>(localStorage.getItem('lastName'));
     speciality = signal<string | null>(localStorage.getItem('speciality'));
     section = signal<string | null>(localStorage.getItem('section'));
+    sections = signal<string[]>([]);
 
     private apiUrl = environment.apiUrl;
     private updatePasswordEndpoint = (taj: string, role: string, oldPassword: string, newPassword: string) => `${this.apiUrl}/people/${taj}/change-password?role=${role}`;
@@ -37,8 +38,8 @@ export class AppService {
         return this.http.put<{ msg: string, data: any }>(this.updateSectionEndpoint(taj), section);
     }
 
-    getSections(): Observable<{msg: string, data: any}> {
-        return this.http.get<{msg: string, data: any}>(this.getAllSectionsEndpoint);
+    getSections(): Observable<{ msg: string, data: any }> {
+        return this.http.get<{ msg: string, data: any }>(this.getAllSectionsEndpoint);
     }
 
     private readonly ROLE_MAP: Record<string, string> = {
@@ -88,6 +89,13 @@ export class AppService {
 
     setSection(newSection: string | null): void {
         this.updateStorageAndSignal('section', newSection, this.section);
+    }
+
+    loadSections() {
+        this.getSections().subscribe({
+            next: res => this.sections.set(res.data.map((sec: any) => sec.sectionName)),
+            error: err => this.errorPopup('Szekciók betöltése sikertelen')
+        });
     }
 
     private updateStorageAndSignal(key: string, value: string | null, sig: any) {
