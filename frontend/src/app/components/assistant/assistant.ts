@@ -88,16 +88,9 @@ export class Assistant {
       this.appoints = [];
     }
     if (req && !this.isBookingMode) {
-      this.assistantService.getAppointmentsByPatient(p.taj).subscribe({
-        next: (response) => {
-          this.appoints = this.appService.formatData(response.data);
-        },
-        error: (err) => {
-          console.error('Error fetching appointments', err);
-        }
-      });
+      this.loadPatientAppointments();
     }
-    if(!req){
+    if (!req) {
       this.loadCareForPatient(p);
     }
   }
@@ -243,8 +236,18 @@ export class Assistant {
       },
       error: (err) => this.appService.errorPopup('Hiba történt!')
     });
+  }
 
-
+  updateAppointmentStatus(id: number) {
+    this.assistantService.updateAppointmentStatus("DONE", id).subscribe({
+      next: (response) => {
+        this.appService.successPopup("Siker!");
+        this.loadPatientAppointments();
+      },
+      error: (err) => {
+        this.appService.errorPopup("Hiba!");
+      }
+    });
   }
 
   navigateToAppoints() {
@@ -286,7 +289,7 @@ export class Assistant {
       entryDay: this.today
     };
     console.log(req);
-    
+
     this.assistantService.postCare(req).subscribe({
       next: (response) => {
         this.appService.successPopup("Siker!");
@@ -303,7 +306,7 @@ export class Assistant {
         } else {
           this.appService.errorPopup("Hiba!\nKitöltötte az adatokat?");
           console.log(err.error.message);
-          
+
         }
       }
     });
@@ -453,7 +456,7 @@ export class Assistant {
     });
   }
 
-  private loadCareForPatient(p: PatientModel){
+  private loadCareForPatient(p: PatientModel) {
     this.assistantService.getActiveCare(p.taj).subscribe({
       next: (response) => {
         this.care = response.data;
@@ -464,7 +467,7 @@ export class Assistant {
     });
   }
 
-  private loadPatients(){
+  private loadPatients() {
     this.assistantService.getAllPatients(this.appService.getTaj()!).subscribe({
       next: (response) => {
         this.patients = response.data;
@@ -475,6 +478,17 @@ export class Assistant {
       }
     });
     this.loadCareData();
+  }
+
+  private loadPatientAppointments() {
+    this.assistantService.getAppointmentsByPatient(this.patient!.taj).subscribe({
+      next: (response) => {
+        this.appoints = this.appService.formatData(response.data);
+      },
+      error: (err) => {
+        console.error('Error fetching appointments', err);
+      }
+    });
   }
 
   private updateAssistant(dTaj: string, aTaj: string, day: string, uTaj: string, mode: string) {
@@ -503,6 +517,16 @@ export class Assistant {
           this.appService.successPopup("Siker!");
           this.loadOwnWorks(req.day);
           this.work = null;
+          this.assistantService.getAllWorksBetween(this.appService.getTaj()!, this.startDate, this.endDate).subscribe({
+            next: (response) => {
+              this.works = response.data;
+              console.log(response.data);
+
+            },
+            error: (err) => {
+              console.error('Error fetching', err);
+            }
+          });
         },
         error: (err) => {
           this.appService.errorPopup("Hiba!");
@@ -510,6 +534,7 @@ export class Assistant {
 
         }
       });
+
     }
   }
 }

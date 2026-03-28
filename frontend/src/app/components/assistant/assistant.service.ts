@@ -38,6 +38,7 @@ export class AssistantService {
     private getActiveCareEnpoint= (pTaj:string) => `${this.apiUrl}/cares/active?pTaj=${pTaj}`;
 
     private postAppointmentEnpoint: string = `${this.apiUrl}/appointments/add-request`;
+    private changeAppointmentStatusEndpoint = (id: number): string => `${this.apiUrl}/appointments/update-status?appointmentId=${id}`;
     private postFileEnpoint = (id: number): string => `${this.apiUrl}/images/upload-to-appointment?appointmentId=${id}`;
     private postCareEndpoint: string = `${this.apiUrl}/cares/add`;
     private updateAssistantEnpoint: string = `${this.apiUrl}/works/assign`;
@@ -106,6 +107,10 @@ export class AssistantService {
 
     postAppointment(request: AppointmentRequest): Observable<{msg: string,data: any}> {
         return this.http.post<{msg: string,data: any}>(this.postAppointmentEnpoint, request);
+    }
+
+    updateAppointmentStatus(status: string, id: number): Observable<{msg: string,data: any}> {
+        return this.http.put<{msg: string,data: any}>(this.changeAppointmentStatusEndpoint(id), status);
     }
 
     postCare(request: CareRequestModel): Observable<{msg: string,data: CareModel}> {
