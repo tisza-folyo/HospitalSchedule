@@ -76,7 +76,6 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
     @Override
     public List<AssistantDto> getFreeAssistants(LocalDate day){
         if (!doctorAssistantWorkRepository.existsByWorkDay(day)) return List.of();
-        if (doctorAssistantWorkRepository.existsByAssistantIsNotNullAndWorkDay(day)) return List.of();
         List<Assistant> freeAssistants = assistantRepository.findFreeAssistantsByDay(day);
         return freeAssistants.stream().map(personMapper::toAssistantDto).toList();
     }
@@ -137,7 +136,7 @@ public class DoctorAssistantWorkService implements IDoctorAssistantWorkService {
         Assistant newAssistant = assistantRepository.findByTaj(request.getATaj()).orElseThrow(() -> new ResourceNotFoundException("Assistant"));
         DoctorAssistantWork work = doctorAssistantWorkRepository.findByDoctorAndWorkDay(doctor,request.getDay()).orElseThrow(() -> new ResourceNotFoundException("Work"));
         if (doctorAssistantWorkRepository.existsByAssistantAndWorkDay(newAssistant, request.getDay())) throw new CollisionException("Work");
-        if (!work.getAssistant().getTaj().equals(request.getUTaj())) throw new ResourceNotFoundException("Assistant");
+        if (!work.getAssistant().getTaj().equals(request.getUTaj())) throw new CollisionException("Assistant");
         work.setAssistant(newAssistant);
         work.setUTaj(request.getUTaj());
         return doctorAssistantWorkMapper.toDto(doctorAssistantWorkRepository.save(work));

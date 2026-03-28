@@ -32,5 +32,4 @@ public interface DoctorAssistantWorkRepository extends JpaRepository<DoctorAssis
 
     boolean existsByWorkDay(LocalDate workDay);
 
-    boolean existsByAssistantIsNotNullAndWorkDay(LocalDate workDay);
 }
