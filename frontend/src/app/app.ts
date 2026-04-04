@@ -18,6 +18,14 @@ export class App {
 
   constructor(private router: Router) { }
 
+  ngOnInit() {
+    const savedRole = localStorage.getItem('roleName');
+
+    if (savedRole && (window.location.pathname === '/' || window.location.pathname === '/login')) {
+      this.appService.navigateByRole(savedRole);
+    }
+  }
+
 
   onSetSection() {
     const optionsHtml = this.appService.sections().map(name =>
