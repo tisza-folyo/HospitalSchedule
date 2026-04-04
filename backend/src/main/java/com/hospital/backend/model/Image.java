@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.sql.Blob;
 
@@ -24,6 +26,7 @@ public class Image {
     private String dwnUrl;
 
     @Lob
+    @JdbcTypeCode(SqlTypes.BINARY)
     @JsonIgnore
     private Blob image;
 
