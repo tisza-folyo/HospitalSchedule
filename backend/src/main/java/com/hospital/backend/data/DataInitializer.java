@@ -154,6 +154,7 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                 .orElseGet(() -> {
                     Specialty s = new Specialty();
                     s.setSpecialtyName("Specialitás");
+                    s.setTreatmentTimeInMinutes(30);
                     return specialtyRepository.save(s);
                 });
     }

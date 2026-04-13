@@ -98,6 +98,7 @@ public class AppointmentService implements IAppointmentService {
         List<LocalTime> times = appointments.stream().map(Appointment::getTimeSlot).toList();
         List<Appointment> freeAppointments = new ArrayList<>();
         if (doctor.getWorkHoursStart() == null || doctor.getWorkHoursEnd() == null) return appointmentMapper.toDtoList(freeAppointments);
+        if (doctor.getSpecialty().getTreatmentTimeInMinutes() <= 0) throw new IllegalArgumentException("Treatment time in minutes must be greater than 0");
         for (LocalTime t = doctor.getWorkHoursStart(); t.isBefore(doctor.getWorkHoursEnd()); t = t.plusMinutes(doctor.getSpecialty().getTreatmentTimeInMinutes())) {
             if (!times.contains(t)) freeAppointments.add(createAppointment(doctor, null, day, t, null, Status.FREE));
         }

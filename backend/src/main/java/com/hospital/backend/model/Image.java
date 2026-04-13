@@ -26,7 +26,7 @@ public class Image {
     private String dwnUrl;
 
     @Lob
-    @JdbcTypeCode(SqlTypes.BINARY)
+    @JdbcTypeCode(SqlTypes.LONGVARBINARY)
     @JsonIgnore
     private Blob image;
 
