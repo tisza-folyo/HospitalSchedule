@@ -3,7 +3,6 @@ package com.hospital.backend.service.doctorAssistantWork;
 import com.hospital.backend.dto.AssistantDto;
 import com.hospital.backend.dto.DoctorAssistantWorkDto;
 import com.hospital.backend.dto.DoctorDto;
-import com.hospital.backend.model.Doctor;
 import com.hospital.backend.request.UpdateAssistantWorkRequest;
 
 import java.time.LocalDate;

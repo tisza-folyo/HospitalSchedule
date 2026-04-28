@@ -9,9 +9,6 @@ import com.hospital.backend.repository.*;
 import com.hospital.backend.request.AppointmentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.print.Doc;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -23,7 +20,6 @@ public class AppointmentService implements IAppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final SectionRepository sectionRepository;
     private final DoctorRepository doctorRepository;
-    private final RoleRepository roleRepository;
     private final PatientRepository patientRepository;
     private final AppointmentMapper appointmentMapper;
     private final DoctorAssistantWorkRepository doctorAssistantWorkRepository;

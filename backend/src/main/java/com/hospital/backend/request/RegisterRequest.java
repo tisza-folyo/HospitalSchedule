@@ -1,6 +1,5 @@
 package com.hospital.backend.request;
 
-import com.hospital.backend.dto.SpecialtyDto;
 import lombok.Getter;
 import lombok.Setter;
 

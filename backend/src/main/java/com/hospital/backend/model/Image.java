@@ -27,6 +27,7 @@ public class Image {
 
     @Lob
     @JdbcTypeCode(SqlTypes.LONGVARBINARY)
+    @Column(name = "image", columnDefinition = "LONGBLOB")
     @JsonIgnore
     private Blob image;
 

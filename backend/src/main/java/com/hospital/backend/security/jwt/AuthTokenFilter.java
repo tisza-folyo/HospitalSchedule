@@ -1,9 +1,6 @@
 package com.hospital.backend.security.jwt;
 
-import com.hospital.backend.exception.ResourceNotFoundException;
-import com.hospital.backend.model.Role;
-import com.hospital.backend.repository.RoleRepository;
-import com.hospital.backend.security.person.HospitalPersonDetailsService; // Az új service-ed
+import com.hospital.backend.security.person.HospitalPersonDetailsService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,8 +1,5 @@
 package com.hospital.backend.dto;
 
-import com.hospital.backend.model.Role;
-import com.hospital.backend.model.Section;
-import com.hospital.backend.model.Specialty;
 import lombok.Data;
 
 import java.time.LocalTime;

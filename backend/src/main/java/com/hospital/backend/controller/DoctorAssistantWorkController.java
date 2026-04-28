@@ -3,8 +3,6 @@ package com.hospital.backend.controller;
 import com.hospital.backend.dto.AssistantDto;
 import com.hospital.backend.dto.DoctorAssistantWorkDto;
 import com.hospital.backend.dto.DoctorDto;
-import com.hospital.backend.exception.AlreadyExistsException;
-import com.hospital.backend.exception.CollisionException;
 import com.hospital.backend.exception.ResourceNotFoundException;
 import com.hospital.backend.request.UpdateAssistantWorkRequest;
 import com.hospital.backend.service.doctorAssistantWork.IDoctorAssistantWorkService;

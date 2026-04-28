@@ -1,7 +1,6 @@
 package com.hospital.backend.repository;
 
 import com.hospital.backend.model.Patient;
-import com.hospital.backend.model.Person;
 import com.hospital.backend.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -1,6 +1,5 @@
 package com.hospital.backend.repository;
 
-import com.hospital.backend.model.Assistant;
 import com.hospital.backend.model.Doctor;
 import com.hospital.backend.model.Role;
 import com.hospital.backend.model.Section;

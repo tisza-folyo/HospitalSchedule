@@ -1,7 +1,6 @@
 package com.hospital.backend.controller;
 
 import com.hospital.backend.dto.AppointmentDto;
-import com.hospital.backend.model.Status;
 import com.hospital.backend.request.AppointmentRequest;
 import com.hospital.backend.service.appointment.IAppointmentService;
 import lombok.RequiredArgsConstructor;

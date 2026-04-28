@@ -1,13 +1,9 @@
 package com.hospital.backend.service.appointment;
 
 import com.hospital.backend.dto.AppointmentDto;
-import com.hospital.backend.model.Doctor;
-import com.hospital.backend.model.Section;
-import com.hospital.backend.model.Status;
 import com.hospital.backend.request.AppointmentRequest;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 public interface IAppointmentService {

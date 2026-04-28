@@ -1,6 +1,5 @@
 package com.hospital.backend.security.jwt;
 
-import com.hospital.backend.model.Role;
 import com.hospital.backend.security.person.HospitalPersonDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

@@ -1,7 +1,5 @@
 package com.hospital.backend.dto;
 
-import com.hospital.backend.model.Image;
-import com.hospital.backend.model.Role;
 import lombok.Data;
 
 import java.util.List;
