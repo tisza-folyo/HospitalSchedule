@@ -63,13 +63,11 @@ export class Login {
 
     this.loginService.loginPerson(person).subscribe({
       next: (response) => {
-        console.log("Login response:", response);
         const token = response.data.token;
         this.appService.setToken(token);
         this.appService.setRoleName(person.roleName);
         this.loginService.getPersonInfo(response.data.taj, person.roleName).subscribe({
           next: (infoResponse) => {
-            console.log("Person info response:", infoResponse);
             const d = infoResponse.data;
             this.appService.setTaj(d.taj ?? null);
             this.appService.setFirstName(d.firstName ?? null);
@@ -80,7 +78,6 @@ export class Login {
             }
             this.appService.navigateByRole(person.roleName);
             this.appService.loadSections();
-            console.log(this.appService.getSections());
             
           },
           error: (infoError) => {

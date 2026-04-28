@@ -222,7 +222,6 @@ export class Doctor {
       next: (response) => {
         this.appService.successPopup("Munka hozzáadva");
         this.onWorkSearch();
-        console.log(response.data);
       },
       error: (err) => {
         this.appService.errorPopup("Hiba");

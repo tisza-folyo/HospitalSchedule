@@ -34,7 +34,6 @@ export class Registration {
     this.submitAttempted = true;
 
     if (form.invalid || this.password !== this.passwordConfirm) {
-      console.log("Password mismatch");
       return;
     }
     const person: PatientRegistrationRequest = {
@@ -49,7 +48,6 @@ export class Registration {
 
     this.registrationService.registerPerson(person).subscribe({
       next: (response) => {
-        console.log('Registration successful:', response);
         this.router.navigate(['/login']);
         this.submitAttempted = false;
       },

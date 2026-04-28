@@ -265,8 +265,6 @@ export class AppService {
     }
 
     formatData(data: any): AppointmentModel[] {
-        console.log(data);
-
         return data.map((item: any) => ({
             appointmentId: item.appointmentId,
             timeSlot: new Date(`${item.day}T${item.timeSlot}`),
