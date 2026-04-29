@@ -131,7 +131,11 @@ export class Doctor {
         this.resetField('date');
       },
       error: (err) => {
-        this.appService.errorPopup("Hiba");
+        if (err.status === 409) {
+          this.appService.errorPopup("Már van asszisztens bejegyezve!");
+        }else{
+          this.appService.errorPopup("Hiba");
+        }
       }
     });
   }

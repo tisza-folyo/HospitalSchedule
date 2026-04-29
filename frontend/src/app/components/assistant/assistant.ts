@@ -138,8 +138,6 @@ export class Assistant {
     this.assistantService.getAllWorksBetween(this.appService.getTaj()!, this.startDate, this.endDate).subscribe({
       next: (response) => {
         this.works = response.data;
-        console.log(response.data);
-
       },
       error: (err) => {
         console.error('Error fetching', err);
@@ -288,8 +286,6 @@ export class Assistant {
       uTaj: this.appService.getTaj()!,
       entryDay: this.today
     };
-    console.log(req);
-
     this.assistantService.postCare(req).subscribe({
       next: (response) => {
         this.appService.successPopup("Siker!");
@@ -303,10 +299,10 @@ export class Assistant {
       error: (err) => {
         if (this.patient == null) {
           this.appService.errorPopup("Nem választott pácienst!");
+        }else if(err.status == 409){
+          this.appService.errorPopup("A páciens már ellátás alatt van!");
         } else {
           this.appService.errorPopup("Hiba!\nKitöltötte az adatokat?");
-          console.log(err.error.message);
-
         }
       }
     });
@@ -520,8 +516,6 @@ export class Assistant {
           this.assistantService.getAllWorksBetween(this.appService.getTaj()!, this.startDate, this.endDate).subscribe({
             next: (response) => {
               this.works = response.data;
-              console.log(response.data);
-
             },
             error: (err) => {
               console.error('Error fetching', err);

@@ -331,7 +331,6 @@ export class Admin {
       workHoursEnd: this.workHourEnd,
       specialtyName: this.specialty
     }
-    console.log(request);
 
     this.adminService.registerPerson(request).subscribe({
       next: (response) => {

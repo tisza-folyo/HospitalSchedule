@@ -398,7 +398,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title mb-3 fw-bold">Elérhető időpontok</h5>
                                     <div class="list-group overflow-auto" style="max-height: 400px;">
-                                        @for (slot of appoints; track slot.appointmentId) {
+                                        @for (slot of appoints; track i; let i = $index) {
                                         <button type="button" (click)="setSelectedSlot(slot)"
                                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2 rounded border"
                                             [class.active]="selectedSlot === slot">
@@ -578,8 +578,17 @@
                             <div class="list-group">
                                 @for (w of works; track w.workDay) {
                                 <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                    <div>
-                                        <span class="fw-bold me-2">{{ w.workDay }}</span>
+
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-4">
+                                            <span class="fw-bold">{{ w.workDay }}</span>
+                                        </div>
+                                        <div class="me-3">
+                                            <span>{{ w.doctor?.lastName }} {{ w.doctor?.firstName }}</span>
+                                        </div>
+                                        <div class="text-muted small">
+                                            TAJ: {{ w.doctor?.taj }}
+                                        </div>
                                     </div>
 
                                     <div class="btn-group shadow-sm">
@@ -592,8 +601,8 @@
                                             </svg>
                                         </button>
                                     </div>
-                                </div>
 
+                                </div>
                                 } @empty {
                                 <div class="text-center p-5 text-muted small">Minden napra van asszisztens.</div>
                                 }
